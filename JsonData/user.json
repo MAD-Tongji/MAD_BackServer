@@ -1,0 +1,914 @@
+{
+	"name": "String",
+	"id": "String",
+	"status": true,
+	"mobilePhone": "String",
+	"password": "String",
+	"alipay": "String",
+	"playTimes": 1000,
+	"balance": 100.00,
+	"detail": {
+		"email": "String",
+		"gender": true,
+		"vehicleLicenseImage": "图片URL",
+		"VIN": "车辆识别码"
+	},
+	"statistics": {
+		"totalIncome": 100.00,
+		"totalCash": 0,
+		"hour": {
+			"time01": {
+				"broadcastTimes": 200,
+				"averagePrice": 0.50,
+				"incomeRanking": [
+					{	
+						"advertiser_id1": "广告ID1",
+						"income": 30.00
+					},
+					{	
+						"advertiser_id2": "广告ID2",
+						"income": 30.00
+					}
+				]
+			},
+			"time02": {
+				"broadcastTimes": 200,
+				"averagePrice": 0.50,
+				"incomeRanking": [
+					{	
+						"advertiser_id1": "广告ID1",
+						"income": 30.00
+					},
+					{	
+						"advertiser_id2": "广告ID2",
+						"income": 30.00
+					}
+				]
+			},
+			"time03": {
+				"broadcastTimes": 200,
+				"averagePrice": 0.50,
+				"incomeRanking": [
+					{	
+						"advertiser_id1": "广告ID1",
+						"income": 30.00
+					},
+					{	
+						"advertiser_id2": "广告ID2",
+						"income": 30.00
+					}
+				]
+			},
+			"time04": {
+				"broadcastTimes": 200,
+				"averagePrice": 0.50,
+				"incomeRanking": [
+					{	
+						"advertiser_id1": "广告ID1",
+						"income": 30.00
+					},
+					{	
+						"advertiser_id2": "广告ID2",
+						"income": 30.00
+					}
+				]
+			},
+			"time05": {
+				"broadcastTimes": 200,
+				"averagePrice": 0.50,
+				"incomeRanking": [
+					{	
+						"advertiser_id1": "广告ID1",
+						"income": 30.00
+					},
+					{	
+						"advertiser_id2": "广告ID2",
+						"income": 30.00
+					}
+				]
+			},
+			"time06": {
+				"broadcastTimes": 200,
+				"averagePrice": 0.50,
+				"incomeRanking": [
+					{	
+						"advertiser_id1": "广告ID1",
+						"income": 30.00
+					},
+					{	
+						"advertiser_id2": "广告ID2",
+						"income": 30.00
+					}
+				]
+			},
+			"time07": {
+				"broadcastTimes": 200,
+				"averagePrice": 0.50,
+				"incomeRanking": [
+					{	
+						"advertiser_id1": "广告ID1",
+						"income": 30.00
+					},
+					{	
+						"advertiser_id2": "广告ID2",
+						"income": 30.00
+					}
+				]
+			},
+			"time08": {
+				"broadcastTimes": 200,
+				"averagePrice": 0.50,
+				"incomeRanking": [
+					{	
+						"advertiser_id1": "广告ID1",
+						"income": 30.00
+					},
+					{	
+						"advertiser_id2": "广告ID2",
+						"income": 30.00
+					}
+				]
+			},
+			"time09": {
+				"broadcastTimes": 200,
+				"averagePrice": 0.50,
+				"incomeRanking": [
+					{	
+						"advertiser_id1": "广告ID1",
+						"income": 30.00
+					},
+					{	
+						"advertiser_id2": "广告ID2",
+						"income": 30.00
+					}
+				]
+			},
+			"time10": {
+				"broadcastTimes": 200,
+				"averagePrice": 0.50,
+				"incomeRanking": [
+					{	
+						"advertiser_id1": "广告ID1",
+						"income": 30.00
+					},
+					{	
+						"advertiser_id2": "广告ID2",
+						"income": 30.00
+					}
+				]
+			},
+			"time11": {
+				"broadcastTimes": 200,
+				"averagePrice": 0.50,
+				"incomeRanking": [
+					{	
+						"advertiser_id1": "广告ID1",
+						"income": 30.00
+					},
+					{	
+						"advertiser_id2": "广告ID2",
+						"income": 30.00
+					}
+				]
+			},
+			"time12": {
+				"broadcastTimes": 200,
+				"averagePrice": 0.50,
+				"incomeRanking": [
+					{	
+						"advertiser_id1": "广告ID1",
+						"income": 30.00
+					},
+					{	
+						"advertiser_id2": "广告ID2",
+						"income": 30.00
+					}
+				]
+			},
+			"time13": {
+				"broadcastTimes": 200,
+				"averagePrice": 0.50,
+				"incomeRanking": [
+					{	
+						"advertiser_id1": "广告ID1",
+						"income": 30.00
+					},
+					{	
+						"advertiser_id2": "广告ID2",
+						"income": 30.00
+					}
+				]
+			},
+			"time14": {
+				"broadcastTimes": 200,
+				"averagePrice": 0.50,
+				"incomeRanking": [
+					{	
+						"advertiser_id1": "广告ID1",
+						"income": 30.00
+					},
+					{	
+						"advertiser_id2": "广告ID2",
+						"income": 30.00
+					}
+				]
+			},
+			"time15": {
+				"broadcastTimes": 200,
+				"averagePrice": 0.50,
+				"incomeRanking": [
+					{	
+						"advertiser_id1": "广告ID1",
+						"income": 30.00
+					},
+					{	
+						"advertiser_id2": "广告ID2",
+						"income": 30.00
+					}
+				]
+			},
+			"time16": {
+				"broadcastTimes": 200,
+				"averagePrice": 0.50,
+				"incomeRanking": [
+					{	
+						"advertiser_id1": "广告ID1",
+						"income": 30.00
+					},
+					{	
+						"advertiser_id2": "广告ID2",
+						"income": 30.00
+					}
+				]
+			},
+			"time17": {
+				"broadcastTimes": 200,
+				"averagePrice": 0.50,
+				"incomeRanking": [
+					{	
+						"advertiser_id1": "广告ID1",
+						"income": 30.00
+					},
+					{	
+						"advertiser_id2": "广告ID2",
+						"income": 30.00
+					}
+				]
+			},
+			"time18": {
+				"broadcastTimes": 200,
+				"averagePrice": 0.50,
+				"incomeRanking": [
+					{	
+						"advertiser_id1": "广告ID1",
+						"income": 30.00
+					},
+					{	
+						"advertiser_id2": "广告ID2",
+						"income": 30.00
+					}
+				]
+			},
+			"time19": {
+				"broadcastTimes": 200,
+				"averagePrice": 0.50,
+				"incomeRanking": [
+					{	
+						"advertiser_id1": "广告ID1",
+						"income": 30.00
+					},
+					{	
+						"advertiser_id2": "广告ID2",
+						"income": 30.00
+					}
+				]
+			},
+			"time20": {
+				"broadcastTimes": 200,
+				"averagePrice": 0.50,
+				"incomeRanking": [
+					{	
+						"advertiser_id1": "广告ID1",
+						"income": 30.00
+					},
+					{	
+						"advertiser_id2": "广告ID2",
+						"income": 30.00
+					}
+				]
+			},
+			"time21": {
+				"broadcastTimes": 200,
+				"averagePrice": 0.50,
+				"incomeRanking": [
+					{	
+						"advertiser_id1": "广告ID1",
+						"income": 30.00
+					},
+					{	
+						"advertiser_id2": "广告ID2",
+						"income": 30.00
+					}
+				]
+			},
+			"time22": {
+				"broadcastTimes": 200,
+				"averagePrice": 0.50,
+				"incomeRanking": [
+					{	
+						"advertiser_id1": "广告ID1",
+						"income": 30.00
+					},
+					{	
+						"advertiser_id2": "广告ID2",
+						"income": 30.00
+					}
+				]
+			},
+			"time23": {
+				"broadcastTimes": 200,
+				"averagePrice": 0.50,
+				"incomeRanking": [
+					{	
+						"advertiser_id1": "广告ID1",
+						"income": 30.00
+					},
+					{	
+						"advertiser_id2": "广告ID2",
+						"income": 30.00
+					}
+				]
+			},
+			"time24": {
+				"broadcastTimes": 200,
+				"averagePrice": 0.50,
+				"incomeRanking": [
+					{	
+						"advertiser_id1": "广告ID1",
+						"income": 30.00
+					},
+					{	
+						"advertiser_id2": "广告ID2",
+						"income": 30.00
+					}
+				]
+			}
+		},
+
+		"day": {
+			"date01": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date02": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date03": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date04": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date05": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date06": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date07": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date08": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date09": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date10": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date11": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date12": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date13": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date14": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date15": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date16": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date17": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date18": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date19": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date20": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+
+			"date21": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date22": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date23": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date24": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date25": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date26": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date27": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date28": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date29": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"date30": {
+				"broadcastTimes": 10,
+				"averagePrice": 0.3,
+				"incomeRanking": [
+					{	"advertiser_id1": "String",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			}
+		},
+		"month": {
+			"month01": {
+				"broadcastTimes": 100,
+				"averagePrice": 1.00,
+				"incomeRanking": [
+					{	"advertiser_id1": "广告收入排名表广告ID",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"month02": {
+				"broadcastTimes": 100,
+				"averagePrice": 1.00,
+				"incomeRanking": [
+					{	"advertiser_id1": "广告收入排名表广告ID",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			"month03": {
+				"broadcastTimes": 100,
+				"averagePrice": 1.00,
+				"incomeRanking": [
+					{	"advertiser_id1": "广告收入排名表广告ID",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			 "month04": {
+				"broadcastTimes": 100,
+				"averagePrice": 1.00,
+				"incomeRanking": [
+					{	"advertiser_id1": "广告收入排名表广告ID",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			 "month05": {
+				"broadcastTimes": 100,
+				"averagePrice": 1.00,
+				"incomeRanking": [
+					{	"advertiser_id1": "广告收入排名表广告ID",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			 "month06": {
+				"broadcastTimes": 100,
+				"averagePrice": 1.00,
+				"incomeRanking": [
+					{	"advertiser_id1": "广告收入排名表广告ID",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			 "month07": {
+				"broadcastTimes": 100,
+				"averagePrice": 1.00,
+				"incomeRanking": [
+					{	"advertiser_id1": "广告收入排名表广告ID",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			 "month08": {
+				"broadcastTimes": 100,
+				"averagePrice": 1.00,
+				"incomeRanking": [
+					{	"advertiser_id1": "广告收入排名表广告ID",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			 "month09": {
+				"broadcastTimes": 100,
+				"averagePrice": 1.00,
+				"incomeRanking": [
+					{	"advertiser_id1": "广告收入排名表广告ID",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			 "month10": {
+				"broadcastTimes": 100,
+				"averagePrice": 1.00,
+				"incomeRanking": [
+					{	"advertiser_id1": "广告收入排名表广告ID",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			 "month11": {
+				"broadcastTimes": 100,
+				"averagePrice": 1.00,
+				"incomeRanking": [
+					{	"advertiser_id1": "广告收入排名表广告ID",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			},
+			 "month12": {
+				"broadcastTimes": 100,
+				"averagePrice": 1.00,
+				"incomeRanking": [
+					{	"advertiser_id1": "广告收入排名表广告ID",
+						"income": 10.0
+					},
+					{
+						"advertiser_id2": "String",
+						"income": 10.0
+					}
+				]
+			}
+		}
+	},
+	"message": [{
+		"date": "Date",
+		"content": "消息内容"
+	}]
+}
