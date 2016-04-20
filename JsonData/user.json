@@ -915,10 +915,40 @@
 			}]
 		}
 	],
-	"advertiser": [
-		
+	"advertiser": [],
+	"advertisment": [
+		{
+			"id": "String",
+			"broadcastTimes": 100,
+			"advertiser": "String",
+			"status": true,  
+			"createtime": "Date", 
+			"title": "String",
+			"content": "String",
+			"catalog": 1,
+			"city": "String",
+			"broadcastLocation": [
+				{
+					"district_name1": "String", 
+					"id": 1 
+				},
+				{
+					"district_name2": "String",
+					"id": 2
+				}
+			],
+			"startDate": "Date",
+			"endDate": "Date",
+			"broadcastSum": 1000,
+			"priceSum": 100, 
+			"statistics": [{ 
+				"date": "Date", 
+				"totalPrice": 30,
+				"totalBroadcast": 100
+			}
+			]
+		}
 	],
-	"advertisment": [],
 	"administrator":[],
 	"city":[],
 	"backendStatistics":[],
