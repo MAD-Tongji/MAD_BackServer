@@ -4,24 +4,10 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var Wilddog = require('wilddog');
 var advertiser = require('./routes/advertiser');
 var user = require('./routes/user');
 var admin = require('./routes/admin');
-var ref = Wilddog('https://wild-boar-00060.wilddogio.com');
 
-// ref.authWithCustomToken('vt3sPR4f6UanTCFANnyRhud7TvW0l1Ctq4hR8XUo',function(error,authData){
-//   if(error){
-//     console.log('Wilddog Login Error:'+error);
-//   }
-//   else
-//   {
-//     console.log('Wilddog Login successfully with payload',authData);
-//   }
-// });
-ref.once('value',function(snapshot){
-  console.log(snapshot.val());
-});
 var app = express();
 
 // view engine setup
