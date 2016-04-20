@@ -915,7 +915,64 @@
 			}]
 		}
 	],
-	"advertiser": [],
+	"advertiser": [
+		{
+			"name": "String",
+			"id": "String",
+			"status": true,
+			"email": "String",
+			"password": "String",
+			"balance": 100.0,
+			"currentBroadcast": 110,
+			"Alipay": "String",
+			"detail": {
+				"registerDate": "Date",
+				"type": "String",
+				"licenseType": "String",
+				"licenseNum": "String",
+				"companyname": "String",
+				"licenseImageUrl": "String",  
+				"licenseCode": "String",
+				"location": "String",  
+				"accomodation": "String",
+				"businessScope": "String",
+				"businessPeriod": "Date",
+				"organizationCode": "String",
+				"legalPerson": {
+					"name": "String",
+					"location": "String",
+					"id": "String",
+					"validDate": "Date",
+					"ifLongTerm": true,
+					"ifLegalPerson": true
+				},
+				"contactemail": "String"
+			},
+			"advertisment": ["0001","0002"],
+			"message": [
+				{
+					"date": "Date",
+					"content": "String"
+				}
+			],
+			"recharge": [
+				{
+					"amount": 100.0,
+					"account": "String",
+					"time": "String",
+					"status": "String"
+				}
+			],
+			"refund": [
+				{
+					"amount": 100.0,
+					"account": "String",
+					"time": "String",
+					"status": "String"
+				}
+			]
+		}
+	],
 	"advertisment": [
 		{
 			"id": "String",
@@ -949,8 +1006,96 @@
 			]
 		}
 	],
-	"administrator":[],
-	"city":[],
-	"backendStatistics":[],
-	"apply":[]
+	"administrator":[
+		{
+			"id": "String",
+			"name": "String",
+			"email": "String",
+			"password": "String",
+			"level": 1.0,
+			"gender": "String",
+			"hireDate": "Date",
+			"message": [
+				{
+					"date": "Date",
+					"content": "String"
+				},{
+					"date": "Date",
+					"content": "String"
+				}
+			]
+		}
+	],
+	"city":[
+		{
+			"name": "Shanghai",
+			"businessDistrict": [
+				{
+					"id": "0001",
+					"name": "陆家嘴",
+					"advertisment": {
+						"entertainment": ["0001"],
+						"education": ["0002"],
+						"service": ["0003"],
+						"recruit": ["0004"],
+						"social": ["0005"],
+						"accommodation": ["0006"],
+						"tenancy": ["0007"],
+						"commodity": ["0008"],
+						"other": ["0009"]
+					}
+				},{
+					"id": "0002",
+					"name": "五角场",
+					"advertisment": {
+						"entertainment": ["0001"],
+						"education": ["0002"],
+						"service": ["0003"],
+						"recruit": ["0004"],
+						"social": ["0005"],
+						"accommodation": ["0006"],
+						"tenancy": ["0007"],
+						"commodity": ["0008"],
+						"other": ["0009"]
+					}
+				}
+			]
+		}
+	],
+	"backendStatistics":{
+		"totalUser": 100,
+		"totalAdvertiser": 100,
+		"totalAdvertisement": 100,
+		"totalBroadcastTimes": 1000,
+		"totalStatistics": [
+			{
+				"date": "Date",
+				"totalBroadcastTimes": 100,
+				"totalIncome": 100.0
+			}
+		],
+		"topAdvertisements": {
+			"advertisment_id1": "String",
+			"advertisment_id2": "String",
+			"advertisment_id3": "String"
+		},
+		"newUser": 10,
+		"newAdvertiser": 10,
+		"newAdvertisement": 10,
+		"newBroadcastTimes": 10
+	},
+	"apply":[
+		{
+			"id": "String",
+			"catalog": "String",
+			"userId": "String",
+			"userName": "String",
+			"account": "String",
+			"money": 1.0,
+			"applyDate": "Date",
+			"completedDate": "Name",
+			"status": true,
+			"operatorName": "String"
+		}
+	]
 }
