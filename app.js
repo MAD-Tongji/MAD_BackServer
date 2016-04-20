@@ -2,11 +2,23 @@ var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
+var wilddog = require('wilddog');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var advertiser = require('./routes/advertiser');
 var user = require('./routes/user');
 var admin = require('./routes/admin');
+
+var superToken='vt3sPR4f6UanTCFANnyRhud7TvW0l1Ctq4hR8XUo';
+var ref = new wilddog('https://wild-boar-00060.wilddogio.com/');
+
+ref.authWithCustomToken(superToken,(error,authData)=>{
+  if (error) {
+    console.log("Login Failed!", error);
+  } else {
+    console.log("Authenticated successfully with payload:", authData);
+  }
+});
 
 var app = express();
 
