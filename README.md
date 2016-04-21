@@ -4,7 +4,7 @@
  2. Install dependencies: <pre><code>npm install</code></pre>
  3. Start the project: <pre><code>npm start</code></pre>
 
-## 2.Supplement   
+## 2.Supplements   
 |—app.js  -- root routers   
 |—routers   
 |——admin  -- administrator module   
