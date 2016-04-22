@@ -9,9 +9,9 @@ var advertiser = require('./routes/advertiser');
 var user = require('./routes/user');
 var admin = require('./routes/admin');
 
+/*---------------------野狗云初始化鉴权---------------------*/
 var superToken='vt3sPR4f6UanTCFANnyRhud7TvW0l1Ctq4hR8XUo';
 var ref = new wilddog('https://wild-boar-00060.wilddogio.com/');
-
 ref.authWithCustomToken(superToken,(error,authData)=>{
   if (error) {
     console.log("Login Failed!", error);
@@ -19,7 +19,12 @@ ref.authWithCustomToken(superToken,(error,authData)=>{
     console.log("Authenticated successfully with payload:", authData);
   }
 });
+/*---------------------野狗云初始化鉴权---------------------*/
 
+/*---------------------公共常用工具---------------------*/
+var utils = require('./routes/publicUtils');
+console.log(utils.getToken('userid111111111'));//getToken(userid);
+/*---------------------公共常用工具---------------------*/
 var app = express();
 
 // view engine setup
