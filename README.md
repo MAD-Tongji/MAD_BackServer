@@ -13,4 +13,10 @@
 |——admin.js  -- administrator routers   
 |——advertiser.js   -- advertiser routers   
 |——user.js   -- car user routers   
+|——publicUtils.js   -- public utilities
+|—typings   -- TypeScript reference files
+|——node  
+|———node.d.ts   -- .d.ts for Node.js
+|——wilddog  
+|———wilddog.d.ts   -- .d.ts for wilddog sdk
  
