@@ -13,8 +13,10 @@ function authenticate(name, pass, res) {
 	ref.child("administrator/-KFwZRymhRyxR0UFGDAi").once("value", function(data) {
   		var username = data.val().name;
   		var password = data.val().password;
-  		var hash = crypto.createHmac('sha256', pass)
-                   .digest('hex');
+  		var hash = crypto.createHash('sha256')
+                .update(pass)
+                .digest('hex');
+      console.log(hash);
         if (username == name && hash == password) {
           var token = Token.getToken(username);
         	res.json({
@@ -23,6 +25,7 @@ function authenticate(name, pass, res) {
         	})
         } else {
         	res.json({
+            hash: hash,
         		errCode: 104
         	})
         }
