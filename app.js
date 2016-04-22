@@ -22,8 +22,8 @@ ref.authWithCustomToken(superToken,(error,authData)=>{
 /*---------------------野狗云初始化鉴权---------------------*/
 
 /*---------------------公共常用工具---------------------*/
-var utils = require('./routes/publicUtils');
-console.log(utils.getToken('userid111111111'));//getToken(userid);
+var utils = require('./lib/publicUtils');
+console.log('Token example: ' + utils.getToken('userid111111111'));//getToken(userid);
 /*---------------------公共常用工具---------------------*/
 var app = express();
 

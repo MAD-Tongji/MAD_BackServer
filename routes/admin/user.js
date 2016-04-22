@@ -1,7 +1,7 @@
 var crypto = require('crypto');
-var expressJwt = require('express-jwt');
 var memcached = require('memcached');
 var wilddog = require('wilddog');
+var Token = require('../../lib/publicUtils');
 var ref = new wilddog('https://wild-boar-00060.wilddogio.com/');
 
 exports.login = function (req, res) {
@@ -16,8 +16,9 @@ function authenticate(name, pass, res) {
   		var hash = crypto.createHmac('sha256', pass)
                    .digest('hex');
         if (username == name && hash == password) {
+          var token = Token.getToken(username);
         	res.json({
-        		token: 'token',
+        		token: token,
         		errCode: 0
         	})
         } else {
