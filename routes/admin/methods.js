@@ -87,17 +87,16 @@ exports.backuserList = function(req, res, next) {
         if (err) return next(err);
         if (result) {
             // 取出最后一条记录的id，由于id是按照数字顺序排序，所以可以向后遍历取出所有记录
-            User.getAllId(function(err, id) {
-                if (err) return next(err);
-                getAllList(id)
+            User.getAllId()
+            .done(function(data) {
+                getAllList(data)
                     .done(function(data) {
-                        console.log(data);
                         res.json({
                             errCode: 0,
                             backUserList: data
                         });     
                     })
-            })
+            }) 
         } else {
             res.json({
                 errCode: 101 //令牌不存在或已经过期
@@ -106,26 +105,18 @@ exports.backuserList = function(req, res, next) {
     })
 }
 
-function getAllList(id) {
+function getAllList(ids) {
     var deferred = Q.defer();
     var listArr = [];
-    if (id) {
-        for (var i = parseInt(id); i > 0; i--) {
-            (function(i) {
-                User.get(i.toString(), function(err, user) {
-                    if (err) deferred.reject(err);
-                    var admin = new User({
-                        id: user.id,
-                        name: user.name,
-                        gender: user.gender,
-                        email: user.email,
-                        level: user.level,
-                        hireDate: user.hireDate
-                    })
-                    listArr.push(admin.toJSON());
+    if (ids) {
+        for (var id in ids) {
+            (function(id) {
+                User.get(ids[id])
+                .done(function(data) {
+                    listArr.push(data.toJSON());
                     deferred.resolve(listArr);
                 })
-            })(i);
+            })(id);
         }
     }
     return deferred.promise;
@@ -158,7 +149,6 @@ exports.create = function(req, res, next) {
                     });
                     throw (err);
                 }
-                    
                 res.json({
                     errCode: 0
                 });
@@ -180,13 +170,15 @@ exports.manage = function(req, res, next) {
         });
         next(err);
     }
-
+    var id = data.id;
+    var level = data.newLevel;
     authenticate(data.token, function(err, result) {
         if (err) return next(err);
         if (result) {
-            User.get(data.id, function(err, user) {
-                if (err) next(err);
-                User.updateLevel(data.id, data.newLevel, function(err) {
+            User.getById(data.id)
+            .done(function(data) {
+                console.log(data);
+                User.updateLevel(data, level, function(err) {
                     if (err) next(err);
                     res.json({
                         errCode: 0
@@ -203,7 +195,9 @@ exports.manage = function(req, res, next) {
 
 exports.modify = function(req, res, next) {
     var data = req.body;
-    console.log(data);
+    var email = data.email;
+    var pass = data.password;
+    console.log(email + ' | ' + pass);
     if (!data.token) {
         res.json({
             errCode: 102 //请求错误
@@ -213,9 +207,9 @@ exports.modify = function(req, res, next) {
     authenticate(data.token, function(err, result) {
         if (err) return next(err);
         if (result) {
-            User.get(data.id, function(err, user) {
-                if (err) next(err);
-                User.updateInfo(data.id, data.email, data.password, function(err) {
+            User.getById(data.id)
+            .done(function(data) {
+                User.updateInfo(data, email, pass, function(err) {
                     if (err) next(err);
                     res.json({
                         errCode: 0
