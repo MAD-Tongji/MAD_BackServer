@@ -7,12 +7,22 @@ router.get('/', function(req, res, next) {
     res.send('here is admin');
 });
 
-/* Login interface*/
-router.post('/back/login', admin.login);
+/* Administrator login interface */
+router.post('/login', admin.login);
 
-router.get('/back/backuser/list', admin.backuserList)
+/* Administrator lists interface */
+router.get('/backuser/list', admin.backuserList)
 
-router.get('/back/user/list', admin.userList);
+/* User and advertiser lists interface  */
+router.get('/user/list', admin.userList);
 
+/* Add administrator */
+router.post('/backuser/create', admin.create);
+
+/* Administrator auth level manage */
+router.post('/backuser/manage', admin.manage);
+
+/* Administrator modify personal info */
+router.post('/backuser/modify', admin.modify);
 
 module.exports = router;

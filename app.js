@@ -55,7 +55,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/advertiser', advertiser);
 app.use('/user', user);
-app.use('/admin',admin);
+app.use('/back', admin); //以前是app.use('/admin', admin), 与接口命名不一致(接口以back开始), 这样的话路由变为/admin/back, 多了一级，现改为back, 朱哥你也改一下吧
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
