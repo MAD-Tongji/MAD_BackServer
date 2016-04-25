@@ -23,6 +23,6 @@ User.findpwd=function(data,fn) {
     
 }
 
-User.alterpwd=function(data.fn) {
+User.alterpwd=function(data,fn) {
     
 }
