@@ -69,7 +69,7 @@ router.get('/advertisement/',function (req,res,next) {
 /************** 广告商账户部分 ***********/
 // 账户充值
 router.post('/account/recharge',function (req,res,next) {
-  console.log(req.body);
+  //console.log(req.body);
   advertiser.recharge(req,res,next);
 });
 
@@ -81,7 +81,7 @@ router.get('/account/detail',function (req,res,next) {
 
 // 获取充值记录
 router.get('/account/recharge/all',function (req,res,next) {
-  //code here
+  advertiser.rechargeList(req,res,next);
 });
 
 // 获取退款记录
