@@ -26,12 +26,13 @@ function getAllAdUsed(req,res) {
                 result.message = '账户不存在';
             }
             else{
-                console.log(snap.val().detail.VIN);
-                for(var i = 0; i < snap.val().adUsedList.length; i++)
+                var adlist = snap.val().adUsedList;
+                for(var i = 0; i < adlist.length; i++)
                 {
-                    console.log(snap.val().adUsedList[i]);
+                    var adDetailRef = adRef.child(adlist[i]);
+                    adDetailRef.
                 }
-                result.adUsedList = snap.val().adUsedList;
+                result.adUsedList = adlist;
             }
             res.json(result);
         });
