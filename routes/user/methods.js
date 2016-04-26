@@ -74,7 +74,31 @@ exports.alterpwd=function(req,res,next) {
     })
 }
 
-
+exports.msglist=function(req,res) {
+    var userId=req.query.userId;
+    var token=req.query.token;
+    User.msglist(userId,token,function(err,result) {
+        if(err) return next(err);
+        if(result){
+            var msglist=result.msglist;
+            res.json({
+                errCode:0,
+                messageList:[
+                    {
+                    id:msgid,
+                    pushTime:msgdate,
+                    content:msgcont,
+                    status:readbl
+                    }
+                ]
+            })
+        }else{
+            res.json({
+                errCode:104
+            })
+        }
+    })
+}
 
 
 
