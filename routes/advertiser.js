@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 var wilddog = require('wilddog');
 var ref = new wilddog('https://wild-boar-00060.wilddogio.com/');
-// var advertiser = require('./advertiser/user.js');
 var advertiser = require('./advertiser/methods.js');
 
 /* GET users listing. */
@@ -15,16 +14,14 @@ router.get('/', function(req, res, next) {
 /************** 登陆注册部分 ***********/
 // 登录
 router.post('/login',function (req,res,next) {
-  console.log(req);
-  advertiser.login();
-  res.send('test login');
+    advertiser.login(req, res, next);
 });
 
 // 注册
 router.post('/signup',function (req,res,next) {
-  console.log(req);
-  advertiser.signup();
-  res.send('test signup');
+  // console.log(req);
+  // advertiser.signup(req, res, next);
+  res.send(req.body.username);
 });
 
 
