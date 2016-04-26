@@ -6,6 +6,7 @@ var memcached = require('memcached');
 var Q = require('q');
 var wilddog = require('wilddog');
 var advertiserRef = new wilddog('https://wild-boar-00060.wilddogio.com/advertiser');
+var q = require('q');
 
 module.exports = User;
 
@@ -46,3 +47,23 @@ User.getAdvertiserByEmail = function(email){
 
 /******** 我是分割线 **********/
 
+function getAccountDetail(id) {
+    var defer = q.defer();
+    var user;
+    advertiserRef.child(id).on("value", function(snapshot) {
+        user = {
+            name: snapshot.val().name,
+            status: snapshot.val().status,
+            email: snapshot.val().email,
+            alipay: snapshot.val().Alipay
+        }
+        console.log(user);
+        defer.resolve(user);
+        //user["avatar"] = snapshot.val().avatar;  //数据库缺失,需要补
+    });
+    //defer.resolve(user);
+    return defer.promise;
+}
+
+// 导出
+exports.getAccountDetail = getAccountDetail;
