@@ -8,7 +8,7 @@ var advertiserRef = new wilddog('https://wild-boar-00060.wilddogio.com/advertise
 
 
 // 参考文档https://z.wilddog.com/web/crud#cha-xun-shu-ju0
-function login(userName, password, callBack){
+function login(){
     //测试如何使用
     advertiserRef.child('hereIsAdvertiserId').on('value', 
         function (datasnapshot) {
@@ -23,7 +23,7 @@ function login(userName, password, callBack){
     });
 }
 
-function signup(newAdvertiser, callBack) {
+function signup() {
     //新建广告商
     //这里如何回调？
     advertiserRef.child('newAdvertiserId').set({
@@ -45,5 +45,11 @@ function signup(newAdvertiser, callBack) {
     });
 }
 
+
+
+/******** 我是分割线 **********/
+
+
+// 导出
 exports.login = login;
 exports.signup = signup;
