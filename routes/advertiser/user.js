@@ -8,6 +8,7 @@ var wilddog = require('wilddog');
 var Token = require('../../lib/publicUtils');
 var advertiserRef = new wilddog('https://wild-boar-00060.wilddogio.com/advertiser');
 var q = require('q');
+var moment = require('moment');
 
 module.exports = User;
 
@@ -86,7 +87,7 @@ User.checkToken = function(token) {
 
 /******** 我是分割线 **********/
 
-function getAccountDetail(id) {
+User.getAccountDetail = function(id) {
     var defer = q.defer();
     var user;
     advertiserRef.child(id).on("value", function(snapshot) {
@@ -102,7 +103,18 @@ function getAccountDetail(id) {
     });
     //defer.resolve(user);
     return defer.promise;
-}
+};
 
-// 导出
-exports.getAccountDetail = getAccountDetail;
+User.recharge = function(id, amount, alipay) {
+    var defer = q.defer();
+    var date = moment().format('YYYY-MM-DD hh:mm:ss');
+    console.log(date);
+    advertiserRef.child(id).child("recharge").push({
+        account: alipay,
+        amount: amount,
+        status: "String",
+        time: date
+    });
+    defer.resolve();
+    return defer.promise;
+};

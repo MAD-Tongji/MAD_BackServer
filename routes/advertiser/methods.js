@@ -100,6 +100,33 @@ exports.accountDetail = function (req,res,next) {
             });
         }
     })
+};
+
+exports.recharge = function (req,res,next) {
+    var data = req.body;
+    if (!data.token) {
+        res.json({
+            errCode: 102
+        });
+        next(err);
+    }
+
+    authenticate(data.token, function (err, result) {
+        if (err) return next(err);
+        if (result) {
+            User.recharge(data.id, data.recharge, data.Alipay)
+                .done(function (data) {
+                    console.log(data);
+                    res.json({
+                        errCode: 0
+                    })
+                })
+        } else {
+            res.json({
+                errCode: 101
+            });
+        }
+    })
 }
 
 function authenticate(token, fn) {
@@ -116,6 +143,6 @@ function authenticate(token, fn) {
 function getToken(token, fn) {
     /* 获取token逻辑，现在缺token映射表 */
     /* 先用token值为1进行模拟认证 */
-    if (token == 1) return fn(null, 1);
+    if (token == "testtoken") return fn(null, 1);
     fn();
 }

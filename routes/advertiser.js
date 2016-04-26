@@ -69,7 +69,8 @@ router.get('/advertisement/',function (req,res,next) {
 /************** 广告商账户部分 ***********/
 // 账户充值
 router.post('/account/recharge',function (req,res,next) {
-  //code here
+  console.log(req.body);
+  advertiser.recharge(req,res,next);
 });
 
 // 获取广告商账户信息
