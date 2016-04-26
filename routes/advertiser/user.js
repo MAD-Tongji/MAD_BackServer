@@ -96,12 +96,11 @@ User.getAccountDetail = function(id) {
             status: snapshot.val().status,
             email: snapshot.val().email,
             alipay: snapshot.val().Alipay
-        }
-        console.log(user);
+        };
+        //console.log(user);
         defer.resolve(user);
         //user["avatar"] = snapshot.val().avatar;  //数据库缺失,需要补
     });
-    //defer.resolve(user);
     return defer.promise;
 };
 
@@ -116,5 +115,16 @@ User.recharge = function(id, amount, alipay) {
         time: date
     });
     defer.resolve();
+    return defer.promise;
+};
+
+User.getRechargeList = function (id) {
+    var defer = q.defer();
+    var list;
+    advertiserRef.child(id).on("value",function(snapshot) {
+        list = snapshot.val().recharge;
+        console.log(list);
+        defer.resolve(list);
+    });
     return defer.promise;
 };
