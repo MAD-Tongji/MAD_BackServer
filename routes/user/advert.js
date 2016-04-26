@@ -13,7 +13,7 @@ function getAllAdUsed(req,res) {
     var userid = req.params.userid || null;
     var token = req.body.token || null;
     var result = new Object;
-    if(userid == null || token == null)
+    if(userid == null || token == null || userid != utils.token2id(token))
     {
         result.errCode = 100;
         res.json(result);
@@ -25,19 +25,16 @@ function getAllAdUsed(req,res) {
             if(snap.val() == null)
             {
                 result.errCode = 100;
-                result.message = '账户不存在';
             }
             else{
-                // var tokena = utils.getToken(userid);
-                // setTimeout(function() {
-                //     console.log(utils.token2id(tokena));
-                // }, 2000);
                 var adlist = snap.val().adUsedList;
+                var detailArray = new Array();
                 for(var i = 0; i < adlist.length; i++)
                 {
-                    var adDetailRef = adRef.child(adlist[i]);
-                    // adDetailRef.
+                    detailArray.push(utils.getAdDetail(adlist[i]));
                 }
+                result.errCode = 0;
+                result.adList=detailArray;
                 result.adUsedList = adlist;
             }
             res.json(result);
@@ -48,4 +45,3 @@ function getAllAdUsed(req,res) {
 }
 
 exports.getAllAdUsed = getAllAdUsed;
-
