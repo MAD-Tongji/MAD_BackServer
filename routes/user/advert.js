@@ -30,7 +30,7 @@ function getAllAdUsed(req,res) {
                 for(var i = 0; i < adlist.length; i++)
                 {
                     var adDetailRef = adRef.child(adlist[i]);
-                    adDetailRef.
+                    // adDetailRef.
                 }
                 result.adUsedList = adlist;
             }

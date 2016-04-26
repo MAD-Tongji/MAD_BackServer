@@ -3,7 +3,7 @@ var User = require('./user');
 var Token = require('../../lib/publicUtils');
 
 
-// 参考文档https://z.wilddog.com/web/crud#cha-xun-shu-ju0
+// 广告商登陆
 exports.login = function(req, res, next) {
     var data = req.body;
     User.authenticate(data.email, data.password, function(err, user){
@@ -21,29 +21,35 @@ exports.login = function(req, res, next) {
             });
         }
     });
-}
+};
 
+// 广告商注册
 exports.signup = function(req, res, next) {
-    //新建广告商
-    //这里如何回调？
-    advertiserRef.child('newAdvertiserId').set({
-        //初始化数据
-        Alipay: "String",
-        advertisment: {},
-        balance: 0,
-        currentBroadcast: 0,
-        detail: {},
-        email: "test@test.com",
-        expiration: "",
-        message: {},
-        name: "String",
-        password: "123456",
-        recharge: {},
-        refund: {},
-        status: false,
-        token: "生成随机token"
-    });
-}
+    var data = req.body;
+    var newUser = User.createNewAdvertiser(data);
+};
+
+// 检查邮箱是否已被注册
+exports.checkEmail = function (req, res, next) {
+    
+};
+
+// 获取已发布广告
+exports.getReleasedAdvertisement = function (req, res, next) {
+    var token = req.qurey.token;
+    
+    //token校验
+    if (User.checkToken(token)) {
+        //数据库查询
+        
+    } else {
+        res.josn({
+            errCode: 101
+        });
+    }
+    
+};
+
 
 
 

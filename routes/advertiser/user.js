@@ -5,6 +5,7 @@
 var memcached = require('memcached');
 var Q = require('q');
 var wilddog = require('wilddog');
+var Token = require('../../lib/publicUtils');
 var advertiserRef = new wilddog('https://wild-boar-00060.wilddogio.com/advertiser');
 var q = require('q');
 
@@ -42,6 +43,44 @@ User.getAdvertiserByEmail = function(email){
 	});
     return deferred.promise;
 };
+
+User.createNewAdvertiser = function (info) {
+	//先检查email是否重复
+	
+	//有重复email时返回errCode
+	
+	//没有重复时新建advertiser
+	var newAdvertiser = advertiserRef.push({
+		 //初始化数据
+        Alipay: '',
+        advertisment: {},
+        balance: 0,
+        currentBroadcast: 0,
+        detail: {},
+        email: info.email,
+        expiration: "",
+        message: {},
+        name: info.username,
+        password: info.password,
+        recharge: {},
+        refund: {},
+        status: false,
+        token: 'testtoken'
+	});
+	var newUser = {
+		token: 'testtoken',
+		id: newAdvertiser.key()
+	};
+	return newUser;
+}
+
+
+User.checkToken = function(token) {
+    // 校验token，失败返回false
+    return true;
+}
+
+
 
 
 

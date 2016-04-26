@@ -21,9 +21,14 @@ router.post('/login',function (req,res,next) {
 router.post('/signup',function (req,res,next) {
   // console.log(req);
   // advertiser.signup(req, res, next);
-  res.send(req.body.username);
+  // res.send(req.body.username);
 });
 
+router.post('/checkemail',function (req,res,next) {
+  // console.log(req);
+  // advertiser.signup(req, res, next);
+  // res.send(req.body.username);
+});
 
 /************** 广告部分 ***********/
 // 查看已发布广告列表
