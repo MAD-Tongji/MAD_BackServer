@@ -26,3 +26,18 @@ Advertisement.district = function () {
 	
 };
 
+Advertisement.pushNewAdvertisement = function () {
+	
+};
+
+Advertisement.saveAdvertisment = function () {
+	
+};
+
+Advertisement.removeAdvertisment = function () {
+	
+};
+
+Advertisement.getAdvertismentById = function () {
+	
+};

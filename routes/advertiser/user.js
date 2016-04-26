@@ -21,27 +21,36 @@ function User(obj) {
 
 User.authenticate = function(email, pass, callback) {
 	User.getAdvertiserByEmail(email).
-	done(function(data, err) {
-		console.log('advertiser data:')
-		console.log(data);
-		if (err) return callback(err);
-		if (!data) return callback(err);
-		if (pass === data.password) {
-			callback(null, data);
-		} else {
-			callback(null, null);
-		}
-	});
+        then(function(data) {
+            // console.log('advertiser data:')
+            // console.log(data);
+            if (pass === data.password) {
+                callback(null, data);
+            } else {
+                callback(null, null);
+            }
+        }, function(err) {
+            callback(err);
+        });
 };
 
 User.getAdvertiserByEmail = function(email){
     var deferred = Q.defer();
-	
-	advertiserRef.orderByChild('email').equalTo(email).on('child_added', function (snapshot) {
-		var user = snapshot.val();
-		user.id = snapshot.key();
-		deferred.resolve(user);
-	});
+    var targetEmail = formatEmail(email);
+    advertiserRef.once('value', function (snapshot) {
+        if (snapshot.child(targetEmail).exists()) {
+            //用户存在，获取用户
+            console.log('用户存在，获取用户');
+            var user = snapshot.child(targetEmail).val();
+            deferred.resolve(user);
+        } else {
+            //用户不存在
+            console.log('用户不存在');
+            var noUserError = new Error('102');
+            deferred.reject('102');
+        }
+    });
+
     return deferred.promise;
 };
 
@@ -81,6 +90,9 @@ User.checkToken = function(token) {
     return true;
 }
 
+function formatEmail(email) {
+    return email.replace('.', '-');
+}
 
 
 

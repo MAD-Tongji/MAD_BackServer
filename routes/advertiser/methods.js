@@ -7,7 +7,11 @@ var Token = require('../../lib/publicUtils');
 exports.login = function(req, res, next) {
     var data = req.body;
     User.authenticate(data.email, data.password, function(err, user){
-        if (err) return next(err);
+        if (err) {
+            res.json({
+                errCode: 104
+            });
+        }
         if (user) {
             var token = Token.getToken(user.id); //传入登录者的id生成token
             res.json({
