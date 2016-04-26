@@ -3,11 +3,13 @@ var rootRef = new wilddog("https://wild-boar-00060.wilddogio.com/");
 var userRef = rootRef.child('user');
 var adRef = rootRef.child('advertisment');
 
+var utils = require('../../lib/publicUtils');
 /**
  * @interface
  * @description {interface} 获取用户已接广告
  */
 function getAllAdUsed(req,res) {
+        
     var userid = req.params.userid || null;
     var token = req.body.token || null;
     var result = new Object;
@@ -26,6 +28,10 @@ function getAllAdUsed(req,res) {
                 result.message = '账户不存在';
             }
             else{
+                // var tokena = utils.getToken(userid);
+                // setTimeout(function() {
+                //     console.log(utils.token2id(tokena));
+                // }, 2000);
                 var adlist = snap.val().adUsedList;
                 for(var i = 0; i < adlist.length; i++)
                 {
