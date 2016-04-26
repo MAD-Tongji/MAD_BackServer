@@ -47,7 +47,7 @@ User.getAdvertiserByEmail = function(email){
 
 /******** 我是分割线 **********/
 
-function getAccountDetail(id) {
+User.getAccountDetail = function(id) {
     var defer = q.defer();
     var user;
     advertiserRef.child(id).on("value", function(snapshot) {
@@ -63,7 +63,4 @@ function getAccountDetail(id) {
     });
     //defer.resolve(user);
     return defer.promise;
-}
-
-// 导出
-exports.getAccountDetail = getAccountDetail;
+};

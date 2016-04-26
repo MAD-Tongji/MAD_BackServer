@@ -110,6 +110,6 @@ function authenticate(token, fn) {
 function getToken(token, fn) {
     /* 获取token逻辑，现在缺token映射表 */
     /* 先用token值为1进行模拟认证 */
-    if (token == 1) return fn(null, 1);
+    if (token == "testtoken") return fn(null, 1);
     fn();
 }
