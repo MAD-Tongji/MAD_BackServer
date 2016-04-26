@@ -34,6 +34,6 @@ router.post('/findpwd',user.findpwd);
 router.post('/alterpwd',user.alterpwd);
 
 /* user get message list interface */
-router.post('/msglist',user.msglist);
+// router.post('/msglist',user.msglist);
 
 module.exports = router;
