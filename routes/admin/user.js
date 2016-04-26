@@ -1,7 +1,7 @@
 var crypto = require('crypto');
 var Token = require('../../lib/publicUtils');
 var Q = require('q');
-// var memcached = require('memcached');
+var memcached = require('memcached');
 var wilddog = require('wilddog');
 var ref = new wilddog('https://wild-boar-00060.wilddogio.com/');
 var adminRef = ref.child("administrator");
@@ -23,6 +23,8 @@ User.prototype.save = function(fn){
         gender: user.gender,
         level: user.level,
         hireDate: user.hireDate
+    }, function(err) {
+        if (err) fn(err);
     })
 
     var id = newPush.key();
@@ -31,6 +33,8 @@ User.prototype.save = function(fn){
         adminRef.child(id).update({
             id: id,
             pass: hashPass
+        }, function(err) {
+            if (err) fn(err);
         })
         fn(null);
     })
@@ -106,7 +110,6 @@ User.authenticate = function(name, pass, fn) {
 			var hash = crypto.createHash('sha256')
 				.update(pass)
 				.digest('hex');
-            console.log('name: ' + name + ' pass: ' + data.pass);
 			if (hash == data.pass) return fn(null, data);
 			fn();
         })
@@ -129,8 +132,10 @@ User.getById = function(userId) {
 User.updateLevel = function(id, level, fn) {
     adminRef.child(id).update({
         level: level
+    }, function(err) {
+        if (err) fn(err);
+        fn(null);
     })
-    fn(null);
 }
 
 User.updateInfo = function(id, email, password, fn) {
@@ -140,8 +145,10 @@ User.updateInfo = function(id, email, password, fn) {
 	adminRef.child(id).update({
         email: email,
         pass: hash
+    }, function(err) {
+        if (err) fn(err);
+        fn(null);
     })
-    fn(null);
 }
 
 User.prototype.toJSON = function() {

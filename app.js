@@ -27,17 +27,17 @@ console.log('Token example: ' + utils.getToken('userid111111111'));//getToken(us
 
 //*****通过一个子键值得到该子键所在节点的数据快照，直接就是json格式无需再.val()*****//
 //#####警告：务必确保该子键值的唯一性，随做了防崩处理但是处理的很粗暴，仅仅只是只返回第一条结果而已，暂时未有好的方法#####//
-setTimeout(()=>{
-  utils.Query_EqualTo(ref.child('user'),'name','Apple',(snap)=>{
-    if(snap == null){             //匹配结果为空
-      console.log('匹配结果为空');
-    }
-    else
-    {
-      console.log(snap);
-    }
-  })
-},3000);
+// setTimeout(()=>{
+//   utils.Query_EqualTo(ref.child('user'),'name','Apple',(snap)=>{
+//     if(snap == null){             //匹配结果为空
+//       console.log('匹配结果为空');
+//     }
+//     else
+//     {
+//       console.log(snap);
+//     }
+//   })
+// },3000);
 /*---------------------公共常用工具---------------------*/
 var app = express();
 

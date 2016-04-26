@@ -3,8 +3,8 @@ var router = express.Router();
 var test = require('./user/ExportFunctionDemo');
 var wilddog = require('wilddog');
 var ref = new wilddog('https://wild-boar-00060.wilddogio.com/');
-var user=require('./user/methods.js');
-
+var user=require('./user/methods');
+var advert = require('./user/advert');
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   	ref.once('value',(snap)=>{
@@ -36,4 +36,6 @@ router.post('/alterpwd',user.alterpwd);
 /* user get message list interface */
 // router.post('/msglist',user.msglist);
 
+/* user get ad-used list interface */
+router.post('/advert/all/:userid',advert.getAllAdUsed);
 module.exports = router;

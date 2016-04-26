@@ -56,7 +56,6 @@ function getAccountDetail(id) {
     advertiserRef.child(id).on("value", function(snapshot) {
         user = {
             name: snapshot.val().name,
-            id: snapshot.val().id,
             status: snapshot.val().status,
             email: snapshot.val().email,
             alipay: snapshot.val().Alipay
