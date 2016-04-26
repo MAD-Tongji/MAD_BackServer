@@ -94,6 +94,33 @@ exports.accountDetail = function (req,res,next) {
             });
         }
     })
+};
+
+exports.recharge = function (req,res,next) {
+    var data = req.body;
+    if (!data.token) {
+        res.json({
+            errCode: 102
+        });
+        next(err);
+    }
+
+    authenticate(data.token, function (err, result) {
+        if (err) return next(err);
+        if (result) {
+            User.recharge(data.id, data.recharge, data.Alipay)
+                .done(function (data) {
+                    console.log(data);
+                    res.json({
+                        errCode: 0
+                    })
+                })
+        } else {
+            res.json({
+                errCode: 101
+            });
+        }
+    })
 }
 
 function authenticate(token, fn) {
