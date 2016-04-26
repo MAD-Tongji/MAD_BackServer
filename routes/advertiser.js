@@ -2,8 +2,8 @@ var express = require('express');
 var router = express.Router();
 var wilddog = require('wilddog');
 var ref = new wilddog('https://wild-boar-00060.wilddogio.com/');
-var advertiser = require('./advertiser/user.js');
-
+// var advertiser = require('./advertiser/user.js');
+var advertiser = require('./advertiser/methods.js');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -72,7 +72,8 @@ router.post('/account/recharge',function (req,res,next) {
 
 // 获取广告商账户信息
 router.get('/account/detail',function (req,res,next) {
-  //code here
+  //console.log(req);
+  advertiser.accountDetail(req,res,next);
 });
 
 // 获取充值记录
