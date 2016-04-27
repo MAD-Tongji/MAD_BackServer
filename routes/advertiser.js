@@ -125,7 +125,7 @@ router.get('/statistics/data',function (req,res,next) {
 //消息部分
 // 获取消息列表
 router.get('/message',function (req,res,next) {
-  //code here
+  advertiser.messageList(req,res,next);
 });
 
 /************** 杂项 ***********/

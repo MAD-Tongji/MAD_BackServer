@@ -199,3 +199,30 @@ exports.refundList = function (req,res,next) {
         });
     }
 };
+
+//获取消息记录
+exports.messageList = function (req,res,next) {
+    var token = req.query.token;
+    if (!token) {
+        res.json({
+            errCode: 102
+        });
+        next(err);
+    }
+    // token to id
+    var id = Token.token2id(token);
+    if (id != null) {
+        // 获取内容并处理
+        User.getMessages(id)
+            .done(function (data) {
+                res.json({
+                    errCode: 0,
+                    messages: data
+                });
+            })
+    } else {
+        res.json({
+            errCode: 101
+        });
+    }
+};

@@ -179,3 +179,14 @@ User.getRefundList = function (id) {
     });
     return defer.promise;
 };
+
+User.getMessages = function (id) {
+    var defer = q.defer();
+    var list;
+    advertiserRef.child(id).on("value", function(snapshot) {
+        list = snapshot.val().message;
+        console.log(list);
+        defer.resolve(list);
+    });
+    return defer.promise;
+};
