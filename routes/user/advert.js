@@ -11,7 +11,7 @@ var utils = require('../../lib/publicUtils');
 function getAllAdUsed(req,res) {
         
     var userid = req.params.userid || null;
-    var token = req.body.token || null;
+    var token = req.query.token || null;
     var result = new Object;
     if(userid == null || token == null || userid != utils.token2id(token))
     {
@@ -35,7 +35,7 @@ function getAllAdUsed(req,res) {
                 }
                 result.errCode = 0;
                 result.adList=detailArray;
-                result.adUsedList = adlist;
+                // result.adUsedList = adlist;
             }
             res.json(result);
         });
@@ -45,3 +45,15 @@ function getAllAdUsed(req,res) {
 }
 
 exports.getAllAdUsed = getAllAdUsed;
+
+/**
+ * @interface
+ * @description {interface} 获取广告详情
+ */
+function getDetail(req,res) {
+    var adid = req.params.adid;
+    var result = utils.getAdDetail(adid) || null;
+    res.json(result);
+}
+
+exports.getDetail = getDetail;

@@ -38,5 +38,8 @@ router.post('/alterpwd',access.alterpwd);
  router.post('/msglist',access.msglist);
 
 /* user get ad-used list interface */
-router.post('/advert/all/:userid',advert.getAllAdUsed);
+router.get('/advert/all/:userid',advert.getAllAdUsed);
+
+/* user get ad-used detail */
+router.get('/advert/detail/:adid',advert.getDetail);
 module.exports = router;
