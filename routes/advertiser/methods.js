@@ -57,6 +57,7 @@ exports.getReleasedAdvertisement = function (req, res, next) {
 
 /******** 我是分割线 **********/
 
+//广告商账户信息
 exports.accountDetail = function (req,res,next) {
     var token = req.query.token;
 
@@ -84,6 +85,7 @@ exports.accountDetail = function (req,res,next) {
     }
 };
 
+//充值
 exports.recharge = function (req,res,next) {
     var data = req.body;
 
@@ -110,6 +112,7 @@ exports.recharge = function (req,res,next) {
     }
 };
 
+//充值记录
 exports.rechargeList = function (req,res,next) {
     var token = req.query.token;
     if (!token) {
@@ -127,6 +130,94 @@ exports.rechargeList = function (req,res,next) {
                 res.json({
                     errCode: 0,
                     rechargeHistory: data
+                });
+            })
+    } else {
+        res.json({
+            errCode: 101
+        });
+    }
+};
+
+// 退款
+exports.refund = function (req,res,next) {
+    var data = req.body;
+
+    if (!data.token) {
+        res.json({
+            errCode: 102
+        });
+        next(err);
+    }
+
+    var id = Token.token2id(data.token);
+    if (id != null) {
+        User.refund.authenticate(id, data.refund)
+            .then(function () { //resolve
+                User.refund(id, data.refund, data.Alipay)
+                    .done(function (data) {
+                        console.log(data);
+                        res.json({
+                            errCode: 0
+                        })
+                    })
+            }, function () { //reject
+                res.json({
+                    errCode: 301 // 退款金额大于余额
+                })
+            });
+    } else {
+        res.json({
+            errCode: 101
+        });
+    }
+};
+
+//退款记录
+exports.refundList = function (req,res,next) {
+    var token = req.query.token;
+    if (!token) {
+        res.json({
+            errCode: 102 //请求错误
+        });
+        next(err);
+    }
+    // token to id
+    var id = Token.token2id(token);
+    if (id != null) {
+        // 获取内容并处理
+        User.getRefundList(id)
+            .done(function(data) {
+                res.json({
+                    errCode: 0,
+                    refundHistory: data
+                });
+            })
+    } else {
+        res.json({
+            errCode: 101
+        });
+    }
+};
+
+//获取消息记录
+exports.messageList = function (req,res,next) {
+    var token = req.query.token;
+    if (!token) {
+        res.json({
+            errCode: 102
+        });
+        next(err);
+    }
+    // token to id
+    var id = Token.token2id(token);
+    if (id != null) {
+        // 获取内容并处理
+        User.getMessages(id)
+            .done(function (data) {
+                res.json({
+                    errCode: 0,
+                    messages: data
                 });
             })
     } else {

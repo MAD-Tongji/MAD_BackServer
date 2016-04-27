@@ -86,12 +86,12 @@ router.get('/account/recharge/all',function (req,res,next) {
 
 // 获取退款记录
 router.get('/account/refund/all',function (req,res,next) {
-  //code here
+  advertiser.refundList(req,res,next);
 });
 
 // 申请退款
 router.post('/account/refund',function (req,res,next) {
-  //code here
+  advertiser.refund(req,res,next);
 });
 
 // 提交验证信息
@@ -125,7 +125,7 @@ router.get('/statistics/data',function (req,res,next) {
 //消息部分
 // 获取消息列表
 router.get('/message',function (req,res,next) {
-  //code here
+  advertiser.messageList(req,res,next);
 });
 
 /************** 杂项 ***********/
