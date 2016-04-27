@@ -42,4 +42,7 @@ router.get('/advert/all/:userid',advert.getAllAdUsed);
 
 /* user get ad-used detail */
 router.get('/advert/detail/:adid',advert.getDetail);
+
+/* user set ad filter */
+router.post('/advert/filter',advert.setFilter);
 module.exports = router;
