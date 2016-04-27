@@ -53,8 +53,16 @@ exports.getAllAdUsed = getAllAdUsed;
 function getDetail(req,res) {
     var adid = req.params.adid;
     var result = new Object;
-    result.detail = utils.getAdDetail(adid) || null;
-    result.errCode = 0;
+    var detail = utils.getAdDetail(adid) || null;
+    if(detail == null)
+    {
+        result.errCode = 201;
+    }
+    else
+    {
+        result.errCode = 0;
+        result.detail = detail;
+    }
     res.json(result);
 }
 
