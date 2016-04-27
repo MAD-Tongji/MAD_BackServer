@@ -66,6 +66,7 @@ User.getUser = function(id) {
     adminRef.child(id).on("value", function(shapshot) {
         user.name = shapshot.val().name;
         user.pass = shapshot.val().pass;
+        user.id = shapshot.val().id;
         deferred.resolve(user);
         console.log(user);
     })

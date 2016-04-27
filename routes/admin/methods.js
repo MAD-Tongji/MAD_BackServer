@@ -8,6 +8,7 @@ exports.login = function(req, res, next){
     User.authenticate(data.name, data.pass, function(err, user){
         if (err) return next(err);
         if (user) {
+            console.log(user.id);
             var token = Token.getToken(user.id); //传入登录者的id生成token
             res.json({
                 token: token,
@@ -78,9 +79,8 @@ function authenticate(token, fn) {
 }
 
 function getToken(token, fn) {
-    /* 获取token逻辑，现在缺token映射表 */
-    /* 先用token值为1进行模拟认证 */
-    if (token == 1) return fn(null, 1);
+    /*  token验证 */
+    if (Token.token2id(token)) return fn(null, 1);
     fn();
 }
 
