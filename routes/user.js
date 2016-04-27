@@ -35,11 +35,14 @@ router.post('/findpwd',access.findpwd);
 router.post('/alterpwd',access.alterpwd);
 
 /* user get message list interface */
- router.post('/msglist',access.msglist);
+ router.post('/msglist/:userid',access.msglist);
 
 /* user get ad-used list interface */
 router.get('/advert/all/:userid',advert.getAllAdUsed);
 
 /* user get ad-used detail */
 router.get('/advert/detail/:adid',advert.getDetail);
+
+/* user set ad filter */
+router.post('/advert/filter',advert.setFilter);
 module.exports = router;
