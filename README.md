@@ -1,20 +1,27 @@
 # MAD_BackServer
-## 1.Deploymenty   
+## 1.Deployment   
 1. 安装Nodejs，推荐使用v5.11.0版本，更低版本无法正常运行express，原因未知
-2. 使用npm安装依赖包
+2. 全局安装nodemon
+
+    ```
+    $ npm install -g nodemon
+    ```
+    
+3. 使用npm安装依赖包
 
     ```
     $ npm install
     ```
-3. 启动项目
+    
+4. 启动项目
 
     ```
-    $ npm start
+    $ nodemon    //使用nodemon启动服务器
     ```
+    访问http://localhost:3000/
 
-4. 接口测试
+5. 接口测试
 
-    需要大神写一下接口怎么测＝。＝我只会postman人肉测
 
 ## 2.Project structure   
 ```

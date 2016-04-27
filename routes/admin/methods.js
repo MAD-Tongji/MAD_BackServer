@@ -1,6 +1,7 @@
 var Q = require('q');
 var User = require('./user');
 var Advertisment = require('./advertisment');
+var List = require('./list');
 var Token = require('../../lib/publicUtils');
 
 //***********ashun: ads api****************
@@ -39,7 +40,7 @@ exports.listAll = function(req, res, next){
     Advertisment.listAll(data).done(function(data){
         res.json({
             AdsList:data
-        })
+        });
     });
 }
 
@@ -49,13 +50,43 @@ exports.audit = function(req, res, next){
         if(data == null){
             res.json({
                 errCode: 0
-            })
+            });
         }else{
             res.json({
                 errCode: 206
-            })
+            });
         }
     });
+}
+
+exports.remove = function(req, res, next){
+    var data = req.body;
+    Advertisment.remove(data).done(function(data){
+        if(data == null){
+        res.json({
+            errCode: 0
+        });
+    }else{
+        
+    }
+    })
+}
+
+exports.detail = function(req, res, next){
+    var data = req.body;
+    Advertisment.detail(data).done(function(data){
+        if(data){
+        res.json({
+            errCode: 0,
+            adsDetail: data
+        });
+    }else{
+        res.json({
+            errCode: 206
+        })
+    }
+    })
+
 }
 
 //***********ashun: end ****************
@@ -81,7 +112,6 @@ exports.login = function(req, res, next){
 exports.userList = function(req, res, next) {
     var token = req.query.token;
     var tag = req.query.tag;
-
     if (!token || !tag) {
         res.json({
             errCode: 102 //请求错误
@@ -94,17 +124,27 @@ exports.userList = function(req, res, next) {
         if (err) return next(err);
         if (result) {
             if (tag == 1) {
-                //获取车主用户列表，具体从wilddog取数据的逻辑未写，先用字符串代替
-                res.json({
-                    errCode: 0,
-                    userList: 'userList'
-                });
+                List.getUserIds()
+                .done(function(data) {
+                    List.getCarUserList(data)
+                    .done(function(data) {
+                        res.json({
+                            errCode: 0,
+                            userList: data
+                        });
+                    })
+                })
             } else if (tag == 2) {
-                //获取广告商用户列表，具体从wilddog取数据的逻辑未写，先用字符串代替
-                res.json({
-                    errCode: 0,
-                    advertiserList: 'advertiserList'
-                });
+                List.getAdvertiserIds()
+                .done(function(data) {
+                    List.getAdvertiserList(data)
+                    .done(function(data) {
+                        res.json({
+                            errCode: 0,
+                            advertiserList: data
+                        });
+                    })
+                })
             }
         } else {
             res.json({
@@ -144,7 +184,6 @@ exports.backuserList = function(req, res, next) {
     authenticate(token, function(err, result) {
         if (err) return next(err);
         if (result) {
-            // 取出最后一条记录的id，由于id是按照数字顺序排序，所以可以向后遍历取出所有记录
             User.getAllId()
             .done(function(data) {
                 getAllList(data)
@@ -255,7 +294,6 @@ exports.modify = function(req, res, next) {
     var data = req.body;
     var email = data.email;
     var pass = data.password;
-    console.log(email + ' | ' + pass);
     if (!data.token) {
         res.json({
             errCode: 102 //请求错误

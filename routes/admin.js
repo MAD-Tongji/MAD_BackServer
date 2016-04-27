@@ -39,4 +39,7 @@ router.post('/advert/audit',admin.audit);
 
 //ashun: Administrator remove ads
 router.post('/advert/remove',admin.remove);
+
+//ashun: Administrator remove ads
+router.post('/advert/detail',admin.detail);
 module.exports = router;

@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var wilddog = require('wilddog');
 var ref = new wilddog('https://wild-boar-00060.wilddogio.com/');
+var advertiser = require('./advertiser/methods.js');
+
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   res.send('here is advertiser');
@@ -12,24 +14,35 @@ router.get('/', function(req, res, next) {
 /************** 登陆注册部分 ***********/
 // 登录
 router.post('/login',function (req,res,next) {
-  //code here
+    advertiser.login(req, res, next);
 });
 
 // 注册
 router.post('/signup',function (req,res,next) {
-  //code here
+  // console.log(req);
+  // advertiser.signup(req, res, next);
+  // res.send(req.body.username);
 });
 
+router.post('/checkemail',function (req,res,next) {
+  // console.log(req);
+  // advertiser.signup(req, res, next);
+  // res.send(req.body.username);
+});
 
 /************** 广告部分 ***********/
 // 查看已发布广告列表
 router.get('/advertisement/list/all',function (req,res,next) {
-  //code here
+  console.log(req);
+  advertiser.signup();
+  res.send('test signup');
 });
 
 // 获取投放商圈列表
 router.get('/advertisement/district/all',function (req,res,next) {
-  //code here
+  console.log(req);
+  advertiser.signup();
+  res.send('test signup');
 });
 
 // 发布新广告
@@ -56,17 +69,19 @@ router.get('/advertisement/',function (req,res,next) {
 /************** 广告商账户部分 ***********/
 // 账户充值
 router.post('/account/recharge',function (req,res,next) {
-  //code here
+  //console.log(req.body);
+  advertiser.recharge(req,res,next);
 });
 
 // 获取广告商账户信息
 router.get('/account/detail',function (req,res,next) {
-  //code here
+  //console.log(req);
+  advertiser.accountDetail(req,res,next);
 });
 
 // 获取充值记录
 router.get('/account/recharge/all',function (req,res,next) {
-  //code here
+  advertiser.rechargeList(req,res,next);
 });
 
 // 获取退款记录
