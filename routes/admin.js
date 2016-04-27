@@ -2,11 +2,6 @@ var express = require('express');
 var router = express.Router();
 var admin = require('./admin/methods');
 
-/* GET admin listing. */
-router.get('/', function(req, res, next) {
-    res.send('here is admin');
-});
-
 /* Administrator login interface */
 router.post('/login', admin.login);
 
@@ -25,4 +20,6 @@ router.post('/backuser/manage', admin.manage);
 /* Administrator modify personal info */
 router.post('/backuser/modify', admin.modify);
 
+/* Get index page data interface */
+router.get('/home', admin.home);
 module.exports = router;

@@ -99,12 +99,12 @@ exports.backuserList = function(req, res, next) {
             User.getAllId()
             .done(function(data) {
                 getAllList(data)
-                    .done(function(data) {
-                        res.json({
-                            errCode: 0,
-                            backUserList: data
-                        });     
-                    })
+                .done(function(data) {
+                    res.json({
+                        errCode: 0,
+                        backUserList: data
+                    });     
+                })
             }) 
         } else {
             res.json({
@@ -222,6 +222,42 @@ exports.modify = function(req, res, next) {
                     res.json({
                         errCode: 0
                     });
+                })
+            })
+        } else {
+            res.json({
+                errCode: 101 //令牌不存在或已经过期
+            });
+        }
+    })
+}
+
+exports.home = function(req, res, next) {
+    var token = req.query.token;
+    if (!token) {
+        res.json({
+            errCode: 102 //请求错误
+        });
+    }
+    //与颁发的token作比较
+    authenticate(token, function(err, result) {
+        if (err) return next(err);
+        if (result) {
+            List.getHomeData()
+            .done(function(data) {
+                res.json({
+                    errCode: 0,
+                    totalAdvertiser: data.totalAdvertiser,
+                    totalAdvertisement: data.totalAdvertisement,
+                    totalUser: data.totalUser,
+                    totalBroadcastTimes: data.totalBroadcastTimes,
+                    advert_detail7: data.advert_detail7,
+                    advert_most: data.advert_most,
+                    newUser: data.newUser,
+                    newAdvertiser: data.newAdvertiser,
+                    newAdvertisement: data.newAdvertisement,
+                    newBroadcastTimes: data.newBroadcastTimes
+                    /* 缺下载量*/
                 })
             })
         } else {
