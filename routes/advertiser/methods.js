@@ -16,7 +16,6 @@ exports.login = function(req, res, next) {
             var token = Token.getToken(user.id); //传入登录者的id生成token
             res.json({
                 token: token,
-                id: user.id,
                 errCode: 0
             });
         } else {
@@ -30,7 +29,20 @@ exports.login = function(req, res, next) {
 // 广告商注册
 exports.signup = function(req, res, next) {
     var data = req.body;
-    var newUser = User.createNewAdvertiser(data);
+    console.log(data);
+    User.createNewAdvertiser(data, function (newUserId) {
+        if (null !== newUserId) {
+            var token = Token.getToken(newUserId);
+            res.json({
+                errCode: '0',
+                token: token
+            });
+        } else {
+            res.json({
+                errCode: '104'
+            });
+        }
+    });
 };
 
 // 检查邮箱是否已被注册

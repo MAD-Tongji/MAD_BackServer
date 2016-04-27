@@ -19,9 +19,7 @@ router.post('/login',function (req,res,next) {
 
 // 注册
 router.post('/signup',function (req,res,next) {
-  // console.log(req);
-  // advertiser.signup(req, res, next);
-  // res.send(req.body.username);
+  advertiser.signup(req, res, next);
 });
 
 router.post('/checkemail',function (req,res,next) {
