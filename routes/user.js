@@ -35,7 +35,7 @@ router.post('/findpwd',access.findpwd);
 router.post('/alterpwd',access.alterpwd);
 
 /* user get message list interface */
- router.post('/msglist',access.msglist);
+ router.post('/msglist/:userid',access.msglist);
 
 /* user get ad-used list interface */
 router.get('/advert/all/:userid',advert.getAllAdUsed);
