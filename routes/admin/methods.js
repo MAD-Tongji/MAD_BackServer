@@ -4,11 +4,14 @@ var Advertisment = require('./advertisment');
 var List = require('./list');
 var Token = require('../../lib/publicUtils');
 
-//***********ashun: ads api****************
+//*********** ashun: ads api****************
 exports.submit = function(req, res, next){
-    //提交新广告接口尚未写验证token的逻辑
     var data = req.body;
-    var errcode;
+    if(Token.token2id(data.token) == null){
+        res.json({
+            errCode: 101
+        })
+    }else{
     Advertisment.addNew(data, function(err,key){
         if(err == null){
             res.json({
@@ -16,14 +19,17 @@ exports.submit = function(req, res, next){
             id: key
         });
         }
-    
    });
+}
 }
 
 exports.save = function(req, res, next){
-    //广告暂存草稿接口尚未写验证token的逻辑
     var data = req.body;
-    var errcode;
+    if(Token.token2id(data.token) == null){
+        res.json({
+            errCode: 101
+        })
+    }else{
     Advertisment.saveDraft(data, function(err,key){
         if(err == null){
             res.json({
@@ -31,21 +37,33 @@ exports.save = function(req, res, next){
             id: key
         });
         }
-    
    });
+}
 }
 
 exports.listAll = function(req, res, next){
     var data = req.body;
+    if(Token.token2id(data.token) == null){
+        res.json({
+            errCode: 101
+        })
+    }else{
     Advertisment.listAll(data).done(function(data){
         res.json({
-            AdsList:data
+            AdsList:data,
+            errCode: 0
         });
     });
+}
 }
 
 exports.audit = function(req, res, next){
     var data = req.body;
+    if(Token.token2id(data.token) == null){
+        res.json({
+            errCode: 101
+        })
+    }else{
     Advertisment.audit(data).done(function(data){
         if(data == null){
             res.json({
@@ -58,9 +76,15 @@ exports.audit = function(req, res, next){
         }
     });
 }
+}
 
 exports.remove = function(req, res, next){
     var data = req.body;
+    if(Token.token2id(data.token) == null){
+        res.json({
+            errCode: 101
+        })
+    }else{
     Advertisment.remove(data).done(function(data){
         if(data == null){
         res.json({
@@ -69,11 +93,17 @@ exports.remove = function(req, res, next){
     }else{
         
     }
-    })
+    });
+}
 }
 
 exports.detail = function(req, res, next){
     var data = req.body;
+    if(Token.token2id(data.token) == null){
+        res.json({
+            errCode: 101
+        })
+    }else{
     Advertisment.detail(data).done(function(data){
         if(data){
         res.json({
@@ -85,11 +115,12 @@ exports.detail = function(req, res, next){
             errCode: 206
         })
     }
-    })
+    });
+}
 
 }
 
-//***********ashun: end ****************
+//*********** ashun: end ****************
 
 exports.login = function(req, res, next){
     var data = req.body;

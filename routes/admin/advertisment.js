@@ -9,6 +9,8 @@ var AdvertiserRef = ref.child("advertiser");
 module.exports = Advertisment;
 
 //广告管理接口的一些函数实现
+
+//获取当前系统时间，格式：yyyy-MM-dd hh:mm:ss
 function getNowFormatDate() {
     var date = new Date();
     var seperator1 = "-";
@@ -33,7 +35,7 @@ function Advertisment(obj) {
 //提交新广告
 Advertisment.addNew = function (data, callback){
     var childref = AdvertismentRef.push({
-    	//下面这个advertiser字段没传值，还不懂怎么获得。
+    	//下面这个advertiser字段暂定为admin，下同
     "advertiser": "admin",
     "title": data.title ,//广告标题
     "content": data.content ,//广告内容
@@ -51,7 +53,6 @@ Advertisment.addNew = function (data, callback){
 //广告存为草稿
 Advertisment.saveDraft = function (data, callback){
     var childref = AdvertismentRef.push({
-    	//下面这个advertiser字段没传值，还不懂怎么获得。
     "advertiser": "admin",
     "title": data.title ,//广告标题
     "content": data.content ,//广告内容
@@ -132,7 +133,7 @@ Advertisment.remove = function(data){
 			var msg = AdvertiserRef.child(advertiserName).child('message');
 			msg.push({
 				"content": data.reason,
-				"data":  getNowFormatDate(),
+				"date":  getNowFormatDate(),
 			})
 		}else{
 			var msg = AdvertiserRef.child(advertiserName);
@@ -141,7 +142,7 @@ Advertisment.remove = function(data){
 			},function(err){
 				msg.child('message').push({
 				"content": data.reason,
-				"data":  getNowFormatDate(),
+				"date":  getNowFormatDate(),
 			});
 
 			})
