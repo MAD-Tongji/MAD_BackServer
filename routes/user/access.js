@@ -63,8 +63,41 @@ exports.register=function(req,res) {
         // });
         var newUser={};
         newUser[username]={
+            adUsedList:[],
+            alipay:'',
+            balance:0,
+            detail:{
+              VIN:'',
+              email:'',
+              gender:true,
+              vehicleFrontImage:'',
+              vehicleLicenseImage :'' 
+            },
+            expiration:'',
+            filter:{
+              accommodation:'',
+              commodity:'',
+              education:'',
+              entertainment:'',
+              other:'',
+              recruit:'',
+              service:'',
+              social:'',
+              tenancy:''  
+            },
+            message:[],
+            mobilePhone:'',
             name:username,
-            password:password
+            password:password,
+            playTimes:0,
+            statistics:{
+                day:[],
+                hour:[],
+                mouth:[],
+                totalCash:0,
+                totalIncome:0
+            },
+            status:true
         };
         userRef.update(newUser);
         result.errCode=0;
@@ -108,8 +141,8 @@ exports.findpwd=function(req,res) {
  * @description {interface} 用户修改密码，参数为旧密码，新密码，会话令牌
  */
 exports.alterpwd=function(req,res) {
-    var oldPassword=req.body.oldPassword;
-    var newPassword=req.body.newPassword;
+    var oldPassword=req.body.oldPassword||null;
+    var newPassword=req.body.newPassword||null;
     var token=req.body.token;
     var currentToken=tokenRef.child(token);
     var id;
@@ -117,7 +150,7 @@ exports.alterpwd=function(req,res) {
         id=snapshot.val();
         console.log(id);
         
-        var ref=userRef.child(id);
+        var ref=userRef.child(id)||null;
     
         ref.once('value',function(snapshot) {
             var dogPassword=snapshot.val().password;
@@ -147,5 +180,25 @@ exports.alterpwd=function(req,res) {
  * @description {interface} 获取消息列表
  */
 exports.msglist=function(req,res) {
-    
+    var userId=req.params.userid;
+    var token=req.body.token;
+    var result={};
+    console.log(userId);
+    if(userId==null||token==null){
+        result.errCode=100;
+        res.json(result);
+    }else{
+        var ref=userRef.child(userId)||null;
+        ref.once('value',function(snapshot) {
+            if(snapshot.val()==null){
+                result.errCode=101;
+            }
+            else{
+                var msglist=snapshot.val().message;
+                result.errCode=0;
+                result.messageList=msglist;
+            }
+             res.json(result);
+        })
+    }
 }

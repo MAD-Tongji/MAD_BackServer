@@ -52,8 +52,75 @@ exports.getAllAdUsed = getAllAdUsed;
  */
 function getDetail(req,res) {
     var adid = req.params.adid;
-    var result = utils.getAdDetail(adid) || null;
+    var result = new Object;
+    var detail = utils.getAdDetail(adid) || null;
+    if(detail == null)
+    {
+        result.errCode = 201;
+    }
+    else
+    {
+        result.errCode = 0;
+        result.detail = detail;
+    }
     res.json(result);
 }
 
 exports.getDetail = getDetail;
+
+/**
+ * @interface
+ * @description {interface} 设置广告过滤参数
+ */
+function setFilter(req,res) {
+    var filterArray = req.body.adValidationSettings;
+    var token = req.body.token;
+    var userId = utils.token2id(token);
+    if (userId == null)
+    {
+        res.json({errCode:101});
+    }
+    else if(filterArray.length != 9)
+    {
+        res.json({errCode:999,errMessage:"filterArray不合规范"});
+    }
+    else
+    {
+        var ref = userRef.child(userId).child('filter');
+        ref.once('value',(snap)=>{
+            if(snap.val() == null)
+            {
+                res.json({errCode:999,errMessage:"找不到filter"});
+            }
+            else
+            {
+                ref.set({
+                    accommodation : filterArray[0],
+                    commodity : filterArray[1],
+                    education : filterArray[2],
+                    entertainment : filterArray[3],
+                    other : filterArray[4],
+                    recruit : filterArray[5],
+                    service : filterArray[6],
+                    social : filterArray[7],
+                    tenancy : filterArray[8],
+                },
+                (err)=>{
+                    if(err!=null)
+                    {
+                        res.json({errCode:999,errMessage:"修改filter失败，严重错误"});
+                    }
+                    else
+                    {
+                        var result = new Object;
+                        result.errCode = 0;
+                        // result.filterArray =filterArray;
+                        res.json(result);
+                    }
+                });
+            }
+        });
+    }
+}
+
+exports.setFilter = setFilter;

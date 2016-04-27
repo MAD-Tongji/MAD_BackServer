@@ -1,13 +1,102 @@
 var Q = require('q');
 var User = require('./user');
+var Advertisment = require('./advertisment');
 var List = require('./list');
 var Token = require('../../lib/publicUtils');
+
+//***********ashun: ads api****************
+exports.submit = function(req, res, next){
+    //提交新广告接口尚未写验证token的逻辑
+    var data = req.body;
+    var errcode;
+    Advertisment.addNew(data, function(err,key){
+        if(err == null){
+            res.json({
+            errCode: 0,
+            id: key
+        });
+        }
+    
+   });
+}
+
+exports.save = function(req, res, next){
+    //广告暂存草稿接口尚未写验证token的逻辑
+    var data = req.body;
+    var errcode;
+    Advertisment.saveDraft(data, function(err,key){
+        if(err == null){
+            res.json({
+            errCode: 0,
+            id: key
+        });
+        }
+    
+   });
+}
+
+exports.listAll = function(req, res, next){
+    var data = req.body;
+    Advertisment.listAll(data).done(function(data){
+        res.json({
+            AdsList:data
+        });
+    });
+}
+
+exports.audit = function(req, res, next){
+    var data = req.body;
+    Advertisment.audit(data).done(function(data){
+        if(data == null){
+            res.json({
+                errCode: 0
+            });
+        }else{
+            res.json({
+                errCode: 206
+            });
+        }
+    });
+}
+
+exports.remove = function(req, res, next){
+    var data = req.body;
+    Advertisment.remove(data).done(function(data){
+        if(data == null){
+        res.json({
+            errCode: 0
+        });
+    }else{
+        
+    }
+    })
+}
+
+exports.detail = function(req, res, next){
+    var data = req.body;
+    Advertisment.detail(data).done(function(data){
+        if(data){
+        res.json({
+            errCode: 0,
+            adsDetail: data
+        });
+    }else{
+        res.json({
+            errCode: 206
+        })
+    }
+    })
+
+}
+
+//***********ashun: end ****************
 
 exports.login = function(req, res, next){
     var data = req.body;
     User.authenticate(data.name, data.pass, function(err, user){
         if (err) return next(err);
         if (user) {
+            console.log(user.id);
             var token = Token.getToken(user.id); //传入登录者的id生成token
             res.json({
                 token: token,
@@ -78,9 +167,8 @@ function authenticate(token, fn) {
 }
 
 function getToken(token, fn) {
-    /* 获取token逻辑，现在缺token映射表 */
-    /* 先用token值为1进行模拟认证 */
-    if (token == 1) return fn(null, 1);
+    /*  token验证 */
+    if (Token.token2id(token)) return fn(null, 1);
     fn();
 }
 
@@ -99,12 +187,12 @@ exports.backuserList = function(req, res, next) {
             User.getAllId()
             .done(function(data) {
                 getAllList(data)
-                    .done(function(data) {
-                        res.json({
-                            errCode: 0,
-                            backUserList: data
-                        });     
-                    })
+                .done(function(data) {
+                    res.json({
+                        errCode: 0,
+                        backUserList: data
+                    });     
+                })
             }) 
         } else {
             res.json({
@@ -222,6 +310,42 @@ exports.modify = function(req, res, next) {
                     res.json({
                         errCode: 0
                     });
+                })
+            })
+        } else {
+            res.json({
+                errCode: 101 //令牌不存在或已经过期
+            });
+        }
+    })
+}
+
+exports.home = function(req, res, next) {
+    var token = req.query.token;
+    if (!token) {
+        res.json({
+            errCode: 102 //请求错误
+        });
+    }
+    //与颁发的token作比较
+    authenticate(token, function(err, result) {
+        if (err) return next(err);
+        if (result) {
+            List.getHomeData()
+            .done(function(data) {
+                res.json({
+                    errCode: 0,
+                    totalAdvertiser: data.totalAdvertiser,
+                    totalAdvertisement: data.totalAdvertisement,
+                    totalUser: data.totalUser,
+                    totalBroadcastTimes: data.totalBroadcastTimes,
+                    advert_detail7: data.advert_detail7,
+                    advert_most: data.advert_most,
+                    newUser: data.newUser,
+                    newAdvertiser: data.newAdvertiser,
+                    newAdvertisement: data.newAdvertisement,
+                    newBroadcastTimes: data.newBroadcastTimes
+                    /* 缺下载量*/
                 })
             })
         } else {
