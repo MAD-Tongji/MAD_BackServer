@@ -32,7 +32,7 @@ router.post('/checkemail',function (req,res,next) {
 /************** 广告部分 ***********/
 // 查看已发布广告列表
 router.get('/advertisement/list/all',function (req,res,next) {
-  advertiser.getReleasedAdvertisement(req,res,next);
+  advertiser.getAdvertisement(req,res,next);
 });
 
 // 获取投放商圈列表
@@ -64,13 +64,11 @@ router.get('/advertisement/',function (req,res,next) {
 /************** 广告商账户部分 ***********/
 // 账户充值
 router.post('/account/recharge',function (req,res,next) {
-  //console.log(req.body);
   advertiser.recharge(req,res,next);
 });
 
 // 获取广告商账户信息
 router.get('/account/detail',function (req,res,next) {
-  //console.log(req);
   advertiser.accountDetail(req,res,next);
 });
 
@@ -91,12 +89,7 @@ router.post('/account/refund',function (req,res,next) {
 
 // 提交验证信息
 router.post('/account/check',function (req,res,next) {
-  //code here
-});
-
-// 上传营业执照图片
-router.post('/account/license',function (req,res,next) {
-  //code here
+  advertiser.checkAccount(req,res,next);
 });
 
 

@@ -200,3 +200,13 @@ User.getMessages = function (id) {
     });
     return defer.promise;
 };
+
+User.checkAccount = function (data) {
+    var defer = q.defer();
+    var check;
+    advertiserRef.child(id).update({
+        detail: data
+    });
+    defer.resolve();
+    return defer.promise;
+};

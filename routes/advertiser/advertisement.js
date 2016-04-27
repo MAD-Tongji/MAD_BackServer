@@ -5,8 +5,8 @@
 var memcached = require('memcached');
 var Q = require('q');
 var wilddog = require('wilddog');
-var advertisementRef = new wilddog('https://wild-boar-00060.wilddogio.com/advertisement');
-
+var advertisementRef = new wilddog('https://wild-boar-00060.wilddogio.com/advertisment');
+var cityRef = new wilddog('https://wild-boar-00060.wilddogio.com/AdsInCitys');
 
 module.exports = Advertisement;
 
@@ -17,13 +17,28 @@ function Advertisement(obj) {
 }
 
 // 获取所有已发布广告
-Advertisement.allReleasedAdvertisement = function(callback) {
-	
+Advertisement.getAllAdvertisement = function(id) {
+	var defer = Q.defer();
+	console.log(id);
+	advertisementRef.orderByChild("advertiser").equalTo(id).on("value", function (snapshot) {
+		defer.resolve(snapshot.val());
+	});
+	return defer.promise;
 };
 
 // 获取投放商圈列表
-Advertisement.district = function () {
-	
+Advertisement.district = function (city) {
+	var defer = Q.defer();
+	var districts = new Array;
+	cityRef.child(city).on("value", function (snapshot) {
+		console.log(snapshot.val());
+		snapshot.forEach(function (district) {
+			districts.push(district.val().name);
+		});
+		console.log(districts);
+		defer.resolve(districts);
+	});
+	return defer.promise;
 };
 
 Advertisement.pushNewAdvertisement = function () {

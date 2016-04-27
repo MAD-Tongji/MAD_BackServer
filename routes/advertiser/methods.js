@@ -1,6 +1,7 @@
 var Q = require('q');
 var User = require('./user');
-var Advertisment = require('./../admin/advertisment');
+var ExternalAdvert = require('./../admin/advertisment');
+var Advert = require('./advertisement')
 var Token = require('../../lib/publicUtils');
 
 
@@ -50,10 +51,25 @@ exports.signup = function(req, res, next) {
 };
 
 // 获取已发布广告
-exports.getReleasedAdvertisement = function (req, res, next) {
-    if ((req.qurey !== undefined) && User.checkToken(req.qurey.token)) {
+exports.getAdvertisement = function (req, res, next) {
+    var token = req.query.token;
+    if (!token) {
+        res.json({
+            errCode: 102 //请求错误
+        });
+        next(err);
+    }
+    // token to id
+    var id = Token.token2id(token);
+    if (id != null) {
         //数据库查询
-        
+        Advert.getAllAdvertisement(id)
+            .done(function (data) {
+                res.json({
+                    errCode: 0,
+                    advertisement: data
+                })
+            })
     } else {
         res.json({
             errCode: 101
@@ -64,15 +80,31 @@ exports.getReleasedAdvertisement = function (req, res, next) {
 
 // 获取广告商圈
 exports.getDistrict = function (req, res, next) {
-    if ((req.qurey !== undefined) && User.checkToken(req.qurey.token)) {
+    var token = req.query.token;
+    var city = req.query.city;
+    if (!token) {
+        res.json({
+            errCode: 102 //请求错误
+        });
+        next(err);
+    }
+    // token to id
+    var id = Token.token2id(token);
+    if (id != null) {
         //数据库查询
-        
+        Advert.district(city)
+            .done(function (data) {
+                res.json({
+                    errCode: 0,
+                    advertisement: data
+                })
+            })
     } else {
         res.json({
             errCode: 101
         });
     }
-}
+};
 
 
 /******** 我是分割线 **********/
@@ -246,3 +278,32 @@ exports.messageList = function (req,res,next) {
         });
     }
 };
+
+//提交验证信息
+exports.checkAccount = function (req,res,next) {
+    var data = req.body;
+
+    if (!data.token) {
+        res.json({
+            errCode: 102
+        });
+        next(err);
+    }
+
+    var id = Token.token2id(data.token);
+    if (id != null) {
+        var detail = data.detail;
+        User.checkAccount(detail)
+            .done(function () {
+                res.json({
+                    errCode: 0
+                })
+            })
+    } else {
+        res.json({
+            errCode: 101
+        });
+    }
+};
+
+//
