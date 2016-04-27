@@ -1,5 +1,6 @@
 var Q = require('q');
 var User = require('./user');
+var Advertisment = require('./../admin/advertisment');
 var Token = require('../../lib/publicUtils');
 
 
@@ -33,6 +34,9 @@ exports.signup = function(req, res, next) {
     User.createNewAdvertiser(data, function (newUserId) {
         if (null !== newUserId) {
             var token = Token.getToken(newUserId);
+            
+            // 给用户邮箱发送验证邮件
+            
             res.json({
                 errCode: '0',
                 token: token
@@ -45,26 +49,30 @@ exports.signup = function(req, res, next) {
     });
 };
 
-// 检查邮箱是否已被注册
-exports.checkEmail = function (req, res, next) {
-    
-};
-
 // 获取已发布广告
 exports.getReleasedAdvertisement = function (req, res, next) {
-    var token = req.qurey.token;
-    
-    //token校验
-    if (User.checkToken(token)) {
+    if ((req.qurey !== undefined) && User.checkToken(req.qurey.token)) {
         //数据库查询
         
     } else {
-        res.josn({
+        res.json({
             errCode: 101
         });
     }
     
 };
+
+// 获取广告商圈
+exports.getDistrict = function (req, res, next) {
+    if ((req.qurey !== undefined) && User.checkToken(req.qurey.token)) {
+        //数据库查询
+        
+    } else {
+        res.json({
+            errCode: 101
+        });
+    }
+}
 
 
 /******** 我是分割线 **********/

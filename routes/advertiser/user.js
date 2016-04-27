@@ -93,7 +93,11 @@ User.createNewAdvertiser = function (info, callback) {
 
 User.checkToken = function(token) {
     // 校验token，失败返回false
-    return true;
+    if (Token.token2id(token) !== null) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 function formatEmail(email) {

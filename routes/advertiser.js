@@ -22,6 +22,7 @@ router.post('/signup',function (req,res,next) {
   advertiser.signup(req, res, next);
 });
 
+// 检查邮箱是否被注册，暂时不实现
 router.post('/checkemail',function (req,res,next) {
   // console.log(req);
   // advertiser.signup(req, res, next);
@@ -31,16 +32,12 @@ router.post('/checkemail',function (req,res,next) {
 /************** 广告部分 ***********/
 // 查看已发布广告列表
 router.get('/advertisement/list/all',function (req,res,next) {
-  console.log(req);
-  advertiser.signup();
-  res.send('test signup');
+  advertiser.getReleasedAdvertisement(req,res,next);
 });
 
 // 获取投放商圈列表
 router.get('/advertisement/district/all',function (req,res,next) {
-  console.log(req);
-  advertiser.signup();
-  res.send('test signup');
+  advertiser.getDistrict(req,res,next);
 });
 
 // 发布新广告
