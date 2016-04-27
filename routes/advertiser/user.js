@@ -118,12 +118,12 @@ User.getAccountDetail = function(id) {
 
 User.recharge = function(id, amount, alipay) {
     var defer = q.defer();
-    var date = moment().format('YYYY-MM-DD hh:mm:ss');
+    var date = moment().format('YYYY-MM-DD HH:mm:ss');
     console.log(date);
     advertiserRef.child(id).child("recharge").push({
         account: alipay,
         amount: amount,
-        status: "String",
+        status: false, // false为到帐中,true为已到账
         time: date
     });
     defer.resolve();
@@ -135,6 +135,45 @@ User.getRechargeList = function (id) {
     var list;
     advertiserRef.child(id).on("value",function(snapshot) {
         list = snapshot.val().recharge;
+        console.log(list);
+        defer.resolve(list);
+    });
+    return defer.promise;
+};
+
+User.refund = function(id, amount, alipay) {
+    var defer = q.defer();
+    var date = moment().format('YYYY-MM-DD HH:mm:ss');
+    advertiserRef.child(id).child('refund').push({
+        account: alipay,
+        amount: amount,
+        status: false, // false为审核中,true为已退款
+        time: date
+    });
+    defer.resolve();
+    return defer.promise;
+};
+
+User.refund.authenticate = function(id, amount) {
+    var defer = q.defer();
+    advertiserRef.child(id).on("value", function(snapshot) {
+        var balance = snapshot.val().balance;
+        console.log(balance);
+        if (amount > balance) {
+            // 这里的处理有点问题
+            defer.reject('301');
+        } else {
+            defer.resolve();
+        }
+    });
+    return defer.promise;
+};
+
+User.getRefundList = function (id) {
+    var defer = q.defer();
+    var list;
+    advertiserRef.child(id).on("value",function(snapshot) {
+        list = snapshot.val().refund;
         console.log(list);
         defer.resolve(list);
     });
