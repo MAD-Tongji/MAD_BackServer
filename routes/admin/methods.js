@@ -1,6 +1,64 @@
 var Q = require('q');
 var User = require('./user');
+var Advertisment = require('./advertisment');
 var Token = require('../../lib/publicUtils');
+
+//***********ashun: ads api****************
+exports.submit = function(req, res, next){
+    //提交新广告接口尚未写验证token的逻辑
+    var data = req.body;
+    var errcode;
+    Advertisment.addNew(data, function(err,key){
+        if(err == null){
+            res.json({
+            errCode: 0,
+            id: key
+        });
+        }
+    
+   });
+}
+
+exports.save = function(req, res, next){
+    //广告暂存草稿接口尚未写验证token的逻辑
+    var data = req.body;
+    var errcode;
+    Advertisment.saveDraft(data, function(err,key){
+        if(err == null){
+            res.json({
+            errCode: 0,
+            id: key
+        });
+        }
+    
+   });
+}
+
+exports.listAll = function(req, res, next){
+    var data = req.body;
+    Advertisment.listAll(data).done(function(data){
+        res.json({
+            AdsList:data
+        })
+    });
+}
+
+exports.audit = function(req, res, next){
+    var data = req.body;
+    Advertisment.audit(data).done(function(data){
+        if(data == null){
+            res.json({
+                errCode: 0
+            })
+        }else{
+            res.json({
+                errCode: 206
+            })
+        }
+    });
+}
+
+//***********ashun: end ****************
 
 exports.login = function(req, res, next){
     var data = req.body;
