@@ -60,7 +60,10 @@ function getDetail(req,res) {
 
 exports.getDetail = getDetail;
 
-
+/**
+ * @interface
+ * @description {interface} 设置广告过滤参数
+ */
 function setFilter(req,res) {
     var filterArray = req.body.adValidationSettings;
     var token = req.body.token;
