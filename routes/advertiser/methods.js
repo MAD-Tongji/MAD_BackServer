@@ -1,5 +1,6 @@
 var Q = require('q');
 var User = require('./user');
+var Email = require('./email');
 var ExternalAdvert = require('./../admin/advertisment');
 var Advert = require('./advertisement')
 var Token = require('../../lib/publicUtils');
@@ -11,7 +12,7 @@ exports.login = function(req, res, next) {
     User.authenticate(data.email, data.password, function(err, user){
         if (err) {
             res.json({
-                errCode: 104
+                errCode: err.message
             });
         }
         if (user) {
@@ -22,11 +23,28 @@ exports.login = function(req, res, next) {
             });
         } else {
             res.json({
-               errCode: 104 //用户名或密码不正确
+               errCode: 102 //用户名或密码不正确
             });
         }
     });
 };
+
+// 邮箱注册验证
+exports.check = function (req, res, nect) {
+    var id = Token.token2id(req.query.token);
+    console.log('id:' + id);
+    if (id !== null) {
+        // 根据ID修改用户check为true
+        res.json({
+            errCode: 0
+        });
+    } else {
+        //邮箱验证码过期或错误，验证失败
+        res.json({
+            errCode: 107    
+        });
+    }
+}
 
 // 广告商注册
 exports.signup = function(req, res, next) {
@@ -35,12 +53,22 @@ exports.signup = function(req, res, next) {
     User.createNewAdvertiser(data, function (newUserId) {
         if (null !== newUserId) {
             var token = Token.getToken(newUserId);
+            // 这个要根据host来拼
+            var checkUrl = req.host + ':3000/advertiser/checkemail?token=' + token;
             
             // 给用户邮箱发送验证邮件
+            var newUser = {
+                name: data.username,
+                targetMail: data.email,
+                checkUrl: checkUrl
+            }
+            
+            Email.sendEmail(newUser, function (response) {
+                console.log(response);
+            });
             
             res.json({
-                errCode: '0',
-                token: token
+                errCode: '0'
             });
         } else {
             res.json({
