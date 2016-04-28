@@ -45,17 +45,18 @@ router.post('/advertisement/submit',function (req,res,next) {
 
 // 将广告保存为草稿
 router.post('/advertisement/save',function (req,res,next) {
-  //code here
+  advertiser.saveAdvert(req,res,next);
 });
 
 // 根据ID下架广告
 router.post('/advertisement/remove',function (req,res,next) {
-  //code here
+  advertiser.removeAdvertById(req,res,next);
 });
 
-// 根据ID获取广告详情(这个接口好像设计的有问题，我还不知道怎么实现，需要查一查)
-router.get('/advertisement/',function (req,res,next) {
-  //code here
+// 根据ID获取广告详情
+// 暂时是这么写的= =
+router.get('/advertisement',function (req,res,next) {
+  advertiser.getAdvertById(req,res,next);
 });
 
 

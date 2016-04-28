@@ -134,6 +134,7 @@ exports.getDistrict = function (req, res, next) {
     }
 };
 
+//提交广告
 exports.submitAdvert = function (req,res,next) {
     var data = req.body;
     console.log(data);
@@ -166,8 +167,100 @@ exports.submitAdvert = function (req,res,next) {
     }
 };
 
+//保存草稿
+exports.saveAdvert = function (req,res,next) {
+    var data = req.body;
+    console.log(data);
+    if (!data.token) {
+        res.json({
+            errCode: 102
+        });
+        next(err);
+    }
+    // token to id
+    var id = Token.token2id(data.token);
+    if (id != null) {
+        Advert.saveAdvert(id, data, function (err,key) {
+            if (err == null) {
+                res.json({
+                    errCode: 0,
+                    id: key
+                });
+            } else {
+                res.json({
+                    errCode: 207, //广告上传失败
+                    error: err
+                });
+            }
+        })
+    } else {
+        res.json({
+            errCode: 101
+        });
+    }
+};
 
-/******** 我是分割线 **********/
+//广告下架
+exports.removeAdvertById = function (req,res,next) {
+    var data = req.body;
+    console.log(data);
+    if (!data.token) {
+        res.json({
+            errCode: 102
+        });
+        next(err);
+    }
+    // token to id
+    var id = Token.token2id(data.token);
+    var adId = data.id;
+    if (id != null) {
+        Advert.removeAdvertById(id, adId, function (err) {
+            if (err == null) {
+                res.json({
+                    errCode: 0
+                });
+            } else {
+                res.json({
+                    errCode: 208, //广告下架失败
+                    error: err
+                });
+            }
+        })
+    } else {
+        res.json({
+            errCode: 101
+        });
+    }
+};
+
+//用id取广告内容
+exports.getAdvertById = function (req,res,next) {
+    var token = req.query.token;
+
+    if (!token) {
+        res.json({
+            errCode: 102 //请求错误
+        });
+        next(err);
+    }
+    // token to id
+    var id = Token.token2id(token);
+    var adId = req.query.id;
+    if (id != null) {
+        // 获取内容并处理
+        Advert.getAdvertById(adId)
+            .done(function(data) {
+                res.json({
+                    errCode: 0,
+                    advertisement: data
+                });
+            })
+    } else {
+        res.json({
+            errCode: 101
+        });
+    }
+};
 
 //广告商账户信息
 exports.accountDetail = function (req,res,next) {
@@ -365,5 +458,3 @@ exports.checkAccount = function (req,res,next) {
         });
     }
 };
-
-//

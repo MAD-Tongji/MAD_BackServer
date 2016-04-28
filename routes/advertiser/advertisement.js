@@ -44,26 +44,58 @@ Advertisement.district = function (city) {
 Advertisement.submitAdvert = function (id, data, callback) {
 	var newPush = advertisementRef.push({
 		"advertiser": id,
-		"title": data.title ,//广告标题
-		"content": data.content ,//广告内容
-		"catalog": data.catalog ,//广告类别
+		"title": data.title,//广告标题
+		"content": data.content,//广告内容
+		"catalog": data.catalog,//广告类别
 		"broadcastLocation": data.broadcastLocation,//投放地点商圈名
 		"startDate": data.startDate, //广告开始投放日期
 		"endDate": data.endDate, //广告停止投放日期
-		"status": "001" //提交新广告
+		"status": "100" //提交新广告
 	},function(err){
 		callback(err,newPush.key());
 	});
 };
 
-Advertisement.saveAdvertisment = function () {
-	
+Advertisement.saveAdvert = function (id, data, callback) {
+	var newPush = advertisementRef.push({
+		"advertiser": id,
+		"title": data.title,//广告标题
+		"content": data.content,//广告内容
+		"catalog": data.catalog,//广告类别
+		"broadcastLocation": data.broadcastLocation,//投放地点商圈名
+		"startDate": data.startDate, //广告开始投放日期
+		"endDate": data.endDate, //广告停止投放日期
+		"status": "010" //保存为草稿
+	},function(err){
+		callback(err,newPush.key());
+	});
 };
 
-Advertisement.removeAdvertisment = function () {
-	
+Advertisement.removeAdvertById = function (id, adId, callback) {
+	var defer = Q.defer();
+	var advert = advertisementRef.child(adId);
+	advert.on("value", function (snapshot) {
+		//验证
+		if (snapshot.val().advertiser == id) {
+			advert.update({
+				"status":"101"
+			},function(err){
+				defer.resolve();
+				callback(err);
+				console.log(err);
+			});
+		} else {
+			defer.resolve();
+			callback("这不是您的广告");
+		}
+	});
+	return defer.promise;
 };
 
-Advertisement.getAdvertismentById = function () {
-	
+Advertisement.getAdvertById = function (id) {
+	var defer = Q.defer();
+	advertisementRef.child(id).on("value", function (snapshot) {
+		defer.resolve(snapshot.val());
+	});
+	return defer.promise;
 };
