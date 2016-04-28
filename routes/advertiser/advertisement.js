@@ -41,8 +41,19 @@ Advertisement.district = function (city) {
 	return defer.promise;
 };
 
-Advertisement.pushNewAdvertisement = function () {
-	
+Advertisement.submitAdvert = function (id, data, callback) {
+	var newPush = advertisementRef.push({
+		"advertiser": id,
+		"title": data.title ,//广告标题
+		"content": data.content ,//广告内容
+		"catalog": data.catalog ,//广告类别
+		"broadcastLocation": data.broadcastLocation,//投放地点商圈名
+		"startDate": data.startDate, //广告开始投放日期
+		"endDate": data.endDate, //广告停止投放日期
+		"status": "001" //提交新广告
+	},function(err){
+		callback(err,newPush.key());
+	});
 };
 
 Advertisement.saveAdvertisment = function () {

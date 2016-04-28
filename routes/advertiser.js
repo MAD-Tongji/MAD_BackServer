@@ -42,7 +42,7 @@ router.get('/advertisement/district/all',function (req,res,next) {
 
 // 发布新广告
 router.post('/advertisement/submit',function (req,res,next) {
-  //code here
+  advertiser.submitAdvert(req,res,next);
 });
 
 // 将广告保存为草稿
