@@ -22,11 +22,9 @@ router.post('/signup',function (req,res,next) {
   advertiser.signup(req, res, next);
 });
 
-// 检查邮箱是否被注册，暂时不实现
-router.post('/checkemail',function (req,res,next) {
-  // console.log(req);
-  // advertiser.signup(req, res, next);
-  // res.send(req.body.username);
+// 邮箱注册验证
+router.get('/checkemail',function (req,res,next) {
+  advertiser.check(req, res, next);
 });
 
 /************** 广告部分 ***********/

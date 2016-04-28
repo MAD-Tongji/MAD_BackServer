@@ -25,7 +25,13 @@ User.authenticate = function(email, pass, callback) {
             // console.log('advertiser data:')
             // console.log(data);
             if (pass === data.password) {
-                callback(null, data);
+                // 登陆后检查是否验证过
+                if (!data.check) {
+                    var uncheck = new Error('103');
+                    callback(uncheck, null);
+                } else {
+                    callback(null, data);
+                }
             } else {
                 callback(null, null);
             }
@@ -55,6 +61,13 @@ User.getAdvertiserByEmail = function(email){
     return deferred.promise;
 };
 
+User.checkUser = function (id) {
+    // 根据ID获取用户，修改其check为true
+    advertiserRef.child(id).update({
+        check: true
+    });
+}
+
 User.createNewAdvertiser = function (info, callback) {
 	User.getAdvertiserByEmail(info.email).
         then(function (data) {
@@ -82,7 +95,8 @@ User.createNewAdvertiser = function (info, callback) {
                 password: info.password,
                 recharge: {},
                 refund: {},
-                status: false
+                status: false,
+                check: false
             });
 
             console.log(targetEmail);
