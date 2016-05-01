@@ -52,7 +52,7 @@ List.getCarUser = function(id) {
         	list.registrationDate = shapshot.val().detail.registerDate;
         } else {
         	list.registrationDate = 'null';
-        }   
+        }
     })
     deferred.resolve(list);
     return deferred.promise;
@@ -98,7 +98,7 @@ List.getAdvertiser = function(id) {
         	list.registrationDate = shapshot.val().detail.registerDate;
         } else {
         	list.registrationDate = 'null';
-        }   
+        }
     	deferred.resolve(list);
     })
     return deferred.promise;
@@ -186,7 +186,6 @@ List.getAdvertismentById = function(ids) {
 }
 
 List.getAdvertisment = function(id) {
-	console.log('id: ' + id);
 	var deferred = Q.defer();
     var advertisment = new Object();
     ref.child("advertisment").child(id).once("value", function(shapshot, err) {
@@ -220,6 +219,127 @@ List.prototype.toJSON = function() {
 		id: this.id,
 		name: this.name,
 		status: this.status,
-        registrationDate: this.registrationDate
+    registrationDate: this.registrationDate
 	}
+}
+
+List.getAdvertiserById = function(id) {
+	var deferred = Q.defer();
+	var userDetail = new Object();
+	var list = new List();
+	advertiserRef.child(id).once("value", function(shapshot, err) {
+		if (err) deferred.reject(err);
+		var data = shapshot.val();
+		list.name = data.name,
+		list.id = id;
+		list.status = data.status,
+		list.email = data.email,
+		List.getAdvertiserDetail(id)
+		.done(function(data) {
+			list.detail = data;
+		})
+		deferred.resolve(list);
+	})
+	return deferred.promise;
+}
+
+List.getAdvertiserDetail = function(id) {
+	var deferred = Q.defer();
+	var detail = new Object();
+	advertiserRef.child(id).child("detail").once("value", function(shapshot, err) {
+		if (err) deferred.reject(err);
+		var data = shapshot.val();
+        detail.registerDate = data.registerDate;
+        detail.type = data.type;
+        detail.licenseType = data.licenseType;
+        detail.licenseImage = data.licenseImage;
+        detail.licenseCode = data.licenseCode;
+        detail.location = data.location;
+        detail.accomodation = detail.accomodation;
+        detail.businessScope = detail.businessScope;
+        detail.businessPeriod = detail.businessPeriod;
+        detail.organizationCode = detail.organizationCode;
+        List.getAdvertiserLegalPerson(id)
+        .done(function(data) {
+            detail.legalPerson = data;
+        })
+        deferred.resolve(detail);
+	})
+    return deferred.promise;
+}
+
+List.getAdvertiserLegalPerson = function(id) {
+    var deferred = Q.defer();
+    var legalPerson = new Object();
+    advertiserRef.child(id).child("detail").child("legalPerson").once("value", function(shapshot, err) {
+        if (err) deferred.reject(err);
+        var data = shapshot.val();
+        legalPerson.name = data.name;
+        legalPerson.location = data.location;
+        legalPerson.id = data.id;
+        legalPerson.validDate = data.validDate;
+        legalPerson.ifLongTerm = data.ifLongTerm;
+        legalPerson.ifLegalPerson = data.ifLegalPerson;
+        deferred.resolve(legalPerson);
+    })
+    return deferred.promise;
+}
+
+List.getUserById = function(id) {
+  var deferred = Q.defer();
+  var userDetail = new Object();
+  carUserRef.child(id).once("value", function(shapshot, err) {
+    if (err) deferred.reject(err);
+    var data = shapshot.val();
+    userDetail.name = data.name;
+    userDetail.id = id;
+    userDetail.location = data.location;  //数据库缺字段
+    userDetail.mobilePhone = data.mobilePhone;
+    List.getUserDetail(id)
+    .done(function(data) {
+      userDetail.vehicleLicenseImage = data.vehicleLicenseImage;
+      userDetail.email = data.email;
+    })
+    deferred.resolve(userDetail);
+  })
+  return deferred.promise;
+}
+
+List.getUserDetail = function(id) {
+  var deferred = Q.defer();
+  var detail = new Object();
+  carUserRef.child(id).child("detail", function(shapshot, err) {
+    if (err) deferred.reject(err);
+    var data = shapshot.val();
+    detail.vehicleLicenseImage = data.vehicleLicenseImage;
+    detail.email = data.email;
+    deferred.resolve(detail);
+  })
+  return deferred.promise;
+}
+
+List.userVerify = function(childRef, id, success, reason) {
+  var deferred = Q.defer();
+  var statusMap = [false, true];
+  if (!childRef && !id) {
+    if (success == 0 || success == 1) {
+      ref.child(childRef).child(id).update({
+        status: statusMap[success],
+        reason: statusMap?null:reason
+      }, function(err) {
+        deferred.reject(err);
+      })
+      // console.log('childRef: ' + childRef);
+      // console.log('id: ' + id)
+      // console.log('status: ' + statusMap[success]);
+      // console.log('reason: ' + statusMap?null:reason)
+    }
+    deferred.resolve('0');
+  }
+  return deferred.promise;
+}
+
+List.userCreate = function(username, userType, userEmail, initPassword) {
+  var deferred = Q.defer();
+  /* 接口信息不完整 */
 }
