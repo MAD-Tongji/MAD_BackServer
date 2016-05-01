@@ -23,5 +23,10 @@
     "serve-favicon": "~2.3.0",
     "tsd": "^0.6.5",
     "wilddog": "^0.6.2"
+  },
+  "devDependencies": {
+    "mocha": "^2.4.5",
+    "should": "^8.3.1",
+    "supertest": "^1.2.0"
   }
 }
