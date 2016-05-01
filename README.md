@@ -22,6 +22,9 @@
 
 5. 接口测试
 
+    ```
+    $ mocha     //启动项目后，在另一个cli中执行
+    ```
 
 ## 2.Project structure   
 ```
@@ -39,6 +42,8 @@
     |   |-- admin.js           -- admin routers
     |   |-- advertiser.js      -- advertiser routers
     |   |-- user.js            -- car user routers
+    |-- test
+    |   |-- test.js            -- interfaces test file
     |-- typings
     |   |-- node
     |   |   |-- node.d.ts
