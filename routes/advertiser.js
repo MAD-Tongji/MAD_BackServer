@@ -19,63 +19,55 @@ router.post('/login',function (req,res,next) {
 
 // 注册
 router.post('/signup',function (req,res,next) {
-  // console.log(req);
-  // advertiser.signup(req, res, next);
-  // res.send(req.body.username);
+  advertiser.signup(req, res, next);
 });
 
-router.post('/checkemail',function (req,res,next) {
-  // console.log(req);
-  // advertiser.signup(req, res, next);
-  // res.send(req.body.username);
+// 邮箱注册验证
+router.get('/checkemail',function (req,res,next) {
+  advertiser.check(req, res, next);
 });
 
 /************** 广告部分 ***********/
 // 查看已发布广告列表
 router.get('/advertisement/list/all',function (req,res,next) {
-  console.log(req);
-  advertiser.signup();
-  res.send('test signup');
+  advertiser.getAdvertisement(req,res,next);
 });
 
 // 获取投放商圈列表
 router.get('/advertisement/district/all',function (req,res,next) {
-  console.log(req);
-  advertiser.signup();
-  res.send('test signup');
+  advertiser.getDistrict(req,res,next);
 });
 
 // 发布新广告
 router.post('/advertisement/submit',function (req,res,next) {
-  //code here
+  advertiser.submitAdvert(req,res,next);
 });
 
 // 将广告保存为草稿
 router.post('/advertisement/save',function (req,res,next) {
-  //code here
+  advertiser.saveAdvert(req,res,next);
 });
 
 // 根据ID下架广告
 router.post('/advertisement/remove',function (req,res,next) {
-  //code here
+  advertiser.removeAdvertById(req,res,next);
 });
 
-// 根据ID获取广告详情(这个接口好像设计的有问题，我还不知道怎么实现，需要查一查)
-router.get('/advertisement/',function (req,res,next) {
-  //code here
+// 根据ID获取广告详情
+// 暂时是这么写的= =
+router.get('/advertisement',function (req,res,next) {
+  advertiser.getAdvertById(req,res,next);
 });
 
 
 /************** 广告商账户部分 ***********/
 // 账户充值
 router.post('/account/recharge',function (req,res,next) {
-  //console.log(req.body);
   advertiser.recharge(req,res,next);
 });
 
 // 获取广告商账户信息
 router.get('/account/detail',function (req,res,next) {
-  //console.log(req);
   advertiser.accountDetail(req,res,next);
 });
 
@@ -96,12 +88,7 @@ router.post('/account/refund',function (req,res,next) {
 
 // 提交验证信息
 router.post('/account/check',function (req,res,next) {
-  //code here
-});
-
-// 上传营业执照图片
-router.post('/account/license',function (req,res,next) {
-  //code here
+  advertiser.checkAccount(req,res,next);
 });
 
 

@@ -25,7 +25,13 @@ User.authenticate = function(email, pass, callback) {
             // console.log('advertiser data:')
             // console.log(data);
             if (pass === data.password) {
-                callback(null, data);
+                // 登陆后检查是否验证过
+                if (!data.check) {
+                    var uncheck = new Error('103');
+                    callback(uncheck, null);
+                } else {
+                    callback(null, data);
+                }
             } else {
                 callback(null, null);
             }
@@ -42,6 +48,7 @@ User.getAdvertiserByEmail = function(email){
             //用户存在，获取用户
             console.log('用户存在，获取用户');
             var user = snapshot.child(targetEmail).val();
+            user.id = targetEmail;
             deferred.resolve(user);
         } else {
             //用户不存在
@@ -54,40 +61,57 @@ User.getAdvertiserByEmail = function(email){
     return deferred.promise;
 };
 
-User.createNewAdvertiser = function (info) {
-	//先检查email是否重复
-	
-	//有重复email时返回errCode
-	
-	//没有重复时新建advertiser
-	var newAdvertiser = advertiserRef.push({
-		 //初始化数据
-        Alipay: '',
-        advertisment: {},
-        balance: 0,
-        currentBroadcast: 0,
-        detail: {},
-        email: info.email,
-        expiration: "",
-        message: {},
-        name: info.username,
-        password: info.password,
-        recharge: {},
-        refund: {},
-        status: false,
-        token: 'testtoken'
-	});
-	var newUser = {
-		token: 'testtoken',
-		id: newAdvertiser.key()
-	};
-	return newUser;
+User.checkUser = function (id) {
+    // 根据ID获取用户，修改其check为true
+    advertiserRef.child(id).update({
+        check: true
+    });
+}
+
+User.createNewAdvertiser = function (info, callback) {
+	User.getAdvertiserByEmail(info.email).
+        then(function (data) {
+            console.log('用户存在不能新建用户');
+            callback(null);
+        }, function (err) {
+            // 用户不存在，新建广告商用户
+            console.log(err);
+            
+            var targetEmail = formatEmail(info.email);
+            var registerDate = moment().format('YYYY-MM-DD HH:mm:ss')
+            console.log(registerDate);
+            
+            advertiserRef.child(targetEmail).set({
+                //初始化数据
+                Alipay: '',
+                registerDate: registerDate,
+                advertisment: {},
+                balance: 0,
+                currentBroadcast: 0,
+                detail: {},
+                email: info.email,
+                message: {},
+                name: info.username,
+                password: info.password,
+                recharge: {},
+                refund: {},
+                status: false,
+                check: false
+            });
+
+            console.log(targetEmail);
+            callback(targetEmail);
+        });
 }
 
 
 User.checkToken = function(token) {
     // 校验token，失败返回false
-    return true;
+    if (Token.token2id(token) !== null) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 function formatEmail(email) {
@@ -188,5 +212,15 @@ User.getMessages = function (id) {
         console.log(list);
         defer.resolve(list);
     });
+    return defer.promise;
+};
+
+User.checkAccount = function (data) {
+    var defer = q.defer();
+    var check;
+    advertiserRef.child(id).update({
+        detail: data
+    });
+    defer.resolve();
     return defer.promise;
 };

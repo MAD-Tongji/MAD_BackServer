@@ -2,23 +2,35 @@ var express = require('express');
 var router = express.Router();
 var admin = require('./admin/methods');
 
-/* Administrator login interface */
+/* jixiang: Administrator login interface */
 router.post('/login', admin.login);
 
-/* Administrator lists interface */
+/* jixiang: Administrator lists interface */
 router.get('/backuser/list', admin.backuserList)
 
-/* User and advertiser lists interface  */
+/* jixiang: User and advertiser lists interface  */
 router.get('/user/list', admin.userList);
 
-/* Add administrator */
+/* jixiang: Add administrator */
 router.post('/backuser/create', admin.create);
 
-/* Administrator auth level manage */
+/* jixiang: Administrator auth level manage */
 router.post('/backuser/manage', admin.manage);
 
-/* Administrator modify personal info */
+/* jixiang: Administrator modify personal info */
 router.post('/backuser/modify', admin.modify);
+
+/* jixiang: Get index page data interface */
+router.get('/home', admin.home);
+
+/* jixiang: Get user detail by user id */
+router.get('/user/detail/:userid', admin.userDetailById);
+
+/* jixiang: Verify user */
+router.post('/user/audit', admin.userVerify);
+
+/* jixiang: Create user*/
+router.post('/user/create', admin.userCreate);
 
 //ashun: Administrator add ads
 router.post('/advert/submit',admin.submit);
