@@ -1,6 +1,7 @@
 var Q = require('q');
 var User = require('./user');
 var Advertisment = require('./advertisment');
+var Account = require('./account');
 var List = require('./list');
 var Token = require('../../lib/publicUtils');
 
@@ -116,6 +117,78 @@ exports.detail = function(req, res, next){
         })
     }
     });
+}
+
+}
+
+exports.accountList = function(req, res, next){
+    var data = req.body;
+    if(Token.token2id(data.token) == null){
+        res.json({
+            errCode: 101
+        })
+    }else{
+        Account.accountList(data).done(function(data){
+            if(data){
+                res.json({
+                    errCode: 0,
+                    accountList: data
+                });
+            }else{
+                res.json({
+                    errCode: 999
+                })
+            }
+        });
+    
+}
+
+}
+
+exports.applyList = function(req, res, next){
+    var data = req.body;
+    if(Token.token2id(data.token) == null){
+        res.json({
+            errCode: 101
+        })
+    }else{
+        Account.applyList(data).done(function(data){
+            if(data){
+                res.json({
+                    errCode: 0,
+                    applyList: data
+                });
+            }else{
+                res.json({
+                    errCode: 999
+                })
+            }
+        });
+    
+}
+
+}
+
+//完成申请
+exports.complete = function(req, res, next){
+    var data = req.body;
+    if(Token.token2id(data.token) == null){
+        res.json({
+            errCode: 101
+        })
+    }else{
+        Account.complete(data).done(function(data){
+            if(!data){
+                res.json({
+                    errCode: 0,
+                });
+            }else{
+                res.json({
+                    errCode: 999
+                })
+            }
+        });
+    
 }
 
 }

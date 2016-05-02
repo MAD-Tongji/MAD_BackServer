@@ -37,6 +37,16 @@ router.post('/advert/remove',admin.remove);
 
 //ashun: Administrator remove ads
 router.post('/advert/detail',admin.detail);
+
+//ashun: Administrator get account list
+router.post('/account/list',admin.accountList);
+
+//ashun: Administrator get all apply list
+router.post('/account/apply/list',admin.applyList);
+
+//ashun: Administrator complete the apply
+router.post('/account/apply/complete',admin.complete);
+
 /* Get index page data interface */
 router.get('/home', admin.home);
 module.exports = router;
