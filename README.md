@@ -21,11 +21,21 @@
     访问http://localhost:3000/
 
 5. 接口测试
+    ```
+    //启动项目后，在另一个cli中执行
+    ```
 
     ```
-    $ mocha     //启动项目后，在另一个cli中执行
+    $ mocha test/admin.test    // 测试后台接口
     ```
-
+    
+    ```
+    $ mocha test/advertiser.test    // 测试广告商接口
+    ```
+    
+    ```
+    $ mocha test/user.test      // 测试车主接口
+    ```
 ## 2.Project structure   
 ```
 |-- root
@@ -43,7 +53,9 @@
     |   |-- advertiser.js      -- advertiser routers
     |   |-- user.js            -- car user routers
     |-- test
-    |   |-- test.js            -- interfaces test file
+    |   |-- admin.test.js      -- back interfaces test file
+    |   |-- advertiser.test.js -- advertiser interfaces test file
+    |   |-- user.test.js       -- user interfaces test file
     |-- typings
     |   |-- node
     |   |   |-- node.d.ts
