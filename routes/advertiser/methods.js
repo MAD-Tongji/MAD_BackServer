@@ -134,36 +134,36 @@ exports.getDistrict = function (req, res, next) {
     }
 };
 
-//提交广告
+//发布新广告
 exports.submitAdvert = function (req,res,next) {
-    var data = req.body;
+    var data = req.query;
     console.log(data);
-    if (!data.token) {
-        res.json({
-            errCode: 102
-        });
-        next(err);
-    }
-    // token to id
-    var id = Token.token2id(data.token);
-    if (id != null) {
-        Advert.submitAdvert(id, data, function (err,key) {
-            if (err == null) {
-                res.json({
-                    errCode: 0,
-                    id: key
-                });
-            } else {
-                res.json({
-                    errCode: 207, //广告上传失败
-                    error: err
-                });
-            }
-        })
-    } else {
+    if (data.token === undefined || data.token === null || Token.token2id(data.token)) {
         res.json({
             errCode: 101
         });
+    } else {
+        if (data.id === undefined || data.id === null) {
+            res.json({
+                errCode: 201
+            });
+        } else {
+            Advert.releaseNewAdvert(data.id, function (err,key) {
+                if (err == null) {
+                    res.json({
+                        errCode: 0,
+                        id: key
+                    });
+                } else {
+                    console.log('广告发布出现错误：');
+                    console.log(err);
+                    res.json({
+                        errCode: 209 //发布广告失败
+                    });
+                }
+            });
+        }
+        
     }
 };
 

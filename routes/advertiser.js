@@ -39,7 +39,7 @@ router.get('/advertisement/district/all',function (req,res,next) {
 });
 
 // 发布新广告
-router.post('/advertisement/submit',function (req,res,next) {
+router.get('/advertisement/release',function (req,res,next) {
   advertiser.submitAdvert(req,res,next);
 });
 
