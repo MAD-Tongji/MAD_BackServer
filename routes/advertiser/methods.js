@@ -347,6 +347,7 @@ exports.rechargeList = function (req,res,next) {
 // 退款
 exports.refund = function (req,res,next) {
     var data = req.body;
+    console.log(data);
 
     if (!data.token) {
         res.json({
@@ -358,7 +359,7 @@ exports.refund = function (req,res,next) {
     var id = Token.token2id(data.token);
     if (id != null) {
         User.refund.authenticate(id, data.refund)
-            .then(function () { //resolve
+            .then(function (result) { //resolve
                 User.refund(id, data.refund, data.Alipay)
                     .done(function (data) {
                         console.log(data);
@@ -366,9 +367,9 @@ exports.refund = function (req,res,next) {
                             errCode: 0
                         })
                     })
-            }, function () { //reject
+            }, function (error) { //reject
                 res.json({
-                    errCode: 301 // 退款金额大于余额
+                    errCode: 304 // 退款金额大于余额
                 })
             });
     } else {

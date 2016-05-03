@@ -126,7 +126,7 @@ function formatEmail(email) {
 User.getAccountDetail = function(id) {
     var defer = q.defer();
     var user;
-    advertiserRef.child(id).on("value", function(snapshot) {
+    advertiserRef.child(id).once("value", function(snapshot) {
         user = {
             name: snapshot.val().name,
             status: snapshot.val().status,
@@ -157,7 +157,7 @@ User.recharge = function(id, amount, alipay) {
 User.getRechargeList = function (id) {
     var defer = q.defer();
     var list;
-    advertiserRef.child(id).on("value",function(snapshot) {
+    advertiserRef.child(id).once("value",function(snapshot) {
         list = snapshot.val().recharge;
         console.log(list);
         defer.resolve(list);
@@ -178,15 +178,21 @@ User.refund = function(id, amount, alipay) {
     return defer.promise;
 };
 
+// 检查能否扣款并扣款
 User.refund.authenticate = function(id, amount) {
     var defer = q.defer();
-    advertiserRef.child(id).on("value", function(snapshot) {
+    advertiserRef.child(id).once("value", function(snapshot) {
         var balance = snapshot.val().balance;
         console.log(balance);
         if (amount > balance) {
             // 这里的处理有点问题
-            defer.reject('301');
+            defer.reject('304');
         } else {
+            var newBalance = balance-amount;
+            console.log("newBalance:" + newBalance);
+            advertiserRef.child(id).update({
+                balance: newBalance
+            });
             defer.resolve();
         }
     });
@@ -196,7 +202,7 @@ User.refund.authenticate = function(id, amount) {
 User.getRefundList = function (id) {
     var defer = q.defer();
     var list;
-    advertiserRef.child(id).on("value",function(snapshot) {
+    advertiserRef.child(id).once("value",function(snapshot) {
         list = snapshot.val().refund;
         console.log(list);
         defer.resolve(list);
@@ -207,7 +213,7 @@ User.getRefundList = function (id) {
 User.getMessages = function (id) {
     var defer = q.defer();
     var list;
-    advertiserRef.child(id).on("value", function(snapshot) {
+    advertiserRef.child(id).once("value", function(snapshot) {
         list = snapshot.val().message;
         console.log(list);
         defer.resolve(list);

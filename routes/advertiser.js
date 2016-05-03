@@ -3,6 +3,7 @@ var router = express.Router();
 var wilddog = require('wilddog');
 var ref = new wilddog('https://wild-boar-00060.wilddogio.com/');
 var advertiser = require('./advertiser/methods.js');
+var advertisement = require('./advertiser/advertisement.js');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -119,6 +120,14 @@ router.get('/message',function (req,res,next) {
 // 查询服务器当前时间
 router.get('/time',function (req,res,next) {
   //code here
+});
+
+//test
+router.get('/test', function (req,res,next) {
+  advertisement.broadcastOnce(req.query.id);
+  res.json({
+    errCode: 0
+  });
 });
 
 module.exports = router;

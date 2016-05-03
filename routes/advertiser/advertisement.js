@@ -99,3 +99,22 @@ Advertisement.getAdvertById = function (id) {
 	});
 	return defer.promise;
 };
+
+Advertisement.broadcastOnce = function (id) {
+	var defer = Q.defer();
+	advertisementRef.child(id).once("value", function (snapshot) {
+		//验证
+		if (snapshot.val().status == "001") {
+			var broadcastTimes = snapshot.val().broadcastTimes;
+			advertisementRef.child(id).update({
+				broadcastTimes: broadcastTimes+1
+			}, function(err){
+				defer.resolve();
+				callback(err);
+			});
+		} else {
+			defer.reject("206"); //广告状态错误
+		}
+	});
+	return defer.promise;
+};
