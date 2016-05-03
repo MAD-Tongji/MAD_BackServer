@@ -47,4 +47,7 @@ router.post('/advert/filter',advert.setFilter);
 /* user modify detail info */
 router.post('/account/modify',user.modifyInfo);
 
+/* user send validation */
+router.post('/sendValidate',access.sendValidate);
+
 module.exports = router;

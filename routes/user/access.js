@@ -5,7 +5,7 @@ var rootRef = new wilddog("https://wild-boar-00060.wilddogio.com/");
 var userRef = rootRef.child('user');
 var adRef = rootRef.child('advertisment');
 var tokenRef=rootRef.child('token2id');
-
+var validate=require('../user/sms-service');
 
 /**
  * @interface
@@ -14,7 +14,7 @@ var tokenRef=rootRef.child('token2id');
 exports.login=function(req,res) {
     var username=req.body.username;
     var password=req.body.password;
-    //console.log(username,req.params,req.body);
+    console.log(username,req.params,req.body);
     var result={};
     if(username==null|| password==null){
         result.errCode=102;
@@ -47,6 +47,7 @@ exports.login=function(req,res) {
  * @description {interface} 用户注册，参数为用户名，密码
  */
 exports.register=function(req,res) {
+    var name=req.body.name;
     var username=req.body.username;
     var password=req.body.password;
     //console.log(username,req.params,req.body);
@@ -86,8 +87,8 @@ exports.register=function(req,res) {
               tenancy:''  
             },
             message:[],
-            mobilePhone:'',
-            name:username,
+            mobilePhone:username,
+            name:name,
             password:password,
             playTimes:0,
             statistics:{
@@ -117,8 +118,10 @@ exports.findpwd=function(req,res) {
     var phoneNumber=req.body.phoneNumber;
     var newpwd=req.body.newpwd;
     var validationCode=req.body.validationCode;
-    var theValidation=111111;
-    if(validationCode==theValidation){
+    console.log(phoneNumber,newpwd,validationCode);
+    //var theValidation=111111;
+    if(validate.validateVCode(phoneNumber,validationCode)){
+        console.log('validate success');
         var pwdRef=userRef.child(phoneNumber);
         pwdRef.update({
             'password':newpwd
@@ -128,6 +131,7 @@ exports.findpwd=function(req,res) {
         });
     }
     else{
+        console.log('validate error');
         res.json({
             errCode:103
         })
@@ -201,4 +205,18 @@ exports.msglist=function(req,res) {
              res.json(result);
         })
     }
+}
+
+/**
+ * @interface
+ * @description {interface} 发送验证码
+ */
+
+exports.sendValidate=function(req,res) {
+    var phoneNumber=req.body.phoneNumber;
+    validate.sendValidationCode(phoneNumber);
+    var result={
+        errCode:0
+    };
+    res.json(result);
 }
