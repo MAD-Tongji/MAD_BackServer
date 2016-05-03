@@ -7,10 +7,10 @@ var ref = new wilddog('https://wild-boar-00060.wilddogio.com/');
 /**
  * @description 阿里大鱼短信平台发送验证码并且在野狗中记录
  * @param {String} phonenum 要发送短信的手机号
+ * @returns void
  */
 function sendValidationCode(phonenum)
 {
-    var phonenum = req.body.phonenum;
     var code = 0;
     while (code <= 100000)
     {
@@ -30,7 +30,30 @@ function sendValidationCode(phonenum)
         sms_template_code:'SMS_6735070'
     });
     console.log('sms sended');
-    // res.send('sms sended');
 }
 
 exports.sendValidationCode = sendValidationCode;
+
+/**
+ * @description验证验证码是否正确
+ * @param {String} phonenum手机号
+ * @param {Number} vcode验证码
+ * @returns {Boolean} 是否通过验证 
+ */
+function validateVCode (phonenum,vcode)
+{
+    var vcodeRef = ref.child('phone-VCode').child(phonenum);
+    vcodeRef.once('value',(snap)=>{
+        if(snap.val() == null)
+        {
+            return false;
+        }
+        var code = snap.val().code;
+        var timeStamp = snap.val().timeStamp;
+        if(vcode != code) return false;
+        else if(new Date().getTime() - timeStamp > 5*60*1000) return false;
+        else return true;
+    });
+    
+}
+exports.validateVCode = validateVCode;
