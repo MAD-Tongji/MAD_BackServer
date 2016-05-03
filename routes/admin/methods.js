@@ -1,6 +1,7 @@
 var Q = require('q');
 var User = require('./user');
 var Advertisment = require('./advertisment');
+var Account = require('./account');
 var List = require('./list');
 var Token = require('../../lib/publicUtils');
 
@@ -91,7 +92,7 @@ exports.remove = function(req, res, next){
             errCode: 0
         });
     }else{
-        
+
     }
     });
 }
@@ -120,7 +121,81 @@ exports.detail = function(req, res, next){
 
 }
 
+exports.accountList = function(req, res, next){
+    var data = req.body;
+    if(Token.token2id(data.token) == null){
+        res.json({
+            errCode: 101
+        })
+    }else{
+        Account.accountList(data).done(function(data){
+            if(data){
+                res.json({
+                    errCode: 0,
+                    accountList: data
+                });
+            }else{
+                res.json({
+                    errCode: 999
+                })
+            }
+        });
+    
+}
+
+}
+
+exports.applyList = function(req, res, next){
+    var data = req.body;
+    if(Token.token2id(data.token) == null){
+        res.json({
+            errCode: 101
+        })
+    }else{
+        Account.applyList(data).done(function(data){
+            if(data){
+                res.json({
+                    errCode: 0,
+                    applyList: data
+                });
+            }else{
+                res.json({
+                    errCode: 999
+                })
+            }
+        });
+    
+}
+
+}
+
+//完成申请
+exports.complete = function(req, res, next){
+    var data = req.body;
+    if(Token.token2id(data.token) == null){
+        res.json({
+            errCode: 101
+        })
+    }else{
+        Account.complete(data).done(function(data){
+            if(!data){
+                res.json({
+                    errCode: 0,
+                });
+            }else{
+                res.json({
+                    errCode: 999
+                })
+            }
+        });
+    
+}
+
+}
+
 //*********** ashun: end ****************
+
+//***********jixiang: start ************
 
 exports.login = function(req, res, next){
     var data = req.body;
@@ -199,6 +274,7 @@ function authenticate(token, fn) {
 
 function getToken(token, fn) {
     /*  token验证 */
+    // if (Token.token2id(token)) return fn(null, 1);
     if (Token.token2id(token)) return fn(null, 1);
     fn();
 }
@@ -222,9 +298,9 @@ exports.backuserList = function(req, res, next) {
                     res.json({
                         errCode: 0,
                         backUserList: data
-                    });     
+                    });
                 })
-            }) 
+            })
         } else {
             res.json({
                 errCode: 101 //令牌不存在或已经过期
@@ -280,7 +356,7 @@ exports.create = function(req, res, next) {
                 res.json({
                     errCode: 0
                 });
-                
+
             })
         } else {
             res.json({
@@ -386,3 +462,114 @@ exports.home = function(req, res, next) {
         }
     })
 }
+
+exports.userDetailById = function(req, res, next) {
+    var id = req.params.userid;
+    var token = req.query.token;
+    var tag = req.query.tag;
+    console.log('token: ' + token);
+    console.log('id: ' + id);
+    console.log('tag: ' + tag);
+    if (!id || !token || !tag) {
+        res.json({
+            errCode: 102 //请求错误
+        });
+        next(err);
+    }
+
+    //与颁发的token作比较
+    authenticate(token, function(err, result) {
+        if (err) return next(err);
+        if (result) {
+            if (tag == 1) {
+                List.getUserById(id)
+                .done(function(data) {
+                    res.json({
+                        errCode: 0,
+                        tag: 1,
+                        userDetail: data
+                    });
+                })
+            } else if (tag == 2) {
+                List.getAdvertiserById(id)
+                .done(function(data) {
+                    res.json({
+                        errCode: 0,
+                        tag: 2,
+                        userDetail: data
+                    });
+                })
+            }
+        } else {
+            res.json({
+                errCode: 101 //令牌不存在或已经过期
+            });
+        }
+    })
+}
+
+exports.userVerify = function(req, res, next) {
+  var data = req.body;
+  console.log(data.token);
+  if (!data.token) {
+      res.json({
+          errCode: 102 //请求错误
+      });
+      next(err);
+  }
+  authenticate(data.token, function(err, result) {
+      if (err) return next(err);
+      if (result) {
+        var childRef = null;
+        if (data.tag == 1) {
+          childRef = 'user';
+        } else if (data.tag == 2) {
+          childRef = 'advertiser';
+        }
+        console.log(childRef + ' | ' + data.id + ' | ' + data.success + ' | ' + data.reason);
+        List.userVerify(childRef, data.id, data.success, data.reason)
+        .done(function(data) {
+          res.json({
+            errCode: data
+          })
+        })
+      } else {
+          res.json({
+              errCode: 101 //令牌不存在或已经过期
+          });
+      }
+  })
+}
+
+exports.userCreate = function(req, res, next) {
+  var data =req.body;
+  if (!data.token) {
+      res.json({
+          errCode: 102 //请求错误
+      });
+      next(err);
+  }
+  authenticate(data.token, function(err, result) {
+      if (err) return next(err);
+      if (result) {
+        if (!data.username && !data.userType && !data.userEmail && !data.initPassword) {
+          List.userCreate(data.username, data.userType, data.userEmail, data.initPassword)
+          .done(function(data) {
+            res.json({
+              errCode: 0,
+              id: data
+            })
+          })
+        } else {
+          res.json({
+            errCode: 101
+          })
+        }
+      } else {
+          res.json({
+              errCode: 101 //令牌不存在或已经过期
+          });
+      }
+  })
+}
+//***********jixiang: end ************

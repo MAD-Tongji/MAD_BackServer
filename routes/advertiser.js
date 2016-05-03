@@ -40,7 +40,7 @@ router.get('/advertisement/district/all',function (req,res,next) {
 });
 
 // 发布新广告
-router.post('/advertisement/submit',function (req,res,next) {
+router.get('/advertisement/release',function (req,res,next) {
   advertiser.submitAdvert(req,res,next);
 });
 
@@ -55,9 +55,13 @@ router.post('/advertisement/remove',function (req,res,next) {
 });
 
 // 根据ID获取广告详情
-// 暂时是这么写的= =
-router.get('/advertisement',function (req,res,next) {
-  advertiser.getAdvertById(req,res,next);
+router.get('/advertisement/:id?',function (req,res) {
+  // console.log(req.url);
+  // res.json({
+  //   "test": req.params.id,
+  //   "token": req.query.token
+  // });
+  advertiser.getAdvertById(req,res);
 });
 
 
