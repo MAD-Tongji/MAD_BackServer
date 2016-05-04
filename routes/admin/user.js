@@ -143,7 +143,7 @@ User.updateInfo = function(id, email, password, fn) {
 	var hash = crypto.createHash('sha256')
 		.update(password)
 		.digest('hex');
-	adminRef.child(id).update({
+    adminRef.child(id).update({
         email: email,
         pass: hash
     }, function(err) {

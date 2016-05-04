@@ -4,6 +4,7 @@ var ref = new wilddog('https://wild-boar-00060.wilddogio.com/');
 var advertiserRef = ref.child("advertiser");
 var carUserRef = ref.child("user");
 var adminStatisticRef = ref.child("statistic").child("admin");
+var Message = require('./messages');
 
 module.exports = List;
 
@@ -368,25 +369,25 @@ List.getUserDetail = function(id) {
   return deferred.promise;
 }
 
-List.userVerify = function(childRef, id, success, reason) {
-  var deferred = Q.defer();
-  var statusMap = [false, true];
-  if (!childRef && !id) {
-    if (success == 0 || success == 1) {
-      ref.child(childRef).child(id).update({
-        status: statusMap[success],
-        reason: statusMap?null:reason
-      }, function(err) {
-        deferred.reject(err);
-      })
-      // console.log('childRef: ' + childRef);
-      // console.log('id: ' + id)
-      // console.log('status: ' + statusMap[success]);
-      // console.log('reason: ' + statusMap?null:reason)
+List.userVerify = function(childRef, id, tag, success, reason) {
+    var deferred = Q.defer();
+    var statusMap = [false, true];
+    if (childRef && id) {
+        if (success == 0 || success == 1) {
+            ref.child(childRef).child(id).update({
+                status: statusMap[success]
+            }, function(err) {
+                deferred.reject(err);
+            })
+            if (success == 0) reason = "抱歉您的申请没有通过!原因: " + reason;
+            if (success == 1) reason = "恭喜您通过审核!";
+            Message.sendMessage(id, tag, reason, function(err) {
+                if (err) deferred.reject(err);
+            })
+        }
+        deferred.resolve('0');
     }
-    deferred.resolve('0');
-  }
-  return deferred.promise;
+    return deferred.promise;
 }
 
 List.getStatistics = function() {

@@ -596,7 +596,7 @@ exports.userDetailById = function(req, res, next) {
  */
 exports.userVerify = function(req, res, next) {
   var data = req.body;
-  console.log(data.token);
+  var reason = data.reason || null;
   if (!data.token || !data.tag || !data.id || !data.success) {
       res.json({
           errCode: 108 //请求错误
@@ -612,8 +612,8 @@ exports.userVerify = function(req, res, next) {
         } else if (data.tag == 2) {
           childRef = 'advertiser';
         }
-        console.log(childRef + ' | ' + data.id + ' | ' + data.success + ' | ' + data.reason);
-        List.userVerify(childRef, data.id, data.success, data.reason)
+        console.log(childRef + ' | ' + data.id + ' | ' + data.success + ' | ' + reason);
+        List.userVerify(childRef, data.id, data.tag, data.success, reason)
         .done(function(data) {
           res.json({
             errCode: data
