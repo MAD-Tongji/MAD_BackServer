@@ -120,22 +120,24 @@ exports.findpwd=function(req,res) {
     var validationCode=req.body.validationCode;
     console.log(phoneNumber,newpwd,validationCode);
     //var theValidation=111111;
-    if(validate.validateVCode(phoneNumber,validationCode)){
-        console.log('validate success');
-        var pwdRef=userRef.child(phoneNumber);
-        pwdRef.update({
-            'password':newpwd
-        });
-        res.json({
-            errCode:0
-        });
-    }
-    else{
-        console.log('validate error');
-        res.json({
-            errCode:103
-        })
-    }
+    validate.validateVCode(phoneNumber,validationCode,(status)=>{
+        if(status){
+            console.log('validate success');
+            var pwdRef=userRef.child(phoneNumber);
+            pwdRef.update({
+                'password':newpwd
+            });
+            res.json({
+                errCode:0
+            });
+        }
+        else{
+            console.log('validate error');
+            res.json({
+                errCode:103
+            })
+        }
+    });
 }
 
 
