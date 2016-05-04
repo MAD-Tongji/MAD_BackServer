@@ -65,6 +65,109 @@ exports.drawMoney = drawMoney;
 
 /**
  * @interface
+ * @description {interface} 获取提款信息
+ */
+function drawRecord(req,res)
+{
+    var userId = req.params.userId || null;
+    var token = req.query.token || null;
+    //var number = req.body.number || null;
+    var result = {};
+    console.log(req.body);
+    
+    if( userId == null || token == null || userId != utils.token2id(token))
+    {
+        result.errCode = 100;
+        res.json(result);
+    }
+    else
+    {
+        var ref = userRef.child(userId);
+        ref.once('value',function(snapshot) {
+           // var wdHistory=snapshot.val().withdrawHistory;
+            //result={
+              //  errCode:0,
+                //withdrawHistory:wdHistory
+           // };
+            res.json({
+                errCode:0,
+                withdrawHistory:snapshot.val().withdrawHistory    
+            });
+        })
+        //res.json({errCode:0});
+    }
+}
+
+exports.drawRecord = drawRecord;
+
+/**
+ * @interface
+ * @description {interface} 账户提款
+ */
+function submitInfo(req,res)
+{
+    var userId = req.body.userId || null;
+    var token = req.body.token || null;
+    var check = req.body.check || null;
+    var result = {};
+    console.log(req.body);
+    
+    if(userId == null || token == null || userId != utils.token2id(token))
+    {
+        result.errCode = 100;
+        res.json(result);
+    }
+    else
+    {
+        var ref = userRef.child(account);
+        ref.once('value',function(snapshot) {
+            var snap=snapshot.val();
+            snap.name=check.name;
+            snap.detail.VIN=check.VIN;
+            snap.detail.vehicleLicense=check.vehicleLicense;
+            snap.vehicleFrontImage=check.carPicture;
+            snap.vehicleLicenseImage=check.vehicleLicensePicture;
+            ref.update(snap);
+            res.json({
+                errCode:0
+            })
+        });
+        //res.json({errCode:0});
+    }
+}
+
+exports.submitInfo = submitInfo;
+
+/**
+ * @interface
+ * @description {interface} 修改用户信息
+ */
+function changeInfo(req,res)
+{
+    var userId = req.body.userId || null;
+    var token = req.body.token || null;
+    var newInfo = req.body.newInfo || null;
+    var result = {};
+    console.log(req.body);
+    
+    if(userId == null || token == null || userId != utils.token2id(token))
+    {
+        result.errCode = 100;
+        res.json(result);
+    }
+    else
+    {
+        var ref = userRef.child(account);
+        //ref.update()
+        res.json({errCode:0});
+    }
+}
+
+exports.changeInfo = changeInfo;
+
+
+/**
+ * @interface
  * @description {interface} 获取账户信息
  */
 function accountInfo(req,res)

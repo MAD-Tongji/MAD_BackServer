@@ -56,4 +56,14 @@ router.post('/account/withdraw',user.drawMoney);
 /* user send validation */
 router.post('/sendValidate',access.sendValidate);
 
+/* user get withdraw record */
+router.get('/withdraw/:userId',user.drawRecord);
+
+/* user send submit informaition */
+router.post('/check/submit',user.submitInfo);
+
+/* user send modify information */
+router.post('/account/modify',user.changeInfo);
+
+
 module.exports = router;
