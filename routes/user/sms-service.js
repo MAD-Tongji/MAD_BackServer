@@ -40,19 +40,19 @@ exports.sendValidationCode = sendValidationCode;
  * @param {Number} vcode验证码
  * @returns {Boolean} 是否通过验证 
  */
-function validateVCode (phonenum,vcode)
+function validateVCode (phonenum,vcode,callback)
 {
     var vcodeRef = ref.child('phone-VCode').child(phonenum);
     vcodeRef.once('value',(snap)=>{
         if(snap.val() == null)
         {
-            return false;
+            callback(false);
         }
         var code = snap.val().code;
         var timeStamp = snap.val().timeStamp;
-        if(vcode != code) return false;
-        else if(new Date().getTime() - timeStamp > 5*60*1000) return false;
-        else return true;
+        if(vcode != code) callback(false);
+        else if(new Date().getTime() - timeStamp > 5*60*1000) callback(false);
+        else callback(true);
     });
     
 }
