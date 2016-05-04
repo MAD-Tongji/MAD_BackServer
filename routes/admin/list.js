@@ -3,6 +3,7 @@ var wilddog = require('wilddog');
 var ref = new wilddog('https://wild-boar-00060.wilddogio.com/');
 var advertiserRef = ref.child("advertiser");
 var carUserRef = ref.child("user");
+var adminStatisticRef = ref.child("statistic").child("admin");
 
 module.exports = List;
 
@@ -107,10 +108,9 @@ List.getAdvertiser = function(id) {
 List.getHomeData = function() {
 	var deferred = Q.defer();
 	var backendStatistics = new Object();
-	ref.child("backendStatistics").once("value", function(shapshot, err) {
+	adminStatisticRef.child("homePageData").once("value", function(shapshot, err) {
 		if (err) deferred.reject(err);
 		var data = shapshot.val();
-		console.log('totalAdvertiser: ' + data.totalAdvertiser);
 		backendStatistics.totalAdvertiser = data.totalAdvertiser;
 		backendStatistics.totalAdvertisement = data.totalAdvertisement;
 		backendStatistics.totalUser = data.totalUser;
@@ -119,21 +119,26 @@ List.getHomeData = function() {
 		backendStatistics.newAdvertiser = data.newAdvertiser;
 		backendStatistics.newAdvertisement = data.newAdvertisement;
 		backendStatistics.newBroadcastTimes = data.newBroadcastTimes;
-		List.getAllId('backendStatistics', 'totalStatistics')
+		List.getAllId('homePageData', 'advert_detail7')
 		.done(function(data) {
 			List.getAdvert_detail7(data)
 			.done(function(data) {
 				backendStatistics.advert_detail7 = data;
 			})
+            List.getAllId('homePageData', 'advert_most')
+            .done(function(data) {
+                List.getAdvertismentById(data)
+                .done(function(data) {
+                    backendStatistics.advert_most = data;
+                })
+                List.getDownloadCount(data)
+                .done(function(data) {
+                    backendStatistics.downloadCount = data;
+                    deferred.resolve(backendStatistics);
+                })
+            })
 		})
-		List.getAllId('backendStatistics', 'topAdvertisements')
-		.done(function(data) {
-			List.getAdvertismentById(data)
-			.done(function(data) {
-				backendStatistics.advert_most = data;
-			})
-		})
-		deferred.resolve(backendStatistics);
+		
 	})
 	return deferred.promise;
 }
@@ -146,7 +151,7 @@ List.getAdvert_detail7 = function(ids) {
             (function(id) {
                 List.getAdvert_detail(ids[id])
                 .done(function(data) {
-                    listArr.push(data);
+                    listArr.push(List.toDetailJSON(data));
                     deferred.resolve(listArr);
                 })
             })(id);
@@ -155,16 +160,24 @@ List.getAdvert_detail7 = function(ids) {
     return deferred.promise;
 }
 
+List.toDetailJSON = function (data) {
+    return {
+        date: data.date,
+        totalBroadcastTimes: data.totalBroadcastTimes,
+        totalIncome: data.totalIncome
+    }
+}
+
 List.getAdvert_detail = function(id){
   	var deferred = Q.defer();
     var advert_detail = new Object();
-    ref.child("backendStatistics").child("totalStatistics").child(id).on("value", function(shapshot, err) {
+    adminStatisticRef.child("homePageData").child("advert_detail7").child(id).once("value", function(shapshot, err) {
     	if (err) deferred.reject(err);
-        advert_detail.date = shapshot.val().date;
+        advert_detail.date = id;
         advert_detail.totalBroadcastTimes = shapshot.val().totalBroadcastTimes;
         advert_detail.totalIncome = shapshot.val().totalIncome;
+        deferred.resolve(advert_detail);
     })
-    deferred.resolve(advert_detail);
     return deferred.promise;
 }
 
@@ -185,10 +198,18 @@ List.getAdvertismentById = function(ids) {
     return deferred.promise;
 }
 
+List.toAdJson = function (data) {
+    return {
+        advert_id: data.advert_id,
+        broadcastSum: data.broadcastSum,
+        title: data.title
+    }
+}
+
 List.getAdvertisment = function(id) {
 	var deferred = Q.defer();
     var advertisment = new Object();
-    ref.child("advertisment").child(id).once("value", function(shapshot, err) {
+    adminStatisticRef.child("homePageData").child("advert_most").child(id).once("value", function(shapshot, err) {
     	if (err) deferred.reject(err);
         advertisment.id = id;
         if (shapshot.val().broadcastSum) {
@@ -205,7 +226,7 @@ List.getAdvertisment = function(id) {
 List.getAllId = function(relativeRef, childRef) {
 	var deferred = Q.defer();
 	var ids = [];
-	ref.child(relativeRef).child(childRef).once("child_added", function(shapshot, err) {
+	adminStatisticRef.child(relativeRef).child(childRef).on("child_added", function(shapshot, err) {
 		if (err) deferred.reject(err);
 		var id = shapshot.key();
         ids.push(id);
@@ -219,26 +240,55 @@ List.prototype.toJSON = function() {
 		id: this.id,
 		name: this.name,
 		status: this.status,
-    registrationDate: this.registrationDate
+        registrationDate: this.registrationDate
 	}
+}
+
+List.getDownloadCount = function() {
+    var deferred = Q.defer();
+    var downloadCount = new Object();
+    adminStatisticRef.child("homePageData").child("downloadCount").once("value", function(shapshot, err) {
+        if (err) deferred.reject(err);
+        var data = shapshot.val();
+        downloadCount.week1 = data[0];
+        downloadCount.week2 = data[1];
+        downloadCount.week3 = data[2];
+        downloadCount.week4 = data[3];
+        downloadCount.week5 = data[4];
+        downloadCount.week6 = data[5];
+        downloadCount.week7 = data[6];
+        deferred.resolve(List.toDownloadJSON(downloadCount));
+    });
+    return deferred.promise;
+}
+
+List.toDownloadJSON = function (data) {
+    return {
+        week1: data.week1,
+        week2: data.week2,
+        week3: data.week3,
+        week4: data.week4,
+        week5: data.week5,
+        week6: data.week6,
+        week7: data.week7
+    }
 }
 
 List.getAdvertiserById = function(id) {
 	var deferred = Q.defer();
 	var userDetail = new Object();
-	var list = new List();
 	advertiserRef.child(id).once("value", function(shapshot, err) {
 		if (err) deferred.reject(err);
 		var data = shapshot.val();
-		list.name = data.name,
-		list.id = id;
-		list.status = data.status,
-		list.email = data.email,
+		userDetail.name = data.name,
+		userDetail.id = id;
+		userDetail.status = data.status,
+		userDetail.email = data.email,
 		List.getAdvertiserDetail(id)
 		.done(function(data) {
-			list.detail = data;
+			userDetail.detail = data;
 		})
-		deferred.resolve(list);
+		deferred.resolve(userDetail);
 	})
 	return deferred.promise;
 }
@@ -339,7 +389,21 @@ List.userVerify = function(childRef, id, success, reason) {
   return deferred.promise;
 }
 
-List.userCreate = function(username, userType, userEmail, initPassword) {
-  var deferred = Q.defer();
-  /* 接口信息不完整 */
+List.getStatistics = function() {
+    var deferred = Q.defer();
+    var listArr = [];
+    adminStatisticRef.child("incomeDate").on("child_added", function(shapshot, err) {
+        if (err) deferred.reject(err);
+        var id = shapshot.key();
+        console.log(shapshot.key());
+        adminStatisticRef.child("incomeDate").child(id).once("value", function(shapshot, err) {
+            if (err) deferred.reject(err);
+            listArr.push({
+                totalBroadcast: shapshot.val().totalBroadcast,
+                totalIncome: shapshot.val().totalIncome
+            })
+            deferred.resolve(listArr);
+        })
+    })
+    return deferred.promise;
 }

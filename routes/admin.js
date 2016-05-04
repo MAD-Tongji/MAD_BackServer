@@ -29,8 +29,8 @@ router.get('/user/detail/:userid', admin.userDetailById);
 /* jixiang: Verify user */
 router.post('/user/audit', admin.userVerify);
 
-/* jixiang: Create user*/
-router.post('/user/create', admin.userCreate);
+/* jixiang: Statistics */
+router.get('/statistics/dayincome', admin.dayIncome);
 
 //ashun: Administrator add ads
 router.post('/advert/submit',admin.submit);
@@ -59,6 +59,4 @@ router.post('/account/apply/list',admin.applyList);
 //ashun: Administrator complete the apply
 router.post('/account/apply/complete',admin.complete);
 
-/* Get index page data interface */
-router.get('/home', admin.home);
 module.exports = router;

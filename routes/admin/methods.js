@@ -197,31 +197,52 @@ exports.complete = function(req, res, next){
 
 //***********jixiang: start ************
 
+/**
+ * @interface
+ * @description {interface} 用户登录，参数为用户名，密码
+ * @param {String} name 用户名
+ * @param {String} pass 登陆密码
+ * @return {JSON} 登录成功 {errCode, token} 登陆失败 {errCode}
+ */
 exports.login = function(req, res, next){
     var data = req.body;
-    User.authenticate(data.name, data.pass, function(err, user){
-        if (err) return next(err);
-        if (user) {
-            console.log(user.id);
-            var token = Token.getToken(user.id); //传入登录者的id生成token
-            res.json({
-                token: token,
-                errCode: 0
-            });
-        } else {
-            res.json({
-               errCode: 104 //用户名或密码不正确
-            });
-        }
-    })
+    if (data.name && data.pass) {
+        User.authenticate(data.name, data.pass, function(err, user){
+            if (err) return next(err);
+            if (user) {
+                console.log(user.id);
+                var token = Token.getToken(user.id); //传入登录者的id生成token
+                res.json({
+                    token: token,
+                    errCode: 0
+                });
+            } else {
+                res.json({
+                    errCode: 102 //用户名或密码不正确
+                });
+            }
+        })
+    } else {
+        res.json({
+            errCode: 108  //参数不正确
+        })
+    }
+    
 }
 
+/**
+ * @interface
+ * @description {interface} 获取用户列表，参数为token, tag
+ * @param {String} token
+ * @param {String} tag tag= 1 : 车主用户; tag= 2 : 广告商用户
+ * @return {JSON} 成功 {errCode, userList} 登陆失败 {errCode}
+ */
 exports.userList = function(req, res, next) {
     var token = req.query.token;
     var tag = req.query.tag;
     if (!token || !tag) {
         res.json({
-            errCode: 102 //请求错误
+            errCode: 108 //请求错误
         });
         next(err);
     }
@@ -261,6 +282,9 @@ exports.userList = function(req, res, next) {
     })
 }
 
+/**
+ * token验证函数
+ */
 function authenticate(token, fn) {
     var assignedToken = getToken(token, function(err, result) {
         if (err) fn(err);
@@ -279,12 +303,18 @@ function getToken(token, fn) {
     fn();
 }
 
+/**
+ * @interface
+ * @description {interface} 获取后台管理员列表，参数为token
+ * @param {String} token
+ * @return {JSON} 成功 {errCode, backUserList} 登陆失败 {errCode}
+ */
 exports.backuserList = function(req, res, next) {
     var token = req.query.token;
 
     if (!token) {
         res.json({
-            errCode: 102 //请求错误
+            errCode: 108 //请求错误
         });
     }
     //与颁发的token作比较
@@ -309,6 +339,9 @@ exports.backuserList = function(req, res, next) {
     })
 }
 
+/**
+ * 获取所有用户列表函数
+ */
 function getAllList(ids) {
     var deferred = Q.defer();
     var listArr = [];
@@ -326,11 +359,23 @@ function getAllList(ids) {
     return deferred.promise;
 }
 
+/**
+ * @interface
+ * @description {interface} 新建管理员，参数为token, name, pass, emnail. gender, level, hireDate
+ * @param {String} token
+ * @param {String} name 用户名
+ * @param {String} pass 密码
+ * @param {String} email 邮箱
+ * @param {String} gender 性别
+ * @param {String} level 管理级别
+ * @param {String} hireDate 工作开始日期
+ * @return {JSON} 成功 {errCode} 登陆失败 {errCode}
+ */
 exports.create = function(req, res, next) {
     var data = req.body;
     if (!data.token) {
         res.json({
-            errCode: 102 //请求错误
+            errCode: 108 //请求错误
         });
         next(err);
     }
@@ -340,7 +385,7 @@ exports.create = function(req, res, next) {
         if (result) {
             var newAdmin = new User({
                 name: data.userName,
-                pass: '12345678',
+                pass: '12345678', //初始密码
                 email: data.email,
                 gender: data.gender,
                 level: data.level,
@@ -349,7 +394,7 @@ exports.create = function(req, res, next) {
             newAdmin.save(function(err) {
                 if (err){
                     res.json({
-                        errCode: 106 //用户名已存在
+                        errCode: 404 //用户名已存在
                     });
                     throw (err);
                 }
@@ -366,11 +411,19 @@ exports.create = function(req, res, next) {
     })
 }
 
+/**
+ * @interface
+ * @description {interface} 管理权限，参数为token, id, newLevel
+ * @param {String} token
+ * @param {String} id 所修改的管理员id
+ * @param {String} newLevel 新级别
+ * @return {JSON} 成功 {errCode} 登陆失败 {errCode}
+ */
 exports.manage = function(req, res, next) {
     var data = req.body;
-    if (!data.token) {
+    if (!data.token || !data.id || !data.newLevel) {
         res.json({
-            errCode: 102 //请求错误
+            errCode: 108 //请求错误
         });
         next(err);
     }
@@ -397,16 +450,24 @@ exports.manage = function(req, res, next) {
     })
 }
 
+/**
+ * @interface
+ * @description {interface} 修改管理员信息，参数为token, email, pass
+ * @param {String} token
+ * @param {String} pass 修改的密码
+ * @param {String} email 修改的邮箱
+ * @return {JSON} 成功 {errCode} 登陆失败 {errCode}
+ */
 exports.modify = function(req, res, next) {
     var data = req.body;
-    var email = data.email;
-    var pass = data.password;
-    if (!data.token) {
+    if (!data.token || !data.email || !data.pass) {
         res.json({
-            errCode: 102 //请求错误
+            errCode: 108 //请求错误
         });
         next(err);
     }
+    var email = data.email;
+    var pass = data.password;
     authenticate(data.token, function(err, result) {
         if (err) return next(err);
         if (result) {
@@ -427,11 +488,17 @@ exports.modify = function(req, res, next) {
     })
 }
 
+/**
+ * @interface
+ * @description {interface} 首页信息，参数为token
+ * @param {String} token
+ * @return {JSON} 成功 {errCode, 很多信息} 登陆失败 {errCode}
+ */
 exports.home = function(req, res, next) {
     var token = req.query.token;
     if (!token) {
         res.json({
-            errCode: 102 //请求错误
+            errCode: 108 //请求错误
         });
     }
     //与颁发的token作比较
@@ -440,6 +507,7 @@ exports.home = function(req, res, next) {
         if (result) {
             List.getHomeData()
             .done(function(data) {
+                // console.log(data);
                 res.json({
                     errCode: 0,
                     totalAdvertiser: data.totalAdvertiser,
@@ -451,8 +519,8 @@ exports.home = function(req, res, next) {
                     newUser: data.newUser,
                     newAdvertiser: data.newAdvertiser,
                     newAdvertisement: data.newAdvertisement,
-                    newBroadcastTimes: data.newBroadcastTimes
-                    /* 缺下载量*/
+                    newBroadcastTimes: data.newBroadcastTimes,
+                    downloadCount: data.downloadCount
                 })
             })
         } else {
@@ -463,6 +531,14 @@ exports.home = function(req, res, next) {
     })
 }
 
+/**
+ * @interface
+ * @description {interface} 根据id获取用户信息，参数为token, id, tag
+ * @param {String} token
+ * @param {String} id 用户id
+ * @param {String} tag tag= 1 : 车主用户; tag= 2 : 广告商用户
+ * @return {JSON} 成功 {errCode, 很多信息, tag} 登陆失败 {errCode}
+ */
 exports.userDetailById = function(req, res, next) {
     var id = req.params.userid;
     var token = req.query.token;
@@ -472,7 +548,7 @@ exports.userDetailById = function(req, res, next) {
     console.log('tag: ' + tag);
     if (!id || !token || !tag) {
         res.json({
-            errCode: 102 //请求错误
+            errCode: 108 //请求错误
         });
         next(err);
     }
@@ -508,12 +584,22 @@ exports.userDetailById = function(req, res, next) {
     })
 }
 
+/**
+ * @interface
+ * @description {interface} 用户审核，参数为token, id, tag, success, reason
+ * @param {String} token
+ * @param {String} id 用户id
+ * @param {String} tag tag= 1 : 车主用户; tag= 2 : 广告商用户
+ * @param {String} success success= 1 : 审核通过; success= 0 : 审核未通过
+ * @param {String} reason 未通过原因
+ * @return {JSON} 成功 {errCode} 登陆失败 {errCode}
+ */
 exports.userVerify = function(req, res, next) {
   var data = req.body;
   console.log(data.token);
-  if (!data.token) {
+  if (!data.token || !data.tag || !data.id || !data.success) {
       res.json({
-          errCode: 102 //请求错误
+          errCode: 108 //请求错误
       });
       next(err);
   }
@@ -541,35 +627,37 @@ exports.userVerify = function(req, res, next) {
   })
 }
 
-exports.userCreate = function(req, res, next) {
-  var data =req.body;
-  if (!data.token) {
-      res.json({
-          errCode: 102 //请求错误
-      });
-      next(err);
-  }
-  authenticate(data.token, function(err, result) {
-      if (err) return next(err);
-      if (result) {
-        if (!data.username && !data.userType && !data.userEmail && !data.initPassword) {
-          List.userCreate(data.username, data.userType, data.userEmail, data.initPassword)
-          .done(function(data) {
-            res.json({
-              errCode: 0,
-              id: data
+/**
+ * @interface
+ * @description {interface} 统计信息，参数为token
+ * @param {String} token
+ * @return {JSON} 成功 {errCode, 很多信息} 登陆失败 {errCode}
+ */
+exports.dayIncome = function(req, res, next) {
+    var data = req.query;
+    if (!data.token) {
+        res.json({
+            errCode: 108 //请求错误
+        })
+    }
+    
+    //与颁发的token作比较
+    authenticate(data.token, function(err, result) {
+        if (err) return next(err);
+        if (result) {
+            List.getStatistics()
+            .done(function(data) {
+                res.json({
+                    errCode: 0,
+                    statistics: data
+                })
             })
-          })
         } else {
-          res.json({
-            errCode: 101
-          })
+            res.json({
+                errCode: 101 //令牌不存在或已经过期
+            });
         }
-      } else {
-          res.json({
-              errCode: 101 //令牌不存在或已经过期
-          });
-      }
-  })
+    })
 }
+
 //***********jixiang: end ************
