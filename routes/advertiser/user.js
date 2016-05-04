@@ -18,7 +18,12 @@ function User(obj) {
   	}
 }
 
-
+/**
+ * 验证user
+ * @param email
+ * @param pass
+ * @param callback
+ */
 User.authenticate = function(email, pass, callback) {
 	User.getAdvertiserByEmail(email).
         then(function(data) {
@@ -40,6 +45,11 @@ User.authenticate = function(email, pass, callback) {
         });
 };
 
+/**
+ * 通过email获取用户
+ * @param email
+ * @returns {*|promise}
+ */
 User.getAdvertiserByEmail = function(email){
     var deferred = Q.defer();
     var targetEmail = formatEmail(email);
@@ -61,13 +71,22 @@ User.getAdvertiserByEmail = function(email){
     return deferred.promise;
 };
 
+/**
+ * 激活用户
+ * @param id
+ */
 User.checkUser = function (id) {
     // 根据ID获取用户，修改其check为true
     advertiserRef.child(id).update({
         check: true
     });
-}
+};
 
+/**
+ * 新建用户
+ * @param info
+ * @param callback
+ */
 User.createNewAdvertiser = function (info, callback) {
 	User.getAdvertiserByEmail(info.email).
         then(function (data) {
@@ -102,9 +121,13 @@ User.createNewAdvertiser = function (info, callback) {
             console.log(targetEmail);
             callback(targetEmail);
         });
-}
+};
 
-
+/**
+ * 检查token
+ * @param token
+ * @returns {boolean}
+ */
 User.checkToken = function(token) {
     // 校验token，失败返回false
     if (Token.token2id(token) !== null) {
@@ -112,16 +135,17 @@ User.checkToken = function(token) {
     } else {
         return false;
     }
-}
+};
 
 function formatEmail(email) {
     return email.replace('.', '-');
 }
 
-
-
-
-/******** 我是分割线 **********/
+/**
+ * 获取用户信息
+ * @param id
+ * @returns {*}
+ */
 
 User.getAccountDetail = function(id) {
     var defer = q.defer();
@@ -140,6 +164,13 @@ User.getAccountDetail = function(id) {
     return defer.promise;
 };
 
+/**
+ * 充值
+ * @param id
+ * @param amount
+ * @param alipay
+ * @returns {*}
+ */
 User.recharge = function(id, amount, alipay) {
     var defer = q.defer();
     var date = moment().format('YYYY-MM-DD HH:mm:ss');
@@ -154,6 +185,11 @@ User.recharge = function(id, amount, alipay) {
     return defer.promise;
 };
 
+/**
+ * 充值记录
+ * @param id
+ * @returns {*}
+ */
 User.getRechargeList = function (id) {
     var defer = q.defer();
     var list;
@@ -165,6 +201,13 @@ User.getRechargeList = function (id) {
     return defer.promise;
 };
 
+/**
+ * 添加退款记录
+ * @param id
+ * @param amount
+ * @param alipay
+ * @returns {*}
+ */
 User.refund = function(id, amount, alipay) {
     var defer = q.defer();
     var date = moment().format('YYYY-MM-DD HH:mm:ss');
@@ -178,7 +221,12 @@ User.refund = function(id, amount, alipay) {
     return defer.promise;
 };
 
-// 检查能否扣款并扣款
+/**
+ * 检查能否退款,并扣款
+ * @param id
+ * @param amount
+ * @returns {*}
+ */
 User.refund.authenticate = function(id, amount) {
     var defer = q.defer();
     advertiserRef.child(id).once("value", function(snapshot) {
@@ -199,6 +247,11 @@ User.refund.authenticate = function(id, amount) {
     return defer.promise;
 };
 
+/**
+ * 获取退款记录
+ * @param id
+ * @returns {*}
+ */
 User.getRefundList = function (id) {
     var defer = q.defer();
     var list;
@@ -210,6 +263,11 @@ User.getRefundList = function (id) {
     return defer.promise;
 };
 
+/**
+ * 获取消息列表
+ * @param id
+ * @returns {*}
+ */
 User.getMessages = function (id) {
     var defer = q.defer();
     var list;
@@ -221,6 +279,11 @@ User.getMessages = function (id) {
     return defer.promise;
 };
 
+/**
+ * 验证帐户
+ * @param data
+ * @returns {*}
+ */
 User.checkAccount = function (data) {
     var defer = q.defer();
     var check;

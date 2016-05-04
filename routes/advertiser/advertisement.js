@@ -16,7 +16,11 @@ function Advertisement(obj) {
   	}
 }
 
-// 获取所有已发布广告
+/**
+ * 获取所有广告
+ * @param id
+ * @returns {*}
+ */
 Advertisement.getAllAdvertisement = function(id) {
 	var defer = Q.defer();
 	console.log(id);
@@ -26,7 +30,11 @@ Advertisement.getAllAdvertisement = function(id) {
 	return defer.promise;
 };
 
-// 获取投放商圈列表
+/**
+ * 获取投放商圈列表
+ * @param city
+ * @returns {*}
+ */
 Advertisement.district = function (city) {
 	var defer = Q.defer();
 	var districts = new Array;
@@ -41,7 +49,11 @@ Advertisement.district = function (city) {
 	return defer.promise;
 };
 
-// 发布广告
+/**
+ * 发布广告
+ * @param id
+ * @param callback
+ */
 Advertisement.releaseNewAdvert = function (id, callback) {
 	// 判断广告是否存在
 	thereIsAdvertisement(id)
@@ -77,7 +89,10 @@ function checkAdvertiser(advertiserId) {
 
 /**
  * 检查广告是否存在
+ * @param advertiserId
+ * @returns {*|promise}
  */
+
 function thereIsAdvertisement(advertiserId) {
 	var deferred = Q.defer();
 	advertisementRef.child(advertiserId).once('value', function (snapshot) {
@@ -86,6 +101,13 @@ function thereIsAdvertisement(advertiserId) {
 	
 	return deferred.promise;
 }
+
+/**
+ * 保存广告草稿
+ * @param id
+ * @param data
+ * @param callback
+ */
 
 Advertisement.saveAdvert = function (id, data, callback) {
 	var newPush = advertisementRef.push({
@@ -101,6 +123,14 @@ Advertisement.saveAdvert = function (id, data, callback) {
 		callback(err,newPush.key());
 	});
 };
+
+/**
+ * 广告下架
+ * @param id
+ * @param adId
+ * @param callback
+ * @returns {*}
+ */
 
 Advertisement.removeAdvertById = function (id, adId, callback) {
 	var defer = Q.defer();
@@ -123,6 +153,11 @@ Advertisement.removeAdvertById = function (id, adId, callback) {
 	return defer.promise;
 };
 
+/**
+ * 根据id读取广告
+ * @param id
+ * @returns {*}
+ */
 Advertisement.getAdvertById = function (id) {
 	var defer = Q.defer();
 	advertisementRef.child(id).on("value", function (snapshot) {
@@ -130,6 +165,12 @@ Advertisement.getAdvertById = function (id) {
 	});
 	return defer.promise;
 };
+
+/**
+ * 播放一次广告
+ * @param id
+ * @returns {*}
+ */
 
 Advertisement.broadcastOnce = function (id) {
 	var defer = Q.defer();
