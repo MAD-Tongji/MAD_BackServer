@@ -47,6 +47,12 @@ router.post('/advert/filter',advert.setFilter);
 /* user modify detail info */
 router.post('/account/modify',user.modifyInfo);
 
+/* user account detail info */
+router.get('/account/:userId',user.accountInfo);
+
+/* user draw money */
+router.post('/account/withdraw',user.drawMoney);
+
 /* user send validation */
 router.post('/sendValidate',access.sendValidate);
 
