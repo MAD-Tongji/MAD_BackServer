@@ -18,7 +18,7 @@
     ```
     $ nodemon    //使用nodemon启动服务器
     ```
-    访问http://localhost:3000/
+    服务器URL：http://localhost:4000/
 
 5. 接口测试
     ```
