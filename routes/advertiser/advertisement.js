@@ -7,6 +7,8 @@ var Q = require('q');
 var wilddog = require('wilddog');
 var advertisementRef = new wilddog('https://wild-boar-00060.wilddogio.com/advertisment');
 var cityRef = new wilddog('https://wild-boar-00060.wilddogio.com/AdsInCitys');
+var advertiserRef = new wilddog('https://wild-boar-00060.wilddogio.com/advertiser');
+var adminRef = new wilddog('https://wild-boar-00060.wilddogio.com/administrator');
 
 module.exports = Advertisement;
 
@@ -104,21 +106,26 @@ function thereIsAdvertisement(advertiserId) {
 
 /**
  * 保存广告草稿
- * @param id
- * @param data
- * @param callback
+ * @param id       用户id
+ * @param data     提交数据
+ * @param callback 返回内容
  */
 
 Advertisement.saveAdvert = function (id, data, callback) {
+	// 创建一个新的广告节点
 	var newPush = advertisementRef.push({
-		"advertiser": id,
-		"title": data.title,//广告标题
-		"content": data.content,//广告内容
-		"catalog": data.catalog,//广告类别
-		"broadcastLocation": data.broadcastLocation,//投放地点商圈名
-		"startDate": data.startDate, //广告开始投放日期
-		"endDate": data.endDate, //广告停止投放日期
-		"status": "010" //保存为草稿
+		advertiser: id,
+		title: data.title,//广告标题
+		content: data.content,//广告内容
+		catalog: data.catalog,//广告类别
+		broadcastLocation: data.broadcastLocation,//投放地点商圈名
+		startDate: data.startDate, //广告开始投放日期
+		endDate: data.endDate, //广告停止投放日期
+		status: "010", //保存为草稿
+		broadcastTimes: 0,  //播放次数
+		createTime: moment().format('YYYY-MM-DD HH:mm:ss'), //创建时间
+		city: data.city, //所在城市
+		price: data.price  //价格
 	},function(err){
 		callback(err,newPush.key());
 	});

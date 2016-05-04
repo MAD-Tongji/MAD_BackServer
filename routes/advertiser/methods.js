@@ -30,7 +30,7 @@ exports.login = function(req, res, next) {
 };
 
 // 邮箱注册验证
-exports.check = function (req, res, nect) {
+exports.check = function (req, res, next) {
     var id = Token.token2id(req.query.token);
     console.log('id:' + id);
     if (id !== null) {
@@ -180,6 +180,9 @@ exports.saveAdvert = function (req,res,next) {
     if (id != null) {
         Advert.saveAdvert(id, data, function (err,key) {
             if (err == null) {
+                // 广告映射
+                User.saveAdvert("advertiser", id, key);
+                // 返回值
                 res.json({
                     errCode: 0,
                     id: key

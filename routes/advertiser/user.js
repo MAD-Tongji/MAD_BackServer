@@ -7,6 +7,7 @@ var Q = require('q');
 var wilddog = require('wilddog');
 var Token = require('../../lib/publicUtils');
 var advertiserRef = new wilddog('https://wild-boar-00060.wilddogio.com/advertiser');
+var adminRef = new wilddog('https://wild-boar-00060.wilddogio.com/administrator');
 var q = require('q');
 var moment = require('moment');
 
@@ -292,4 +293,50 @@ User.checkAccount = function (data) {
     });
     defer.resolve();
     return defer.promise;
+};
+
+/**
+ * 用户保存草稿时,添加映射
+ * @param userType
+ * @param userId
+ * @param advertId
+ */
+User.saveAdvert = function (userType, userId, advertId) {
+    // 在用户的表里添加映射
+    if (userType === "advertiser") {
+        var advertiser = advertiserRef.child(userId);
+        advertiser.once("value", function (snapshot) {
+            // 如果节点不存在则添加节点
+            if(!snapshot.child("advertisement").exists()) {
+                advertiser.update({
+                    advertisement: {
+                        0: {
+                            id: advertId
+                        }
+                    }
+                });
+            } else {
+                // 添加id映射
+                advertiser.child("advertisement").push({
+                    id: advertId
+                });
+            }
+        })
+    } else if (userType === "admin") {
+        var admin = adminRef.child(userId);
+        admin.once("value", function (snapshot) {
+            // 如果节点不存在则添加节点
+            if(!snapshot.child("advertisement").exists()) {
+                advertiser.update({
+                    advertisement: null
+                });
+            }
+            // 添加id映射
+            advertiser.child("advertisement").push({
+                id: advertId
+            });
+        })
+    } else {
+        console.log("用户类型不存在");
+    }
 };
