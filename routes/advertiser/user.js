@@ -97,7 +97,7 @@ User.createNewAdvertiser = function (info, callback) {
             console.log(err);
             
             var targetEmail = formatEmail(info.email);
-            var registerDate = moment().format('YYYY-MM-DD HH:mm:ss')
+            var registerDate = moment().format('YYYY-MM-DD HH:mm:ss');
             console.log(registerDate);
             
             advertiserRef.child(targetEmail).set({
