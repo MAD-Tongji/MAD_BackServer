@@ -4,6 +4,7 @@ var publicUtils = require('../../lib/publicUtils');
 var ref = new Wilddog("https://wild-boar-00060.wilddogio.com/");
 var AdvertismentRef = ref.child("advertisment");
 var AdvertiserRef = ref.child("advertiser");
+var Message = require('./messages');
 
 
 module.exports = Advertisment;
@@ -118,39 +119,24 @@ Advertisment.audit = function(data){
 Advertisment.remove = function(data){
 	var deferred = Q.defer();
 	var AdsRef = AdvertismentRef.child(data.id);
-	AdsRef.update({"status":"101"},function(err){
-			deferred.resolve(err);
-		});
+	var Advertiser;
 	AdsRef.child('advertiser').once('value', function(snapshot){
-	if(snapshot.val() == "admin"){
-		return deferred.promise
-	}else{
-		var advertiserName = snapshot.val();
-		//console.log(advertiserName);
-		AdvertiserRef.child(advertiserName).once('value', function(snapshot1){
-
-		if(snapshot1.hasChild('message')){
-			var msg = AdvertiserRef.child(advertiserName).child('message');
-			msg.push({
-				"content": data.reason,
-				"date":  getNowFormatDate(),
-			})
-		}else{
-			var msg = AdvertiserRef.child(advertiserName);
-			msg.update({
-				"message":"messageid"
-			},function(err){
-				msg.child('message').push({
-				"content": data.reason,
-				"date":  getNowFormatDate(),
+	Advertiser = snapshot.val();
+});
+	AdsRef.update({"status":"101"},function(err){
+		if(!err){
+			if(Advertiser){
+				var content = "您的广告" + data.id + "被下架了，原因是：" + data.reason;
+			Message.sendMessage(Advertiser,2,content,function(err){
+				deferred.resolve(err);
 			});
-
-			})
+		}else{
+			deferred.resolve("Wrong Advertiser Id.");
 		}
-})
-		return deferred.promise;
-	}
-})
+		}else{
+			deferred.resolve(err);
+		}
+		});
 	return deferred.promise;
 }
 

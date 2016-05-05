@@ -3,6 +3,9 @@ var Wilddog = require('wilddog');
 var publicUtils = require('../../lib/publicUtils');
 var ref = new Wilddog("https://wild-boar-00060.wilddogio.com/");
 var applyRef = ref.child("apply");
+var User = require('./user');
+var AdvertiserRef = ref.child("advertiser");
+var UserRef = ref.child("user");
 
 module.exports = Account;
 function Account(obj) {
@@ -63,10 +66,47 @@ Account.applyList = function(data){
 
 //完成申请
 Account.complete = function(data){
-	var deferred = Q.defer();
-	//！！！！！！！暂时缺少验证登录密码的模块
-	applyRef.child(data.applyId).update({"status":"11"},function(err){
-		deferred.resolve(err);
-	});
+	var deferred = Q.defer();	
+			if (data.tag == 1) {
+				applyRef.child(data.applyId).update({"status":"11"},function(err){
+					deferred.resolve(err);
+				});
+			}else{
+				applyRef.child(data.applyId).update({"status":"00"},function(err){
+					if(!err){				
+						applyRef.child(data.applyId).once('value', function(snapshot){
+							console.log(snapshot.child("money").val());
+							var money = snapshot.child("money").val();
+							var catalog = snapshot.child("catalog").val();
+							var userid = snapshot.child("userId").val();
+							console.log(catalog);
+							if(catalog == "2"){
+							console.log("222");
+								AdvertiserRef.child(userid).once('value', function(snapshot){
+									var balance = snapshot.child("balance").val();
+									var newBalance = balance + money;
+									AdvertiserRef.child(userid).update({"balance": newBalance}, function(err){
+									//deferred.resolve(err);
+								});
+							});	
+						}
+							else if(catalog == "3"){
+								console.log("333");
+								var balance;
+								UserRef.child(userid).once('value', function(snapshot){
+									balance = snapshot.child("balance").val();
+									var newBalance = balance + money;
+									UserRef.child(userid).update({"balance": newBalance}, function(err){
+									//deferred.resolve(err);
+								});
+							});							
+						}
+					});					
+				}
+					deferred.resolve(err);
+				});
+			}
+		
+	
 	return deferred.promise;
 }

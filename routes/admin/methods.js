@@ -5,7 +5,7 @@ var Account = require('./account');
 var List = require('./list');
 var Token = require('../../lib/publicUtils');
 
-//*********** ashun: ads api****************
+//*********** ashun: start ****************
 exports.submit = function(req, res, next){
     var data = req.body;
     if(Token.token2id(data.token) == null){
@@ -92,7 +92,9 @@ exports.remove = function(req, res, next){
             errCode: 0
         });
     }else{
-
+        res.json({
+            errCode: data
+        });
     }
     });
 }
@@ -177,17 +179,40 @@ exports.complete = function(req, res, next){
             errCode: 101
         })
     }else{
-        Account.complete(data).done(function(data){
+    if (data.operatorEmail && data.operatorPassword) {
+        User.authenticate(data.operatorEmail, data.operatorPassword, function(err, user){
+            if (err) return next(err);
+            if (user) {
+            console.log(user.id);
+            Account.complete(data).done(function(data){
             if(!data){
                 res.json({
                     errCode: 0,
                 });
             }else{
                 res.json({
-                    errCode: 999
+                    errCode: data
                 })
             }
         });
+                
+            } else {
+                res.json({
+                    errCode: 102 //用户名或密码不正确
+                });
+            }
+        })
+    } else {
+        res.json({
+            errCode: 108  //参数不正确
+        })
+    }
+
+
+
+
+
+     
     
 }
 
