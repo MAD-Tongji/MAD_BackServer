@@ -9,12 +9,22 @@ var Message = require('./messages');
 
 module.exports = User;
 
+/**
+ * 面向对象编程，此类主要针对管理员
+ */
+
+/**
+ * 构造函数
+ */
 function User(obj) {
   	for (var key in obj) {
     	this[key] = obj[key];
   	}
 }
 
+/**
+ * 新建管理员对象，并发送通知
+ */
 User.prototype.save = function(fn){
   	var user = this;
     var newPush = adminRef.push({
@@ -36,6 +46,7 @@ User.prototype.save = function(fn){
             pass: hashPass
         }, function(err) {
             if (err) fn(err);
+            /* 发送通知 */
             var tag = 3;
             var reason = "您被任命为系统管理员!"
             Message.sendMessage(id, tag, reason, function(err) {
@@ -46,6 +57,9 @@ User.prototype.save = function(fn){
     })
 }
 
+/**
+ * 管理员密码加密
+ */
 User.prototype.hashPassword = function(pass, fn){
   	var hash = crypto.createHash('sha256')
 		.update(pass)
@@ -53,6 +67,9 @@ User.prototype.hashPassword = function(pass, fn){
   	fn(null, hash);
 }
 
+/**
+ * 根据管理员用户名获取id
+ */
 User.getId = function(name){
     var deferred = Q.defer();
     adminRef.on("child_added", function(shapshot) {
@@ -66,6 +83,9 @@ User.getId = function(name){
     return deferred.promise;
 }
 
+/**
+ * 根据id获取管理员用户名、密码
+ */
 User.getUser = function(id) {
     var deferred = Q.defer();
     var user = new User();
@@ -74,11 +94,13 @@ User.getUser = function(id) {
         user.pass = shapshot.val().pass;
         user.id = shapshot.val().id;
         deferred.resolve(user);
-        console.log(user);
     })
     return deferred.promise;
 }
 
+/**
+ * 获取所有管理员用户的id
+ */
 User.getAllId = function() {
 	var deferred = Q.defer();
     var ids = [];
@@ -90,6 +112,9 @@ User.getAllId = function() {
     return deferred.promise;
 }
 
+/**
+ * 根据id获取管理员用户详细信息
+ */
 User.get = function(id){
   	var deferred = Q.defer();
     var user = new User();
@@ -105,6 +130,9 @@ User.get = function(id){
     return deferred.promise;
 }
 
+/**
+ * 管理员用户登录认证
+ */
 User.authenticate = function(name, pass, fn) {
 	User.getId(name)
 	.done(function(data, err) {
@@ -123,6 +151,9 @@ User.authenticate = function(name, pass, fn) {
 	})
 }
 
+/**
+ * 管理员用户id是否存在
+ */
 User.getById = function(userId) {
     var deferred = Q.defer();
     adminRef.on("child_added", function(shapshot) {
@@ -136,6 +167,9 @@ User.getById = function(userId) {
     return deferred.promise;
 }
 
+/**
+ * 修改管理员用户权限
+ */
 User.updateLevel = function(id, level, fn) {
     adminRef.child(id).update({
         level: level
@@ -150,6 +184,9 @@ User.updateLevel = function(id, level, fn) {
     })
 }
 
+/**
+ * 管理员用户修改个人信息
+ */
 User.updateInfo = function(id, email, password, fn) {
 	var hash = crypto.createHash('sha256')
 		.update(password)
@@ -168,6 +205,9 @@ User.updateInfo = function(id, email, password, fn) {
     })
 }
 
+/**
+ * 用户对象Object->JSON
+ */
 User.prototype.toJSON = function() {
 	return {
 		id: this.id,

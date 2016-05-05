@@ -8,12 +8,18 @@ var Message = require('./messages');
 
 module.exports = List;
 
+/**
+ * 列表类构造函数
+ */
 function List(obj) {
   	for (var key in obj) {
     	this[key] = obj[key];
   	}
 }
 
+/**
+ * 获取全部车主用户id
+ */
 List.getUserIds = function() {
 	var deferred = Q.defer();
     var ids = [];
@@ -25,6 +31,9 @@ List.getUserIds = function() {
     return deferred.promise;
 }
 
+/**
+ * 根据[id]获取全部车主信息
+ */
 List.getCarUserList = function(ids) {
 	var deferred = Q.defer();
     var listArr = [];
@@ -42,6 +51,9 @@ List.getCarUserList = function(ids) {
     return deferred.promise;
 }
 
+/**
+ * 根据id获取对应车主信息
+ */
 List.getCarUser = function(id) {
 	var deferred = Q.defer();
     var list = new List();
@@ -60,6 +72,9 @@ List.getCarUser = function(id) {
     return deferred.promise;
 }
 
+/**
+ * 获取全部广告商用户id
+ */
 List.getAdvertiserIds = function() {
 	var deferred = Q.defer();
     var ids = [];
@@ -71,6 +86,9 @@ List.getAdvertiserIds = function() {
     return deferred.promise;
 }
 
+/**
+ * 获取全部广告商用户信息
+ */
 List.getAdvertiserList = function(ids) {
 	var deferred = Q.defer();
     var listArr = [];
@@ -88,6 +106,9 @@ List.getAdvertiserList = function(ids) {
     return deferred.promise;
 }
 
+/**
+ * 根据id获取广告商全部信息
+ */
 List.getAdvertiser = function(id) {
 	var deferred = Q.defer();
     var list = new List();
@@ -106,6 +127,9 @@ List.getAdvertiser = function(id) {
     return deferred.promise;
 }
 
+/**
+ * 获取首页数据
+ */
 List.getHomeData = function() {
 	var deferred = Q.defer();
 	var backendStatistics = new Object();
@@ -144,6 +168,9 @@ List.getHomeData = function() {
 	return deferred.promise;
 }
 
+/**
+ * 获取7天广告详情
+ */
 List.getAdvert_detail7 = function(ids) {
 	var deferred = Q.defer();
     var listArr = [];
@@ -161,6 +188,9 @@ List.getAdvert_detail7 = function(ids) {
     return deferred.promise;
 }
 
+/**
+ * 广告详情Object->JSON
+ */
 List.toDetailJSON = function (data) {
     return {
         date: data.date,
@@ -169,6 +199,9 @@ List.toDetailJSON = function (data) {
     }
 }
 
+/**
+ * 根据id获取广告详情
+ */
 List.getAdvert_detail = function(id){
   	var deferred = Q.defer();
     var advert_detail = new Object();
@@ -182,6 +215,9 @@ List.getAdvert_detail = function(id){
     return deferred.promise;
 }
 
+/**
+ * 获取全部广告id
+ */
 List.getAdvertismentById = function(ids) {
 	var deferred = Q.defer();
     var listArr = [];
@@ -199,6 +235,9 @@ List.getAdvertismentById = function(ids) {
     return deferred.promise;
 }
 
+/**
+ * Obejct->JSON
+ */
 List.toAdJson = function (data) {
     return {
         advert_id: data.advert_id,
@@ -207,6 +246,9 @@ List.toAdJson = function (data) {
     }
 }
 
+/**
+ * 根据id获取投放最多的广告
+ */
 List.getAdvertisment = function(id) {
 	var deferred = Q.defer();
     var advertisment = new Object();
@@ -224,6 +266,9 @@ List.getAdvertisment = function(id) {
     return deferred.promise;
 }
 
+/**
+ * 获取全部id
+ */
 List.getAllId = function(relativeRef, childRef) {
 	var deferred = Q.defer();
 	var ids = [];
@@ -235,7 +280,9 @@ List.getAllId = function(relativeRef, childRef) {
 	});
 	return deferred.promise;
 }
-
+/**
+ * Onject->JSON
+ */
 List.prototype.toJSON = function() {
 	return {
 		id: this.id,
@@ -245,6 +292,9 @@ List.prototype.toJSON = function() {
 	}
 }
 
+/**
+ * 获取最近7周APP下载量
+ */
 List.getDownloadCount = function() {
     var deferred = Q.defer();
     var downloadCount = new Object();
@@ -263,6 +313,9 @@ List.getDownloadCount = function() {
     return deferred.promise;
 }
 
+/**
+ * Object->JSON
+ */
 List.toDownloadJSON = function (data) {
     return {
         week1: data.week1,
@@ -275,6 +328,9 @@ List.toDownloadJSON = function (data) {
     }
 }
 
+/**
+ * 根据id获取广告商信息
+ */
 List.getAdvertiserById = function(id) {
 	var deferred = Q.defer();
 	var userDetail = new Object();
@@ -294,6 +350,9 @@ List.getAdvertiserById = function(id) {
 	return deferred.promise;
 }
 
+/**
+ * 根据id获取广告商基本信息
+ */
 List.getAdvertiserDetail = function(id) {
 	var deferred = Q.defer();
 	var detail = new Object();
@@ -319,6 +378,9 @@ List.getAdvertiserDetail = function(id) {
     return deferred.promise;
 }
 
+/**
+ * 根据id获取广告商法人信息
+ */
 List.getAdvertiserLegalPerson = function(id) {
     var deferred = Q.defer();
     var legalPerson = new Object();
@@ -336,6 +398,9 @@ List.getAdvertiserLegalPerson = function(id) {
     return deferred.promise;
 }
 
+/**
+ * 根据id获取车主信息
+ */
 List.getUserById = function(id) {
   var deferred = Q.defer();
   var userDetail = new Object();
@@ -344,7 +409,7 @@ List.getUserById = function(id) {
     var data = shapshot.val();
     userDetail.name = data.name;
     userDetail.id = id;
-    userDetail.location = data.location;  //数据库缺字段
+    userDetail.location = data.location;  //数据库缺字段!!!
     userDetail.mobilePhone = data.mobilePhone;
     List.getUserDetail(id)
     .done(function(data) {
@@ -356,6 +421,9 @@ List.getUserById = function(id) {
   return deferred.promise;
 }
 
+/**
+ * 车主基本信息
+ */
 List.getUserDetail = function(id) {
   var deferred = Q.defer();
   var detail = new Object();
@@ -369,6 +437,9 @@ List.getUserDetail = function(id) {
   return deferred.promise;
 }
 
+/**
+ * 审核用户
+ */
 List.userVerify = function(childRef, id, tag, success, reason) {
     var deferred = Q.defer();
     var statusMap = [false, true];
@@ -390,6 +461,9 @@ List.userVerify = function(childRef, id, tag, success, reason) {
     return deferred.promise;
 }
 
+/**
+ * 数据统计
+ */
 List.getStatistics = function() {
     var deferred = Q.defer();
     var listArr = [];

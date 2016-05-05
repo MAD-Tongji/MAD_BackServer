@@ -16,7 +16,7 @@ function Message(obj) {
  * @param {String} id 用户id
  * @param {String} tag tag= 1 : 车主用户; tag= 2 : 广告商用户; tag= 3 : 后台管理员
  * @param {String} content 消息内容
- * @fn 回调函数
+ * @param {function} fn 回调函数: 处理错误
  */
 Message.sendMessage = function (id, tag, content, fn) {
     var refMap = ['user', 'advertiser', 'administrator'];
