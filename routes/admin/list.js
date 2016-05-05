@@ -382,10 +382,10 @@ List.userVerify = function(childRef, id, tag, success, reason) {
             if (success == 0) reason = "抱歉您的申请没有通过!原因: " + reason;
             if (success == 1) reason = "恭喜您通过审核!";
             Message.sendMessage(id, tag, reason, function(err) {
-                if (err) deferred.reject(err);
+                if (err) deferred.reject(err); 
+                deferred.resolve('0');
             })
         }
-        deferred.resolve('0');
     }
     return deferred.promise;
 }

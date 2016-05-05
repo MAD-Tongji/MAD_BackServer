@@ -5,6 +5,7 @@ var memcached = require('memcached');
 var wilddog = require('wilddog');
 var ref = new wilddog('https://wild-boar-00060.wilddogio.com/');
 var adminRef = ref.child("administrator");
+var Message = require('./messages');
 
 module.exports = User;
 
@@ -35,6 +36,11 @@ User.prototype.save = function(fn){
             pass: hashPass
         }, function(err) {
             if (err) fn(err);
+            var tag = 3;
+            var reason = "您被任命为系统管理员!"
+            Message.sendMessage(id, tag, reason, function(err) {
+                if (err) fn(err);
+            })
         })
         fn(null);
     })
@@ -135,6 +141,11 @@ User.updateLevel = function(id, level, fn) {
         level: level
     }, function(err) {
         if (err) fn(err);
+        var tag = 3;
+        var reason = "您的管理权限已被修改为" + level;
+        Message.sendMessage(id, tag, reason, function(err) {
+            if (err) fn(err);
+        })
         fn(null);
     })
 }
@@ -148,6 +159,11 @@ User.updateInfo = function(id, email, password, fn) {
         pass: hash
     }, function(err) {
         if (err) fn(err);
+        var tag = 3;
+        var reason = "您的个人信息修改成功!";
+        Message.sendMessage(id, tag, reason, function(err) {
+            if (err) fn(err);
+        })
         fn(null);
     })
 }

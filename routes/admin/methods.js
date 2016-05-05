@@ -606,19 +606,20 @@ exports.userVerify = function(req, res, next) {
   authenticate(data.token, function(err, result) {
       if (err) return next(err);
       if (result) {
-        var childRef = null;
-        if (data.tag == 1) {
-          childRef = 'user';
-        } else if (data.tag == 2) {
-          childRef = 'advertiser';
-        }
-        console.log(childRef + ' | ' + data.id + ' | ' + data.success + ' | ' + reason);
-        List.userVerify(childRef, data.id, data.tag, data.success, reason)
-        .done(function(data) {
-          res.json({
-            errCode: data
+        var refMap = ['user', 'advertiser', 'administrator'];
+        if (data.tag > 0 && (data.tag <= refMap.length)) {
+        //   console.log(refMap[data.tag - 1] + ' | ' + data.id + ' | ' + data.success + ' | ' + reason);
+          List.userVerify(refMap[data.tag - 1], data.id, data.tag, data.success, reason)
+          .done(function(data) {
+            res.json({
+              errCode: data
+            })
           })
-        })
+        } else {
+            res.json({
+                errCode: 108
+            })
+        }
       } else {
           res.json({
               errCode: 101 //令牌不存在或已经过期
