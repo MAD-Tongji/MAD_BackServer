@@ -7,8 +7,6 @@ var Q = require('q');
 var wilddog = require('wilddog');
 var advertisementRef = new wilddog('https://wild-boar-00060.wilddogio.com/advertisment');
 var cityRef = new wilddog('https://wild-boar-00060.wilddogio.com/AdsInCitys');
-var advertiserRef = new wilddog('https://wild-boar-00060.wilddogio.com/advertiser');
-var adminRef = new wilddog('https://wild-boar-00060.wilddogio.com/administrator');
 
 module.exports = Advertisement;
 

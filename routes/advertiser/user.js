@@ -172,18 +172,17 @@ User.getAccountDetail = function(id) {
  * @param alipay
  * @returns {*}
  */
-User.recharge = function(id, amount, alipay) {
-    var defer = q.defer();
+User.recharge = function(id, amount, alipay, callback) {
     var date = moment().format('YYYY-MM-DD HH:mm:ss');
     console.log(date);
-    advertiserRef.child(id).child("recharge").push({
+    var newApply = advertiserRef.child(id).child("recharge").push({
         account: alipay,
         amount: amount,
         status: false, // false为到帐中,true为已到账
         time: date
+    },function(err){
+        callback(err,newApply.key());
     });
-    defer.resolve();
-    return defer.promise;
 };
 
 /**
@@ -209,17 +208,16 @@ User.getRechargeList = function (id) {
  * @param alipay
  * @returns {*}
  */
-User.refund = function(id, amount, alipay) {
-    var defer = q.defer();
+User.refund = function(id, amount, alipay, callback) {
     var date = moment().format('YYYY-MM-DD HH:mm:ss');
-    advertiserRef.child(id).child('refund').push({
+    var newApply = advertiserRef.child(id).child('refund').push({
         account: alipay,
         amount: amount,
         status: false, // false为审核中,true为已退款
         time: date
+    },function(err){
+        callback(err,newApply.key());
     });
-    defer.resolve();
-    return defer.promise;
 };
 
 /**

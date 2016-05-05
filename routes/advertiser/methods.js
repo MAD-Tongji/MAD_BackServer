@@ -2,7 +2,8 @@ var Q = require('q');
 var User = require('./user');
 var Email = require('./email');
 var ExternalAdvert = require('./../admin/advertisment');
-var Advert = require('./advertisement')
+var Advert = require('./advertisement');
+var Apply = require('./apply');
 var Token = require('../../lib/publicUtils');
 
 
@@ -61,7 +62,7 @@ exports.signup = function(req, res, next) {
                 name: data.username,
                 targetMail: data.email,
                 checkUrl: checkUrl
-            }
+            };
             
             Email.sendEmail(newUser, function (response) {
                 console.log(response);
@@ -310,13 +311,17 @@ exports.recharge = function (req,res,next) {
 
     var id = Token.token2id(data.token);
     if (id != null) {
-        User.recharge(id, data.recharge, data.Alipay)
-            .done(function (data) {
-                console.log(data);
-                res.json({
-                    errCode: 0
-                })
-            })
+        User.recharge(id, data.recharge, data.Alipay, function (err, key) {
+            if (err == null) {
+                Apply.createApplyById(key, id, "recharge")
+                    .done(function (data) {
+                        console.log(data);
+                        res.json({
+                            errCode: 0
+                        });
+                    });
+            }
+        });
     } else {
         res.json({
             errCode: 101
@@ -367,13 +372,17 @@ exports.refund = function (req,res,next) {
     if (id != null) {
         User.refund.authenticate(id, data.refund)
             .then(function (result) { //resolve
-                User.refund(id, data.refund, data.Alipay)
-                    .done(function (data) {
-                        console.log(data);
-                        res.json({
-                            errCode: 0
-                        })
-                    })
+                User.refund(id, data.refund, data.Alipay, function (err, key) {
+                    if (err == null) {
+                        Apply.createApplyById(key, id, "refund")
+                            .done(function (data) {
+                                console.log(data);
+                                res.json({
+                                    errCode: 0
+                                });
+                            });
+                    }
+                });
             }, function (error) { //reject
                 res.json({
                     errCode: 304 // 退款金额大于余额
