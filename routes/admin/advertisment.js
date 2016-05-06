@@ -101,14 +101,25 @@ Advertisment.listAll = function (data){
 Advertisment.audit = function(data){
 	var deferred = Q.defer();
 	var AdsRef = AdvertismentRef.child(data.id);
-
+	var Advertiser;
+	AdsRef.child('advertiser').once('value', function(snapshot){
+	Advertiser = snapshot.val();
+});
 	if(parseInt(data.success) == parseInt(0)){
 		AdsRef.update({"status":"000"},function(err){
+			var content = "您的广告" + data.id + "未通过审核";
+			Message.sendMessage(Advertiser,2,content,function(err){
+				deferred.resolve(err);
+			});
 			deferred.resolve(err);
 		});
 	}
 	else if(parseInt(data.success) == parseInt(1)){
 		AdsRef.update({"status":"001"},function(err){
+			var content = "您的广告" + data.id + "已通过审核";
+			Message.sendMessage(Advertiser,2,content,function(err){
+				deferred.resolve(err);
+			})
 			deferred.resolve(err);
 		});
 	}
@@ -127,7 +138,7 @@ Advertisment.remove = function(data){
 		if(!err){
 			if(Advertiser){
 				var content = "您的广告" + data.id + "被下架了，原因是：" + data.reason;
-			Message.sendMessage(Advertiser,2,content,function(err){
+				Message.sendMessage(Advertiser,2,content,function(err){
 				deferred.resolve(err);
 			});
 		}else{
