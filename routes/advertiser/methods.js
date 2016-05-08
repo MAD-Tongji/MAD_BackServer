@@ -5,7 +5,30 @@ var ExternalAdvert = require('./../admin/advertisment');
 var Advert = require('./advertisement');
 var Apply = require('./apply');
 var Token = require('../../lib/publicUtils');
+var qcloud = require('qcloud_cos');     //腾讯云
+qcloud.conf.setAppInfo('10035512','AKIDs7AklOniibC7X0shwTGBhLX5cVpZ5ql1','6oUOZwEh3DouaghoSZEWQcKsdDDRCUId'); 
 
+// 设置腾讯云，图片上传接口
+exports.uploadPic = function (req, res, next) {
+    // 先把req中的数据存到服务器上
+    
+    // 服务器上存好了图片开始上传
+    var expired = parseInt(Date.now() / 1000) + 60*60;
+    var sign  = qcloud.auth.signMore('mad', expired);
+    
+    qcloud.cos.upload('文件在本地的全路径', 'mad', '/', function(ret) {
+        if (0 === ret.code) {
+            console.log('上传成功，url:');
+            console.log(ret.data.access_url);
+            // 上传完成后返回图片URL
+            
+        } else {
+            console.log('上传图片错误');
+            console.log(ret.message);
+            // 上传失败后返回errCode
+        }
+    });
+}
 
 // 广告商登陆
 exports.login = function(req, res, next) {
