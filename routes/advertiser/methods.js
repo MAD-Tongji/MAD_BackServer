@@ -4,10 +4,16 @@ var Email = require('./email');
 var ExternalAdvert = require('./../admin/advertisment');
 var Advert = require('./advertisement');
 var Apply = require('./apply');
+var City = require('./city');
 var Token = require('../../lib/publicUtils');
 
 
-// 广告商登陆
+/**
+ * 广告商登陆
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.login = function(req, res, next) {
     var data = req.body;
     User.authenticate(data.email, data.password, function(err, user){
@@ -30,7 +36,12 @@ exports.login = function(req, res, next) {
     });
 };
 
-// 邮箱注册验证
+/**
+ * 邮箱注册验证
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.check = function (req, res, next) {
     var id = Token.token2id(req.query.token);
     console.log('id:' + id);
@@ -47,7 +58,12 @@ exports.check = function (req, res, next) {
     }
 }
 
-// 广告商注册
+/**
+ * 广告商注册
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.signup = function(req, res, next) {
     var data = req.body;
     console.log(data);
@@ -79,7 +95,12 @@ exports.signup = function(req, res, next) {
     });
 };
 
-// 获取已发布广告
+/**
+ * 获取已发布广告
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.getAdvertisement = function (req, res, next) {
     var token = req.query.token;
     if (!token) {
@@ -107,7 +128,12 @@ exports.getAdvertisement = function (req, res, next) {
     
 };
 
-// 获取广告商圈
+/**
+ * 获取广告商圈
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.getDistrict = function (req, res, next) {
     var token = req.query.token;
     var city = req.query.city;
@@ -135,7 +161,12 @@ exports.getDistrict = function (req, res, next) {
     }
 };
 
-//发布广告
+/**
+ * 发布广告
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.submitAdvert = function (req,res,next) {
     var data = req.query;
     console.log(data);
@@ -166,7 +197,12 @@ exports.submitAdvert = function (req,res,next) {
     }
 };
 
-//保存草稿
+/**
+ * 保存草稿
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.saveAdvert = function (req,res,next) {
     var data = req.body;
     console.log(data);
@@ -182,7 +218,12 @@ exports.saveAdvert = function (req,res,next) {
         Advert.saveAdvert(id, data, function (err,key) {
             if (err == null) {
                 // 广告映射
-                User.saveAdvert("advertiser", id, key);
+                //User.saveAdvert("advertiser", id, key);
+                // 行政区映射
+                var locations = data.broadcastLocation;
+                locations.forEach(function (location) {
+                    City.addAdvertMapping(key, data.city, location, data.catalog);
+                });
                 // 返回值
                 res.json({
                     errCode: 0,
@@ -202,7 +243,12 @@ exports.saveAdvert = function (req,res,next) {
     }
 };
 
-//广告下架
+/**
+ * 广告下架
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.removeAdvertById = function (req,res,next) {
     var data = req.body;
     console.log(data);
@@ -235,7 +281,11 @@ exports.removeAdvertById = function (req,res,next) {
     }
 };
 
-//用id取广告内容
+/**
+ * 用id取广告内容
+ * @param req
+ * @param res
+ */
 exports.getAdvertById = function (req,res) {
     var token = req.query.token;
 
@@ -270,7 +320,12 @@ exports.getAdvertById = function (req,res) {
     }
 };
 
-//广告商账户信息
+/**
+ * 广告商账户信息
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.accountDetail = function (req,res,next) {
     var token = req.query.token;
 
@@ -298,7 +353,12 @@ exports.accountDetail = function (req,res,next) {
     }
 };
 
-//充值
+/**
+ * 充值
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.recharge = function (req,res,next) {
     var data = req.body;
 
@@ -329,7 +389,12 @@ exports.recharge = function (req,res,next) {
     }
 };
 
-//充值记录
+/**
+ * 充值记录
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.rechargeList = function (req,res,next) {
     var token = req.query.token;
     if (!token) {
@@ -356,7 +421,12 @@ exports.rechargeList = function (req,res,next) {
     }
 };
 
-// 退款
+/**
+ * 退款
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.refund = function (req,res,next) {
     var data = req.body;
     console.log(data);
@@ -395,7 +465,12 @@ exports.refund = function (req,res,next) {
     }
 };
 
-//退款记录
+/**
+ * 退款记录
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.refundList = function (req,res,next) {
     var token = req.query.token;
     if (!token) {
@@ -422,7 +497,12 @@ exports.refundList = function (req,res,next) {
     }
 };
 
-//获取消息记录
+/**
+ * 获取消息记录
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.messageList = function (req,res,next) {
     var token = req.query.token;
     if (!token) {
@@ -449,7 +529,12 @@ exports.messageList = function (req,res,next) {
     }
 };
 
-//提交验证信息
+/**
+ * 提交验证信息
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.checkAccount = function (req,res,next) {
     var data = req.body;
 
