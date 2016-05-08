@@ -6,6 +6,7 @@ var wilddog = require('wilddog');
 var ref = new wilddog('https://wild-boar-00060.wilddogio.com/');
 var adminRef = ref.child("administrator");
 var Message = require('./messages');
+var moment = require('moment');
 
 module.exports = User;
 
@@ -33,7 +34,7 @@ User.prototype.save = function(fn){
         pass: user.pass,
         gender: user.gender,
         level: user.level,
-        hireDate: user.hireDate
+        hireDate: moment(user.hireDate).format('YYYY-MM-DD HH:mm:ss')
     }, function(err) {
         if (err) fn(err);
     })
@@ -124,7 +125,7 @@ User.get = function(id){
         user.gender = shapshot.val().gender;
         user.email = shapshot.val().email;
         user.level = shapshot.val().level;
-        user.hireDate = shapshot.val().shapshot;
+        user.hireDate = shapshot.val().hireDate;
     })
     deferred.resolve(user);
     return deferred.promise;
