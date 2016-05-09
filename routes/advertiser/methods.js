@@ -410,7 +410,7 @@ exports.rechargeList = function (req,res,next) {
         // 获取内容并处理
         User.getRechargeList(id)
             .done(function(data) {
-]               res.json({
+                res.json({
                     errCode: 0,
                     rechargeHistory: data
                 });
