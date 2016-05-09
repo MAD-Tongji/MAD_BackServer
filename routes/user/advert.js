@@ -73,9 +73,12 @@ exports.getDetail = getDetail;
  * @description {interface} 设置广告过滤参数
  */
 function setFilter(req,res) {
+    console.log(req.body);
+    console.log(req.params);
     var filterArray = req.body.adValidationSettings;
     var token = req.body.token;
     var userId = utils.token2id(token);
+    console.log(filterArray,token,userId);
     if (userId == null)
     {
         res.json({errCode:101});
@@ -116,6 +119,7 @@ function setFilter(req,res) {
                         result.errCode = 0;
                         // result.filterArray =filterArray;
                         res.json(result);
+                        
                     }
                 });
             }

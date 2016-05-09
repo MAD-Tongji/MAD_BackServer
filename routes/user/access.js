@@ -186,10 +186,12 @@ exports.alterpwd=function(req,res) {
  * @description {interface} 获取消息列表
  */
 exports.msglist=function(req,res) {
+    console.log(req.query,req.params);
     var userId=req.params.userid;
-    var token=req.body.token;
+    var token=req.query.token;
     var result={};
-    console.log(userId);
+    console.log(token+'3');
+    
     if(userId==null||token==null){
         result.errCode=100;
         res.json(result);
