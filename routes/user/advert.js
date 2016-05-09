@@ -75,7 +75,7 @@ exports.getDetail = getDetail;
 function setFilter(req,res) {
     console.log(req.body);
     console.log(req.params);
-    var filterArray = req.body.adValidationSettings;
+    var filterArray = req.body.adValidationSettings.split(',');
     var token = req.body.token;
     var userId = utils.token2id(token);
     console.log(filterArray,token,userId);

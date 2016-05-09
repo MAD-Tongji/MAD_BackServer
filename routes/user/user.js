@@ -229,7 +229,7 @@ exports.accountInfo = accountInfo;
 
 /**
  * @interface
- * @description {interface} 设置广告过滤
+ * @description {interface} 更新用户信息
  */
 function changeInfo(req,res)
 {
