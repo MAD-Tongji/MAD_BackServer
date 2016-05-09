@@ -409,7 +409,12 @@ List.getUserById = function(id) {
     var data = shapshot.val();
     userDetail.name = data.name;
     userDetail.id = id;
-    userDetail.location = data.location;  //数据库缺字段!!!
+    if (data.location) {
+        userDetail.location = data.location;  //数据库缺字段!!!
+    } else {
+        userDetail.location = 'null';
+    }
+    
     userDetail.mobilePhone = data.mobilePhone;
     List.getUserDetail(id)
     .done(function(data) {
@@ -427,7 +432,7 @@ List.getUserById = function(id) {
 List.getUserDetail = function(id) {
   var deferred = Q.defer();
   var detail = new Object();
-  carUserRef.child(id).child("detail", function(shapshot, err) {
+  carUserRef.child(id).child("detail").once("value", function(shapshot, err) {
     if (err) deferred.reject(err);
     var data = shapshot.val();
     detail.vehicleLicenseImage = data.vehicleLicenseImage;
@@ -442,7 +447,7 @@ List.getUserDetail = function(id) {
  */
 List.userVerify = function(childRef, id, tag, success, reason) {
     var deferred = Q.defer();
-    var statusMap = [false, true];
+    var statusMap = ['001', '100'];
     if (childRef && id) {
         if (success == 0 || success == 1) {
             ref.child(childRef).child(id).update({

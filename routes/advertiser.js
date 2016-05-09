@@ -56,11 +56,6 @@ router.post('/advertisement/remove',function (req,res,next) {
 
 // 根据ID获取广告详情
 router.get('/advertisement/:id?',function (req,res) {
-  // console.log(req.url);
-  // res.json({
-  //   "test": req.params.id,
-  //   "token": req.query.token
-  // });
   advertiser.getAdvertById(req,res);
 });
 
@@ -124,6 +119,16 @@ router.get('/message',function (req,res,next) {
 // 查询服务器当前时间
 router.get('/time',function (req,res,next) {
   //code here
+});
+
+// 上传图片
+router.post('/pic', function (req, res, next) {
+  console.log('收到上传图片');
+  // console.log(req);
+  res.json({
+    errCode: 0,
+    url: 'http://test/test'
+  })
 });
 
 //test

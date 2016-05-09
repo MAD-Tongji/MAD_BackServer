@@ -49,13 +49,23 @@ function drawMoney(req,res)
     console.log(req.body);
     
     if(account == null || token == null || account != utils.token2id(token))
-    {
+    {   
+        console.log(utils.token2id(token));
         result.errCode = 100;
         res.json(result);
     }
     else
     {
         var ref = userRef.child(account);
+        var balance = ref.child('balance');
+        var newBalance;
+        balance.once('value',function(snapshot) {
+            console.log(snapshot.val());
+            newBalance=parseInt(snapshot.val())-parseInt(number);
+            console.log(newBalance);
+            ref.update({'balance':newBalance});
+        });
+        
         res.json({errCode:0});
     }
 }
@@ -102,7 +112,7 @@ exports.drawRecord = drawRecord;
 
 /**
  * @interface
- * @description {interface} 账户提款
+ * @description {interface} 提交信息
  */
 function submitInfo(req,res)
 {

@@ -23,9 +23,12 @@ function Advertisement(obj) {
  */
 Advertisement.getAllAdvertisement = function(id) {
 	var defer = Q.defer();
-	console.log(id);
+	var adverts = new Array;
 	advertisementRef.orderByChild("advertiser").equalTo(id).on("value", function (snapshot) {
-		defer.resolve(snapshot.val());
+		snapshot.forEach(function (advert) {
+			adverts.push(advert.val());
+		});
+		defer.resolve(adverts);
 	});
 	return defer.promise;
 };

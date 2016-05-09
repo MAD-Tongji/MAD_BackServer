@@ -43,6 +43,18 @@ ref.authWithCustomToken(superToken,(error,authData)=>{
 /*---------------------公共常用工具---------------------*/
 var app = express();
 
+/**
+ * 设置跨域访问
+ */
+app.all('*', function(req, res, next) {  
+    res.header("Access-Control-Allow-Origin", "*");  
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");  
+    res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");  
+    res.header("X-Powered-By",' 3.2.1')  
+    res.header("Content-Type", "application/json;charset=utf-8");  
+    next();  
+});  
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -59,25 +71,20 @@ app.use('/advertiser', advertiser);
 app.use('/user', user);
 app.use('/back', admin); //以前是app.use('/admin', admin), 与接口命名不一致(接口以back开始), 这样的话路由变为/admin/back, 多了一级，现改为back, 朱哥你也改一下吧
 
-
-app.use(function (req, res, next) {
-
-    // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-
-    // Request methods you wish to allow
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
-    // Request headers you wish to allow
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-
-    // Set to true if you need the website to include cookies in the requests sent
-    // to the API (e.g. in case you use sessions)
-    res.setHeader('Access-Control-Allow-Credentials', true);
-
-    // Pass to next layer of middleware
-    next();
-});
+// 霍腾添加的跨域请求代码，好像没用了
+// app.use(function (req, res, next) {
+//     // Website you wish to allow to connect
+//     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+//     // Request methods you wish to allow
+//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+//     // Request headers you wish to allow
+//     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+//     // Set to true if you need the website to include cookies in the requests sent
+//     // to the API (e.g. in case you use sessions)
+//     res.setHeader('Access-Control-Allow-Credentials', true);
+//     // Pass to next layer of middleware
+//     next();
+// });
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

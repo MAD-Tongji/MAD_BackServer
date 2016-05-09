@@ -21,6 +21,7 @@
     "nodemailer": "^2.3.2",
     "nodemon": "~1.9.1",
     "q": "^1.4.1",
+    "qcloud_cos": "^1.0.4",
     "serve-favicon": "~2.3.0",
     "tsd": "^0.6.5",
     "wilddog": "^0.6.2"
