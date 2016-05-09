@@ -156,7 +156,8 @@ User.getAccountDetail = function(id) {
             name: snapshot.val().name,
             status: snapshot.val().status,
             email: snapshot.val().email,
-            alipay: snapshot.val().Alipay
+            alipay: snapshot.val().Alipay,
+            balance: snapshot.val().balance
         };
         //console.log(user);
         defer.resolve(user);
@@ -230,7 +231,8 @@ User.refund.authenticate = function(id, amount) {
     var defer = q.defer();
     advertiserRef.child(id).once("value", function(snapshot) {
         var balance = snapshot.val().balance;
-        console.log(balance);
+        console.log("balance: " + balance);
+        console.log("amount: " + amount);
         if (amount > balance) {
             // 这里的处理有点问题
             defer.reject('304');

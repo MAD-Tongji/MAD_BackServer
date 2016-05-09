@@ -26,7 +26,9 @@ Advertisement.getAllAdvertisement = function(id) {
 	var adverts = new Array;
 	advertisementRef.orderByChild("advertiser").equalTo(id).on("value", function (snapshot) {
 		snapshot.forEach(function (advert) {
-			adverts.push(advert.val());
+			var advertTemp = advert.val();
+			advertTemp["id"] = advert.key();
+			adverts.push(advertTemp);
 		});
 		defer.resolve(adverts);
 	});
