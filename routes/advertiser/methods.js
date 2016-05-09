@@ -70,7 +70,7 @@ exports.signup = function(req, res, next) {
         if (null !== newUserId) {
             var token = Token.getToken(newUserId);
             // 这个要根据host来拼
-            var checkUrl = req.host + ':3000/advertiser/checkemail?token=' + token;
+            var checkUrl = req.host + ':4000/advertiser/checkemail?token=' + token;
             
             // 给用户邮箱发送验证邮件
             var newUser = {
@@ -540,26 +540,29 @@ exports.messageList = function (req,res,next) {
  */
 exports.checkAccount = function (req,res,next) {
     var data = req.body;
-
-    if (!data.token) {
-        res.json({
-            errCode: 102
-        });
-        next(err);
-    }
-
-    var id = Token.token2id(data.token);
-    if (id != null) {
-        var detail = data.detail;
-        User.checkAccount(detail)
-            .done(function () {
-                res.json({
-                    errCode: 0
-                })
-            })
-    } else {
+    if (!data.token || !Token.token2id(data.token)) {
         res.json({
             errCode: 101
         });
+        next(err);
+    } else {
+        if (data.detail) {
+            var detail = data.detail;
+            var id = Token.token2id(data.token);
+            User.checkAccount(detail, id)
+                .then(function () {
+                    res.json({
+                        errCode: 0
+                    });
+                }, function (error) {
+                    res.json({
+                        errCode: 302
+                    });
+                });
+        } else {
+            res.json({
+                errCode: 302
+            });
+        }
     }
 };

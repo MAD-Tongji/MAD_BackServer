@@ -285,13 +285,18 @@ User.getMessages = function (id) {
  * @param data
  * @returns {*}
  */
-User.checkAccount = function (data) {
+User.checkAccount = function (data, id) {
     var defer = q.defer();
-    var check;
-    advertiserRef.child(id).update({
-        detail: data
-    });
-    defer.resolve();
+    if (data && id) {
+        advertiserRef.child(id).update({
+            detail: data
+        });
+        defer.resolve();
+    } else {
+        var err = new Error('302');
+        defer.reject(err);
+    }
+    
     return defer.promise;
 };
 
