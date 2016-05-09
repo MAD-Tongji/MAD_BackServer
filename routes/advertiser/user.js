@@ -193,10 +193,15 @@ User.recharge = function(id, amount, alipay, callback) {
  */
 User.getRechargeList = function (id) {
     var defer = q.defer();
-    var list;
-    advertiserRef.child(id).once("value",function(snapshot) {
-        list = snapshot.val().recharge;
-        console.log(list);
+    var list = [];
+    advertiserRef.child(id).child('recharge').once("value",function(snapshot) {
+        snapshot.forEach(function (info) {
+            var infoTemp = info.val();
+            infoTemp["id"] = info.key();
+            list.push(infoTemp);
+        });
+        // list = snapshot.val().refund;
+        // console.log(list);
         defer.resolve(list);
     });
     return defer.promise;
@@ -255,10 +260,15 @@ User.refund.authenticate = function(id, amount) {
  */
 User.getRefundList = function (id) {
     var defer = q.defer();
-    var list;
-    advertiserRef.child(id).once("value",function(snapshot) {
-        list = snapshot.val().refund;
-        console.log(list);
+    var list = [];
+    advertiserRef.child(id).child('refund').once("value",function(snapshot) {
+        snapshot.forEach(function (info) {
+            var infoTemp = info.val();
+            infoTemp["id"] = info.key();
+            list.push(infoTemp);
+        });
+        // list = snapshot.val().refund;
+        // console.log(list);
         defer.resolve(list);
     });
     return defer.promise;

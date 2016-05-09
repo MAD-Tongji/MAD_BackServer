@@ -399,28 +399,22 @@ exports.recharge = function (req,res,next) {
  */
 exports.rechargeList = function (req,res,next) {
     var token = req.query.token;
-    if (!token) {
+    if (!token || !Token.token2id(token)) {
         res.json({
-            errCode: 102 //请求错误
+            errCode: 101 //请求错误
         });
         next(err);
     } else {
         // token to id
         var id = Token.token2id(token);
-        if (id != null) {
-            // 获取内容并处理
-            User.getRechargeList(id)
-                .done(function(data) {
-                    res.json({
-                        errCode: 0,
-                        rechargeHistory: data
-                    });
-                })
-        } else {
-            res.json({
-                errCode: 101
+        // 获取内容并处理
+        User.getRechargeList(id)
+            .done(function(data) {
+]               res.json({
+                    errCode: 0,
+                    rechargeHistory: data
+                });
             });
-        }
     }
 };
 
@@ -476,15 +470,14 @@ exports.refund = function (req,res,next) {
  */
 exports.refundList = function (req,res,next) {
     var token = req.query.token;
-    if (!token) {
+    if (!token || !Token.token2id(token)) {
         res.json({
-            errCode: 102 //请求错误
+            errCode: 101 //请求错误
         });
         next(err);
-    }
-    // token to id
-    var id = Token.token2id(token);
-    if (id != null) {
+    } else {
+        // token to id
+        var id = Token.token2id(token);
         // 获取内容并处理
         User.getRefundList(id)
             .done(function(data) {
@@ -492,11 +485,7 @@ exports.refundList = function (req,res,next) {
                     errCode: 0,
                     refundHistory: data
                 });
-            })
-    } else {
-        res.json({
-            errCode: 101
-        });
+            });
     }
 };
 
