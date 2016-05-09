@@ -121,16 +121,6 @@ router.get('/time',function (req,res,next) {
   //code here
 });
 
-// 上传图片
-router.post('/pic', function (req, res, next) {
-  console.log('收到上传图片');
-  // console.log(req);
-  res.json({
-    errCode: 0,
-    url: 'http://test/test'
-  })
-});
-
 //test
 router.get('/test', function (req,res,next) {
   advertisement.broadcastOnce(req.query.id);

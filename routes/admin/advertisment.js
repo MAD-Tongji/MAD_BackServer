@@ -31,7 +31,9 @@ function getNowFormatDate() {
 }
 
 function Advertisment(obj) {
+	for (var key in obj) {
 
+    	}
 }
 //提交新广告
 Advertisment.addNew = function (data, callback){
@@ -72,27 +74,36 @@ Advertisment.saveDraft = function (data, callback){
 Advertisment.listAll = function (data){
 	var deferred = Q.defer();
 	var adsList = new Array();
+	var listItem = new Advertisment();
+	var list = [];
 	console.log(data.tag);
 	AdvertismentRef.on('value', function(snapshot){
 		if(parseInt(data.tag) == parseInt(1)){
 		  snapshot.forEach(function(snap){
 		  	if(snap.child('status').val() == "100"){
-		  		console.log("2");
-		  		//deferred.resolve(snap.val());
+		  		listItem.id = snap.ref().key();
+		  		listItem.title = snap.child("title").val();
+		  		listItem.catalog = snap.child("catalog").val();
+		  		listItem.belongTo = snap.child("advertiser").val();
+		  		list.push(listItem);
 		  		adsList.push(snap.val());
+		  		listItem = new Advertisment();
 		  	}
 		  })
 		}
 		else{
 		  snapshot.forEach(function(snap){
+		  		listItem.id = snap.ref().key();
+		  		listItem.title = snap.child("title").val();
+		  		listItem.catalog = snap.child("catalog").val();
+		  		listItem.belongTo = snap.child("advertiser").val();
+		  		list.push(listItem);
 		  		adsList.push(snap.val());
-		  		//deferred.resolve(snap.val());
-		  		//callback(adsList);
+		  		listItem = new Advertisment();
 		  })
 		}
+		deferred.resolve(list);
 	})
-	 deferred.resolve(adsList);
-
 	return deferred.promise;
 
 }

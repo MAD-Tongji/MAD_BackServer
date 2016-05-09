@@ -31,8 +31,8 @@ Account.accountList = function(data){
 				listItem.completedDate = snap.child("completedDate").val();
 				listItem.operatorName = snap.child("operatorName").val();
 				list.push(listItem);
-			}
-			listItem = new Account();//???
+			    listItem = new Account();//???
+		}
 		})
 		deferred.resolve(list);
 	})
@@ -55,8 +55,8 @@ Account.applyList = function(data){
 				listItem.money = snap.child("money").val();
 				listItem.applyDate = snap.child("applyDate").val();
 				list.push(listItem);
-			}
-			listItem = new Account();//???
+			    listItem = new Account();//???
+		}
 		
 		})
 		deferred.resolve(list);

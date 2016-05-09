@@ -8,7 +8,11 @@ var bodyParser = require('body-parser');
 var advertiser = require('./routes/advertiser');
 var user = require('./routes/user');
 var admin = require('./routes/admin');
-
+// var MongoClient = require('mongodb').MongoClient;
+// var assert = require('assert');
+// var collection = null;
+// var url = 'mongodb://121.42.57.59:27017/MAD_MONGO';
+var mg = require('./bin/mongo');
 var utils = require('./lib/publicUtils');
 
 /*---------------------野狗云初始化鉴权---------------------*/
@@ -20,6 +24,14 @@ ref.authWithCustomToken(superToken,(error,authData)=>{
   } else {
     console.log("Authenticated successfully with payload:", authData);
     utils.fakeMemcache();
+    mg.connectMongo();
+    
+    //*****查询广告示例，先require('./bin/mongo')，然后调用AdQuery方法*****//
+    // setTimeout(function() {
+    //     mg.AdQuery({"adId":"-KHEPtTHU3qXrO4OIgVi"},(docs)=>{console.log(docs)});
+    // }, 2000);
+    
+    
   }
 });
 /*---------------------野狗云初始化鉴权---------------------*/

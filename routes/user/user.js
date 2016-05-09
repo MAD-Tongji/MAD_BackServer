@@ -227,3 +227,30 @@ function accountInfo(req,res)
 exports.accountInfo = accountInfo;
 
 
+/**
+ * @interface
+ * @description {interface} 更新用户信息
+ */
+function changeInfo(req,res)
+{
+    var userId = req.body.userId || null;
+    var token = req.body.token || null;
+    var newInfo = req.body.newInfo || null;
+    var result = {};
+    console.log(req.body);
+    
+    if(userId == null || token == null || userId != utils.token2id(token))
+    {
+        result.errCode = 100;
+        res.json(result);
+    }
+    else
+    {
+        var ref = userRef.child(account);
+        //ref.update()
+        res.json({errCode:0});
+    }
+}
+
+exports.changeInfo = changeInfo;
+

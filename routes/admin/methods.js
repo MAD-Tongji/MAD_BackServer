@@ -51,7 +51,7 @@ exports.listAll = function(req, res, next){
     }else{
     Advertisment.listAll(data).done(function(data){
         res.json({
-            AdsList:data,
+            notAuditAdsList:data,
             errCode: 0
         });
     });
