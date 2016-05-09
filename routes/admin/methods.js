@@ -239,6 +239,7 @@ exports.login = function(req, res, next){
                 var token = Token.getToken(user.id); //传入登录者的id生成token
                 res.json({
                     token: token,
+                    id: user.id,
                     errCode: 0
                 });
             } else {
@@ -492,13 +493,13 @@ exports.modify = function(req, res, next) {
         next(err);
     }
     var email = data.email;
-    var pass = data.password;
+    var password = data.pass;
     authenticate(data.token, function(err, result) {
         if (err) return next(err);
         if (result) {
             User.getById(data.id)
             .done(function(data) {
-                User.updateInfo(data, email, pass, function(err) {
+                User.updateInfo(data, email, password, function(err) {
                     if (err) next(err);
                     res.json({
                         errCode: 0
