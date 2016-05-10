@@ -1,6 +1,6 @@
 var Q = require('q');
 var Wilddog = require('wilddog');
-var publicUtils = require('../../lib/publicUtils');
+var mongo = require('../../bin/mongo');
 var ref = new Wilddog("https://wild-boar-00060.wilddogio.com/");
 var AdvertismentRef = ref.child("advertisment");
 var AdvertiserRef = ref.child("advertiser");
@@ -165,6 +165,22 @@ Advertisment.remove = function(data){
 Advertisment.detail = function(data){
 	var deferred = Q.defer();
 	deferred.resolve(publicUtils.getAdDetail(data.id));
+	return deferred.promise;
+}
+
+//广告查询
+Advertisment.search = function(data){
+	var deferred = Q.defer();
+	//var childvalue = 1000;
+	//console.log("here");
+	var item = new Advertisment();
+	item.id = data.id;
+	mongo.AdQuery(item,function callback(res){
+		console.log(res);
+		deferred.resolve(res);
+	});
+
+
 	return deferred.promise;
 }
 

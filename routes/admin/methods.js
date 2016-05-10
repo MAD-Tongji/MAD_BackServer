@@ -206,13 +206,31 @@ exports.complete = function(req, res, next){
         res.json({
             errCode: 108  //参数不正确
         })
-    }
+    }    
+}
 
+}
 
-
-
-
-     
+exports.search = function(req, res, next){
+    var data = req.body;
+    if(Token.token2id(data.token) == null){
+        res.json({
+            errCode: 101
+        })
+    }else{
+        console.log(data.query);
+        Advertisment.search(data).done(function(data){
+            if(data){
+                res.json({
+                    errCode: 0,
+                    applyList: data
+                });
+            }else{
+                res.json({
+                    errCode: 999
+                })
+            }
+        });
     
 }
 

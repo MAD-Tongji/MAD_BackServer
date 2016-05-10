@@ -59,4 +59,8 @@ router.post('/account/apply/list',admin.applyList);
 //ashun: Administrator complete the apply
 router.post('/account/apply/complete',admin.complete);
 
+//ashun: Administrator ads search
+router.post('/advert/search',admin.search);
+
+
 module.exports = router;
