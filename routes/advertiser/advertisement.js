@@ -36,25 +36,6 @@ Advertisement.getAllAdvertisement = function(id) {
 };
 
 /**
- * 获取投放商圈列表
- * @param city
- * @returns {*}
- */
-Advertisement.district = function (city) {
-	var defer = Q.defer();
-	var districts = new Array;
-	cityRef.child(city).on("value", function (snapshot) {
-		console.log(snapshot.val());
-		snapshot.forEach(function (district) {
-			districts.push(district.val().name);
-		});
-		console.log(districts);
-		defer.resolve(districts);
-	});
-	return defer.promise;
-};
-
-/**
  * 发布广告
  * @param id
  * @param callback
