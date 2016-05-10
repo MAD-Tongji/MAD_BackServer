@@ -66,6 +66,16 @@ router.post('/account/recharge',function (req,res,next) {
   advertiser.recharge(req,res,next);
 });
 
+// 修改密码
+router.post('/account/changePwd',function (req,res,next) {
+  advertiser.changePassword(req,res,next);
+});
+
+// 修改支付宝
+router.post('/account/changeAlipay',function (req,res,next) {
+  advertiser.changeAlipay(req,res,next);
+});
+
 // 获取广告商账户信息
 router.get('/account/detail',function (req,res,next) {
   advertiser.accountDetail(req,res,next);

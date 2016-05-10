@@ -355,3 +355,41 @@ User.saveAdvert = function (userType, userId, advertId) {
         console.log("用户类型不存在");
     }
 };
+
+/**
+ * 修改密码
+ * @param id
+ * @param oldPwd
+ * @param newPwd
+ * @returns {*}
+ */
+User.changePassword = function (id, oldPwd, newPwd) {
+    var defer = q.defer();
+    advertiserRef.child(id).once("value", function (snapshot) {
+        if (snapshot.val().password == oldPwd) {
+            advertiserRef.child(id).update({
+                password: newPwd
+            });
+            defer.resolve();
+        } else {
+            var error = new Error('305'); //旧密码不对
+            defer.reject(error);
+        }
+    });
+    return defer.promise;
+};
+
+/**
+ * 修改支付宝
+ * @param id
+ * @param newAlipay
+ * @returns {*}
+ */
+User.changeAlipay = function (id, newAlipay) {
+    var defer = q.defer();
+    advertiserRef.child(id).update({
+        Alipay: newAlipay
+    });
+    defer.resolve();
+    return defer.promise;
+};
