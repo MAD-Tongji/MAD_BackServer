@@ -43,3 +43,28 @@ City.addAdvertMapping = function(advertId, cityName, districtId, catalog) {
 
     return deferred.promise;
 };
+
+
+/**
+ * 获取投放商圈列表
+ * @param city
+ * @returns {*}
+ */
+City.district = function (city) {
+    var defer = Q.defer();
+    var districts = new Array;
+    cityRef.child(city).on("value", function (snapshot) {
+        console.log(snapshot.val());
+        snapshot.forEach(function (district) {
+            if(district.key() != "name") {
+                districts.push({
+                    id:district.key(),
+                    name: district.val().name
+                });
+            }
+        });
+        console.log(districts);
+        defer.resolve(districts);
+    });
+    return defer.promise;
+};

@@ -623,7 +623,7 @@ exports.userDetailById = function(req, res, next) {
 exports.userVerify = function(req, res, next) {
   var data = req.body;
   var reason = data.reason || null;
-  if (!data.token || !data.tag || !data.id || !data.success) {
+  if (!data.token || !data.id) {
       res.json({
           errCode: 108 //请求错误
       });
@@ -636,9 +636,9 @@ exports.userVerify = function(req, res, next) {
         if (data.tag > 0 && (data.tag <= refMap.length)) {
         //   console.log(refMap[data.tag - 1] + ' | ' + data.id + ' | ' + data.success + ' | ' + reason);
           List.userVerify(refMap[data.tag - 1], data.id, data.tag, data.success, reason)
-          .done(function(data) {
+          .done(function() {
             res.json({
-              errCode: data
+              errCode: 0
             })
           })
         } else {

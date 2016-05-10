@@ -145,11 +145,11 @@ exports.getDistrict = function (req, res, next) {
         var id = Token.token2id(token);
         if (id != null) {
             //数据库查询
-            Advert.district(city)
+            City.district(city)
                 .done(function (data) {
                     res.json({
                         errCode: 0,
-                        advertisement: data
+                        broadcastLocation: data
                     })
                 })
         } else {
