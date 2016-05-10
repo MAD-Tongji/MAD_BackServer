@@ -24,7 +24,7 @@ function Advertisement(obj) {
 Advertisement.getAllAdvertisement = function(id) {
 	var defer = Q.defer();
 	var adverts = new Array;
-	advertisementRef.orderByChild("advertiser").equalTo(id).on("value", function (snapshot) {
+	advertisementRef.orderByChild("advertiser").equalTo(id).once("value", function (snapshot) {
 		snapshot.forEach(function (advert) {
 			var advertTemp = advert.val();
 			advertTemp["id"] = advert.key();
@@ -133,6 +133,35 @@ Advertisement.saveAdvert = function (id, data, callback) {
 		callback(err,newPush.key());
 	});
 };
+
+/**
+ * 更新广告草稿
+ * @param id       用户id
+ * @param data     提交数据
+ * @param callback 返回内容
+ */
+
+Advertisement.updateAdvertDraft = function (id, data, callback) {
+	advertisementRef.child(data.id).update({
+		advertiser: id,
+		title: data.title,//广告标题
+		content: data.content,//广告内容
+		catalog: data.catalog,//广告类别
+		broadcastLocation: data.broadcastlocation,//投放地点商圈名
+		startDate: data.startDate, //广告开始投放日期
+		endDate: data.endDate, //广告停止投放日期
+		status: "010", //保存为草稿
+		city: data.city, //所在城市
+		price: data.price  //价格
+	}, function (err) {
+		if (err) {
+			callback(err);
+		} else {
+			callback(null);
+		}
+	});
+};
+
 
 /**
  * 广告下架
