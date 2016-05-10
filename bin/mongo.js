@@ -6,6 +6,8 @@ var assert = require('assert');
 var collection = null;
 var url = 'mongodb://121.42.57.59:27017/MAD_MONGO';
 
+var os = require('os');
+
 // /*---------------------野狗云初始化鉴权---------------------*/
 // var superToken='vt3sPR4f6UanTCFANnyRhud7TvW0l1Ctq4hR8XUo';
 var ref = new wilddog('https://wild-boar-00060.wilddogio.com/');
@@ -29,7 +31,9 @@ function connectMongo()
             assert.equal(null, err);
             console.log("Connected succesfully to MongoDB server");
             collection = db.collection('advertisment');
+            if(os.networkInterfaces().eth1 != null && os.networkInterfaces().eth1[0] != null && os.networkInterfaces().eth1[0].address == '121.42.57.59')
             dropCol(collection,function(collection){dataBind(collection);});
+            // AdQuery({"advertiser":"test1@test-com"},(docs)=>{console.log(docs)});
         });
     } catch(e){
         console.log("error:"+e.message);
@@ -91,14 +95,14 @@ function dataBind(collection){
             if(err == null)
             {
                 console.log("\033[32mcreate index success:" + result + "\033[0m");
-                // AdQuery({"adId":"-KHEPtTHU3qXrO4OIgVi"},(docs)=>{console.log(docs)});
+                // AdQuery({"advertiser":"test1@test-com"},(docs)=>{console.log(docs)});
             }
             else
             {
                 console.log(err.message);
             }
         });
-    },200);
+    },2000);
 }
 
 /**

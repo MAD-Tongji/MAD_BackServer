@@ -171,16 +171,26 @@ Advertisment.detail = function(data){
 //广告查询
 Advertisment.search = function(data){
 	var deferred = Q.defer();
-	//var childvalue = 1000;
-	//console.log("here");
 	var item = new Advertisment();
-	item.id = data.id;
+	if(data.id){
+		item.adId = data.id;
+	}
+	if(data.title){
+		item.title = data.title;
+	}
+	if(data.broadcastLocation){
+		item.broadcastLocation = data.broadcastLocation;
+	}
+	if(data.startDate){
+		item.startDate = data.startDate;
+	}
+	if(data.endDate){
+		item.endDate = data.endDate;
+	}
 	mongo.AdQuery(item,function callback(res){
-		console.log(res);
+		//console.log(res);
 		deferred.resolve(res);
 	});
-
-
 	return deferred.promise;
 }
 
