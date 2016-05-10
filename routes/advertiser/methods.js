@@ -568,3 +568,67 @@ exports.checkAccount = function (req,res,next) {
         }
     }
 };
+
+/**
+ * 修改密码
+ * @param req
+ * @param res
+ * @param next
+ */
+exports.changePassword = function (req,res,next) {
+    var data = req.body;
+    console.log(data);
+
+    if (!data.token) {
+        res.json({
+            errCode: 101
+        });
+        next(err);
+    } else {
+        var id = Token.token2id(data.token);
+        if (id != null) {
+            User.changePassword(id,data.oldPwd,data.newPwd)
+                .then(function () { //resolve
+                    res.json({
+                        errCode: 0
+                    });
+                }, function (error) { //reject
+                    res.json({
+                        errCode: 305 // 旧密码不对
+                    })
+                });
+        } else {
+            res.json({
+                errCode: 101
+            });
+        }
+    }
+};
+
+exports.changeAlipay = function (req,res,next) {
+    var data = req.body;
+    console.log(data);
+
+    if (!data.token) {
+        res.json({
+            errCode: 101
+        });
+        next(err);
+    } else {
+        var id = Token.token2id(data.token);
+        if (id != null) {
+            User.changeAlipay(id,data.Alipay)
+                .done(function () { //resolve
+                    res.json({
+                        errCode: 0
+                    });
+                });
+        } else {
+            res.json({
+                errCode: 101
+            });
+        }
+    }
+};
+
+//TODO: errCode102问题

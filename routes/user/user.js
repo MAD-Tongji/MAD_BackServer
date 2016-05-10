@@ -58,12 +58,20 @@ function drawMoney(req,res)
     {
         var ref = userRef.child(account);
         var balance = ref.child('balance');
+        var drawRecord=ref.child('withdrawHistory');
+        
         var newBalance;
         balance.once('value',function(snapshot) {
             console.log(snapshot.val());
             newBalance=parseInt(snapshot.val())-parseInt(number);
             console.log(newBalance);
             ref.update({'balance':newBalance});
+            drawRecord.push({
+                    alipay:account,
+                    number:number,
+                    time:'2016-05-06',
+                    status:'true'
+            })
         });
         
         res.json({errCode:0});
@@ -92,18 +100,19 @@ function drawRecord(req,res)
     }
     else
     {
+        var history=[];
         var ref = userRef.child(userId);
-        ref.once('value',function(snapshot) {
-           // var wdHistory=snapshot.val().withdrawHistory;
-            //result={
-              //  errCode:0,
-                //withdrawHistory:wdHistory
-           // };
-            res.json({
+        var historyRef=ref.child('withdrawHistory');
+        res.json({
                 errCode:0,
-                withdrawHistory:snapshot.val().withdrawHistory    
+                withdrawHistory:function() {
+                    ref.orderByKey().on('child_added',function(snapshot) {
+                    history.unshift(snapshot.val());
+                    });
+                    return history;
+                }  
             });
-        })
+        
         //res.json({errCode:0});
     }
 }
