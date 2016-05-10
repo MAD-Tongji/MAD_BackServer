@@ -53,7 +53,7 @@ City.addAdvertMapping = function(advertId, cityName, districtId, catalog) {
 City.district = function (city) {
     var defer = Q.defer();
     var districts = new Array;
-    cityRef.child(city).on("value", function (snapshot) {
+    cityRef.child(city).once("value", function (snapshot) {
         console.log(snapshot.val());
         snapshot.forEach(function (district) {
             if(district.key() != "name") {
@@ -66,5 +66,82 @@ City.district = function (city) {
         console.log(districts);
         defer.resolve(districts);
     });
+    return defer.promise;
+};
+
+/**
+ * 修改city列表中的映射
+ * @param id
+ * @param city
+ * @param catalog
+ * @param add
+ * @param remove
+ */
+City.modifyAdvertById = function(id,city,catalog,add,remove) {
+    var addFinished = false;
+    var removeFinished = false;
+    var bothFinished = function () {
+        if (addFinished && removeFinished) {
+            defer.resolve();
+        }
+    };
+    var defer = Q.defer();
+    //添加id
+    add.forEach(function (distId) {
+        console.log(city +' '+ distId +' '+ catalog);
+        var advertRef = cityRef.child(city).child(distId).child(catalog);
+        if (advertRef != null) {
+            advertRef.once("value", function (snapshot) {
+                console.log('snapshot:');
+                console.log(snapshot.val());
+                //取出内容放入array
+                var advertIds = new Array;
+                snapshot.val().forEach(function (advertId) {
+                    advertIds.push(advertId);
+                });
+                //删除内容
+                if(advertIds.indexOf(id) === -1){
+                    advertIds.push(id);
+                }
+                console.log('advert id s');
+                console.log(advertIds);
+                //添加内容
+                advertIds.push(id);
+                //返回设置
+                advertRef.set(advertIds);
+                addFinished = true;
+                bothFinished();
+            });
+        } else {
+            defer.reject();
+        }
+    });
+    //删除id
+    remove.forEach(function (distId) {
+        console.log('tag:');
+        console.log(catalog);
+        var advertRef = cityRef.child(city).child(distId).child(catalog);
+        if (advertRef !== null) {
+            advertRef.once("value", function (snapshot) {
+                console.log(snapshot.val());
+                //取出内容放入array
+                var advertIds = new Array;
+                snapshot.val().forEach(function (advertId) {
+                    advertIds.push(advertId);
+                });
+                //删除内容
+                if(advertIds.indexOf(id) === -1){
+                    advertIds.splice(index,1);
+                }
+                //返回设置值
+                advertRef.set(advertIds);
+                removeFinished = true;
+                bothFinished();
+            });
+        } else {
+            defer.reject();
+        }
+    });
+
     return defer.promise;
 };
