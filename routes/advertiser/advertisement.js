@@ -42,7 +42,7 @@ Advertisement.getAllAdvertisement = function(id) {
  */
 Advertisement.district = function (city) {
 	var defer = Q.defer();
-	var districts = new Array;
+	var districts = new Array();
 	cityRef.child(city).on("value", function (snapshot) {
 		console.log(snapshot.val());
 		snapshot.forEach(function (district) {

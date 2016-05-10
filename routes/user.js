@@ -10,10 +10,14 @@ var advert = require('./user/advert');
 /* GET users listing. */
 router.get('/', function(req, res, next) {
    
-  	test.b(function(){
-    	console.log('this is callback function');
-  	});
-  	res.send('here is user');
+  	// test.b(function(){
+    // 	console.log('this is callback function');
+  	// });
+	advert.findAdvertisementsByCoordinate({
+		longitude: 121.49491,
+		latitude: 31.24169
+	});
+  	res.send({test:'here is user'});
 });
 /* GET/POST lister*/
 // router.get('/login',function (req,res,next) {
