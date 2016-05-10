@@ -459,7 +459,7 @@ List.userVerify = function(childRef, id, tag, success, reason) {
             if (success == 1) reason = "恭喜您通过审核!";
             Message.sendMessage(id, tag, reason, function(err) {
                 if (err) deferred.reject(err); 
-                deferred.resolve('0');
+                deferred.resolve();
             })
         }
     }
