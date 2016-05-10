@@ -205,15 +205,32 @@ exports.submitAdvert = function (req,res,next) {
 exports.saveAdvert = function (req,res,next) {
     var data = req.body;
     console.log(data);
-    if (!data.token) {
+    if (!data.token || !Token.token2id(data.token)) {
         res.json({
-            errCode: 102
+            errCode: 101
         });
         next(err);
     } else {
         // token to id
         var id = Token.token2id(data.token);
-        if (id != null) {
+        
+        // 判断广告是否有ID
+        if (data.id) {
+            // 有ID，更新广告
+            Advert.updateAdvertDraft(id, data, function (error) {
+                if (error) {
+                    res.json({
+                        errCode: 207
+                    });
+                } else {
+                    res.json({
+                        errCode: 0,
+                        id: data.id
+                    });
+                }
+            });
+        } else {
+            // 没有ID，新建广告
             Advert.saveAdvert(id, data, function (err,key) {
                 if (err == null) {
                     // 广告映射
@@ -230,16 +247,12 @@ exports.saveAdvert = function (req,res,next) {
                     });
                 } else {
                     res.json({
-                        errCode: 207, //广告上传失败
-                        error: err
+                        errCode: 207 //广告上传失败
                     });
                 }
-            })
-        } else {
-            res.json({
-                errCode: 101
             });
         }
+        
     }
 };
 
