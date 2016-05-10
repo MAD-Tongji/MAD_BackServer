@@ -217,24 +217,32 @@ exports.saveAdvert = function (req,res,next) {
         // 判断广告是否有ID
         if (data.id) {
             // 有ID，更新广告
+            console.log('更新广告');
             Advert.updateAdvertDraft(id, data, function (error) {
+                console.log(data.id);
                 if (error) {
                     res.json({
                         errCode: 207
                     });
                 } else {
-                    res.json({
-                        errCode: 0,
-                        id: data.id
-                    });
+                    //行政区映射
+                    //City.modifyAdvertById(data.id,data.city,data.catalog,data.add,data.remove)
+                    //    .then(function (data) {
+                            res.json({
+                                errCode: 0,
+                                id: data.id
+                            })
+                        //}, function (error) { //reject
+                        //    res.json({
+                        //        errCode: 300 // 退款金额大于余额
+                        //    })
+                        //});
                 }
             });
         } else {
             // 没有ID，新建广告
             Advert.saveAdvert(id, data, function (err,key) {
                 if (err == null) {
-                    // 广告映射
-                    //User.saveAdvert("advertiser", id, key);
                     // 行政区映射
                     var locations = data.broadcastLocation;
                     locations.forEach(function (location) {

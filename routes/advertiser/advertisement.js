@@ -36,6 +36,25 @@ Advertisement.getAllAdvertisement = function(id) {
 };
 
 /**
+ * 获取投放商圈列表
+ * @param city
+ * @returns {*}
+ */
+Advertisement.district = function (city) {
+	var defer = Q.defer();
+	var districts = new Array();
+	cityRef.child(city).on("value", function (snapshot) {
+		console.log(snapshot.val());
+		snapshot.forEach(function (district) {
+			districts.push(district.val().name);
+		});
+		console.log(districts);
+		defer.resolve(districts);
+	});
+	return defer.promise;
+};
+
+/**
  * 发布广告
  * @param id
  * @param callback
@@ -128,7 +147,7 @@ Advertisement.updateAdvertDraft = function (id, data, callback) {
 		title: data.title,//广告标题
 		content: data.content,//广告内容
 		catalog: data.catalog,//广告类别
-		broadcastLocation: data.broadcastlocation,//投放地点商圈名
+		broadcastLocation: data.broadcastLocation,//投放地点商圈名
 		startDate: data.startDate, //广告开始投放日期
 		endDate: data.endDate, //广告停止投放日期
 		status: "010", //保存为草稿
