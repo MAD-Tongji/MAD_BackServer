@@ -223,7 +223,7 @@ exports.search = function(req, res, next){
             if(data){
                 res.json({
                     errCode: 0,
-                    applyList: data
+                    resultList: data
                 });
             }else{
                 res.json({

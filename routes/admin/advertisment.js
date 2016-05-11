@@ -1,6 +1,7 @@
 var Q = require('q');
 var Wilddog = require('wilddog');
 var mongo = require('../../bin/mongo');
+var publicUtils = require('../../lib/publicUtils');
 var ref = new Wilddog("https://wild-boar-00060.wilddogio.com/");
 var AdvertismentRef = ref.child("advertisment");
 var AdvertiserRef = ref.child("advertiser");
@@ -188,7 +189,7 @@ Advertisment.search = function(data){
 		item.endDate = data.endDate;
 	}
 	mongo.AdQuery(item,function callback(res){
-		//console.log(res);
+		console.log(res);
 		deferred.resolve(res);
 	});
 	return deferred.promise;
