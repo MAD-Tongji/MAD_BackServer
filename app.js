@@ -25,9 +25,9 @@ ref.authWithCustomToken(superToken,(error,authData)=>{
     console.log("Authenticated successfully with payload:", authData);
     utils.fakeMemcache();
     mg.connectMongo();
-    setTimeout(function() {
-        utils.playAd('59b8aaf5a171cb121e678f04cddf510aea4709ebb45956d133dbef046851d070','-KHEKBJ7cJM1U0KCFAmp');
-    }, 2000);
+    // setTimeout(function() {
+    //     utils.playAd('59b8aaf5a171cb121e678f04cddf510aea4709ebb45956d133dbef046851d070','-KHEKBJ7cJM1U0KCFAmp');
+    // }, 2000);
     //*****查询广告示例，先require('./bin/mongo')，然后调用AdQuery方法*****//
     // setTimeout(function() {
     //     mg.AdQuery({"adId":"-KHEPtTHU3qXrO4OIgVi"},(docs)=>{console.log(docs)});

@@ -54,7 +54,6 @@ City.district = function (city) {
     var defer = Q.defer();
     var districts = new Array;
     cityRef.child(city).once("value", function (snapshot) {
-        console.log(snapshot.val());
         snapshot.forEach(function (district) {
             if(district.key() != "name") {
                 districts.push({
@@ -63,7 +62,6 @@ City.district = function (city) {
                 });
             }
         });
-        console.log(districts);
         defer.resolve(districts);
     });
     return defer.promise;
@@ -78,70 +76,51 @@ City.district = function (city) {
  * @param remove
  */
 City.modifyAdvertById = function(id,city,catalog,add,remove) {
-    var addFinished = false;
-    var removeFinished = false;
-    var bothFinished = function () {
-        if (addFinished && removeFinished) {
-            defer.resolve();
-        }
-    };
     var defer = Q.defer();
-    //添加id
-    add.forEach(function (distId) {
-        console.log(city +' '+ distId +' '+ catalog);
-        var advertRef = cityRef.child(city).child(distId).child(catalog);
-        if (advertRef != null) {
-            advertRef.once("value", function (snapshot) {
-                console.log('snapshot:');
-                console.log(snapshot.val());
-                //取出内容放入array
-                var advertIds = new Array;
-                snapshot.val().forEach(function (advertId) {
-                    advertIds.push(advertId);
-                });
-                //删除内容
-                if(advertIds.indexOf(id) === -1){
-                    advertIds.push(id);
-                }
-                console.log('advert id s');
-                console.log(advertIds);
-                //添加内容
-                advertIds.push(id);
-                //返回设置
-                advertRef.set(advertIds);
-                addFinished = true;
-                bothFinished();
-            });
-        } else {
-            defer.reject();
-        }
+    //建立新的数据结构
+    var advertsNeedModifying = new Array;
+    add.forEach(function (addAdvert) {
+        advertsNeedModifying.push({
+            id: addAdvert,
+            ifAdd: true
+        });
     });
-    //删除id
-    remove.forEach(function (distId) {
-        console.log('tag:');
-        console.log(catalog);
-        var advertRef = cityRef.child(city).child(distId).child(catalog);
-        if (advertRef !== null) {
-            advertRef.once("value", function (snapshot) {
-                console.log(snapshot.val());
-                //取出内容放入array
-                var advertIds = new Array;
-                snapshot.val().forEach(function (advertId) {
-                    advertIds.push(advertId);
-                });
-                //删除内容
-                if(advertIds.indexOf(id) === -1){
-                    advertIds.splice(index,1);
-                }
-                //返回设置值
-                advertRef.set(advertIds);
-                removeFinished = true;
-                bothFinished();
-            });
-        } else {
-            defer.reject();
-        }
+    remove.forEach(function (removeAdvert) {
+        advertsNeedModifying.push({
+            id: removeAdvert,
+            ifAdd: false
+        });
     });
 
+    //修改数据库
+    advertsNeedModifying.forEach(function (advertNeedModifying) {
+        var advertRef = cityRef.child(city).child(advertNeedModifying.id).child(catalog);
+        advertRef.once("value", function (snapshot) {
+            if(snapshot.exists()) {
+                //取出内容放入array
+                var existedAdverts = new Array;
+                snapshot.val().forEach(function (advertId) {
+                    existedAdverts.push(advertId);
+                });
+                //判断增删情况并增删
+                if(advertNeedModifying.ifAdd) {
+                    //不存在则增
+                    if(existedAdverts.indexOf(id) === -1) {
+                        existedAdverts.push(id);
+                    }
+                } else {
+                    //存在则删
+                    if(index = existedAdverts.indexOf(id) !== -1) {
+                        existedAdverts.splice(index,1);
+                    }
+                }
+                //写回数据库
+                advertRef.set(existedAdverts);
+                defer.resolve();
+            } else {
+                defer.reject();
+            }
+        })
+    });
     return defer.promise;
 };

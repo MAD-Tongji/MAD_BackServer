@@ -226,17 +226,17 @@ exports.saveAdvert = function (req,res,next) {
                     });
                 } else {
                     //行政区映射
-                    //City.modifyAdvertById(data.id,data.city,data.catalog,data.add,data.remove)
-                    //    .then(function (data) {
+                    City.modifyAdvertById(data.id,data.city,data.catalog,data.add,data.remove)
+                        .done(function () {
                             res.json({
                                 errCode: 0,
                                 id: data.id
                             })
-                        //}, function (error) { //reject
-                        //    res.json({
-                        //        errCode: 300 // 退款金额大于余额
-                        //    })
-                        //});
+                        }, function (error) { //reject
+                            res.json({
+                                errCode: 300 // 退款金额大于余额
+                            })
+                        });
                 }
             });
         } else {
