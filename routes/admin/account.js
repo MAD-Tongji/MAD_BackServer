@@ -70,6 +70,11 @@ Account.complete = function(data){
 			if (data.tag == 1) {
 				applyRef.child(data.applyId).update({"status":"11"},function(err){
 					deferred.resolve(err);
+					applyRef.child(data.applyId).once('value', function(snapshot){
+						var id = snapshot.child("applyId").val();
+						var userid = snapshot.child("userId").val();
+						AdvertiserRef.child(userid).child("refund").child(id).update({"status": true});
+					});
 				});
 			}else{
 				applyRef.child(data.applyId).update({"status":"00"},function(err){
@@ -79,12 +84,13 @@ Account.complete = function(data){
 							var money = snapshot.child("money").val();
 							var catalog = snapshot.child("catalog").val();
 							var userid = snapshot.child("userId").val();
-							console.log(catalog);
+							var refId = snapshot.child("applyId").val();
 							if(catalog == "2"){
-							console.log("222");
+							//console.log("222");
 								AdvertiserRef.child(userid).once('value', function(snapshot){
 									var balance = snapshot.child("balance").val();
 									var newBalance = balance + money;
+									AdvertiserRef.child(userid).child("refund").child(refId).update({"status": false});
 									AdvertiserRef.child(userid).update({"balance": newBalance}, function(err){
 									//deferred.resolve(err);
 								});
