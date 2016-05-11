@@ -133,14 +133,14 @@ function setFilter(req,res) {
 exports.setFilter = setFilter;
 
 
-function findAdvertisementsByCoordinate(coordinate) {
+function findAdvertisementsByCoordinate(coordinate, callback) {
     // 后台广告查找流程：向高德地图请求经纬度周边poi信息(20条)->提取20个poi的类型->根据类型在数据库里查找广告->返回广告ID列表
-    var httpURL = 'http://restapi.amap.com/v3/place/around?key=02127fede0258553291573039655b9f0&offset=20&radius=5000&extensions=all&location=' + coordinate.longitude + ',' + coordinate.latitude; 
+    var httpURL = 'http://restapi.amap.com/v3/place/around?key=02127fede0258553291573039655b9f0&offset=20&radius=3000&extensions=all&location=' + coordinate.longitude + ',' + coordinate.latitude; 
     var element;
-    var districtNum;
     var distance;
     var advertTypes;
-    var results = new Set();
+    var districtNums = new Set();
+    var catalogs = new Set();
     var i = 0;
     var advertIdList = [];
     try {
@@ -156,75 +156,133 @@ function findAdvertisementsByCoordinate(coordinate) {
                     element = pois[j];
                     if (element.cityname !== undefined && element.cityname !== null) {
                         if (element.cityname === '上海市') {
-                            
                             // 获取行政区代码
-                            districtNum = getDistrictCode(element.adname);
+                            districtNums.add(getDistrictCode(element.adname));
                             
                             // 根据poi类型获取广告类型
                             advertTypes = getAdvertismentTypeFromCode(element.typecode);
                             // console.log(advertTypes);
                             for (i = 0; i < advertTypes.length; i++) {
-                                results.add(advertTypes[i]);
+                                catalogs.add(advertTypes[i]);
                             }
-                            // 遍历results在野狗中查询对应类型的广告
-                            // console.log('results');
-                            // console.log(results);
-                            var districtRef = rootRef.child('AdsInCitys').child('Shanghai').child(districtNum);
-                            
-                            results.forEach(function (item) {
-                                // console.log('item' + i++);
-                                // console.log(item);
-                                
-                                getAdvertisementByCatalog(districtRef, item)
-                                    .done(function (data) {
-                                        console.log('aksdjfasd');
-                                        // console.log('data:');
-                                        // console.log(data);
-                                        advertIdList.push(['data']);
-                                    }, function (error) {
-                                        console.log('野狗获取数据error');
-                                        console.log(error);
-                                    });
-                            });
-                            // console.log('advertIdList');
-                            // console.log(advertIdList);
                         }
-                    } else {
-                        console.log('异常数据');
-                        console.log(element);
                     }
                 }
-                console.log('2');
             } else {
-                console.log('异常数据');
-                console.log(jsonBody);
+                throw new Error('异常数据，没有pois');
             }
         } else {
-            console.log('无法获取到数据');
+            throw new Error('无法获取到高德地图数据，请求失败');
         }
     } catch (err) {
-        console.log('无法获取到数据');
         console.log(err);
+        throw new Error('501');
     }
-    console.log('4');
-    var advertIdSet = new Set(advertIdList);
-    console.log('advertIdList');
-    console.log(advertIdList);
-    return advertIdList;
+    // console.log(districtNums);
+    // console.log(catalogs);
+    // 遍历districtNums和catalogs在野狗中查询对应类型的广告
+    getAdvertisementByCatalog(districtNums, catalogs)
+        .done(function (results) {
+            callback(results);
+        });
 }
 
-function getAdvertisementByCatalog(districtRef, catalog) {
-    var defer = Q.defer();
-    districtRef.child(catalog).once('value', function (snapshot) {
-        // console.log('snapshot');
-        // console.log(snapshot.val());
-        defer.resolve(snapshot.val());
-    }, function (err) {
-        console.log('从wilddog获取数据失败');
-        defer.reject(err);
-    });
+function getAdvertisementByCatalog(districtNums, catalogs) {
+    var deferred = Q.defer();
+    var idList = [];
+    var i = 0;
+    var j = 0;
     
-    return defer.promise;
+    var districtArray = Array.from(districtNums);
+    var catalogArray = Array.from(catalogs);
+    
+    for (i = 0; i < districtArray.length; i += 1) {
+        (function(i) {
+        var districtRef = rootRef.child('AdsInCitys').child('Shanghai').child(districtArray[i]);
+
+        
+        getIdByCatalogs(districtRef, catalogArray)
+            .done(function (data) {
+                console.log('data:');
+                console.log(data);
+                idList.push(data);
+                deferred.resolve(idList);
+            });
+        })(i);
+        
+        // for (j = 0; j < catalogArray.length; j += 1) {
+        //     getIdByCatalog(districtRef, catalogArray[j])
+        //             .done(function (data) {
+        //                 console.log(data);
+        //                 idList.concat(data);
+        //                     deferred.resolve(idList);
+
+        //             });
+        //     // (function (districtRef, catalogArray[j]) {
+        //     //     getIdByCatalog(districtRef, catalogArray[j])
+        //     //         .done(function (data) {
+        //     //             console.log(data);
+        //     //             idList.concat(data);
+        //     //         });
+        //     // })(districtRef, catalogArray[j])
+        // }
+    }
+    // districtNums.forEach(function (district) {
+    //     var districtRef = rootRef.child('AdsInCitys').child('Shanghai').child(district);
+    //     catalogs.forEach(function (catalog) {
+    //         (function (districtRef, catalog) {
+    //             getIdByCatalog(districtRef, catalog)
+    //                 .done(function (data) {
+    //                     console.log(data);
+    //                     idList.concat(data);
+                       
+    //                 });
+    //         })(districtRef, catalog)
+    //     });
+    // });
+    return deferred.promise;
+}
+
+
+function getIdByCatalogs(districtRef, catalogs) {
+    var deferred = Q.defer();
+    var idList = [];
+    var catalog;
+    for (var i = 0; i < catalogs.length; i += 1) {
+        catalog = catalogs[i];
+        
+        (function (catalog) {
+            console.log('catalog:' + catalog);
+            getIdByCatalog(districtRef, catalog)
+                .done(function (data) {
+                    idList.push(data);
+                    deferred.resolve(idList);
+                });
+            // districtRef.child(catalogs[i]).once('value', function (snapshot) {
+            //     console.log('snapshot:');
+            //     console.log(snapshot.val());
+            //     idList.concat(snapshot.val());
+            //     deferred.resolve(idList);
+            // }, function (err) {
+            //     deferred.reject(err);
+            // });
+        })(catalog);
+    }
+    return deferred.promise;
+}
+
+function getIdByCatalog(districtRef, catalog) {
+    var deferred = Q.defer();
+    var ids = [];
+    districtRef.child(catalog).once('value', function (snapshot) {
+        console.log('snapshot:');
+        console.log(snapshot.val());
+        ids = snapshot.val();
+    }, function (err) {
+        deferred.reject(err);
+    });
+    deferred.resolve(ids);
+    return deferred.promise;
 }
 
 

@@ -116,8 +116,8 @@ exports.getAdvertisement = function (req, res, next) {
                     res.json({
                         errCode: 0,
                         advertisement: data
-                    })
-                })
+                    });
+                });
         } else {
             res.json({
                 errCode: 101
@@ -150,8 +150,8 @@ exports.getDistrict = function (req, res, next) {
                     res.json({
                         errCode: 0,
                         broadcastLocation: data
-                    })
-                })
+                    });
+                });
         } else {
             res.json({
                 errCode: 101
