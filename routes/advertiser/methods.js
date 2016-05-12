@@ -234,7 +234,7 @@ exports.saveAdvert = function (req,res,next) {
                             })
                         }, function (error) { //reject
                             res.json({
-                                errCode: 300 // 退款金额大于余额
+                                errCode: 306 //行政区映射失败
                             })
                         });
                 }
@@ -613,6 +613,12 @@ exports.changePassword = function (req,res,next) {
     }
 };
 
+/**
+ * 修改支付宝
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.changeAlipay = function (req,res,next) {
     var data = req.body;
     console.log(data);
@@ -629,6 +635,32 @@ exports.changeAlipay = function (req,res,next) {
                 .done(function () { //resolve
                     res.json({
                         errCode: 0
+                    });
+                });
+        } else {
+            res.json({
+                errCode: 101
+            });
+        }
+    }
+};
+
+exports.getAccountCheckDetail = function (req,res,next) {
+    var token = req.query.token;
+
+    if (!token) {
+        res.json({
+            errCode: 101
+        });
+        next(err);
+    } else {
+        var id = Token.token2id(token);
+        if (id != null) {
+            User.getAccountCheckDetail(id)
+                .done(function (data) { //resolve
+                    res.json({
+                        errCode: 0,
+                        detail: data
                     });
                 });
         } else {
