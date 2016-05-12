@@ -6,6 +6,10 @@ var List = require('./list');
 var Token = require('../../lib/publicUtils');
 
 //*********** ashun: start ****************
+
+//以下我的所有接口的逻辑都是先检验请求体中的token参数是否合法，合法再进行每个接口的具体逻辑
+
+//新增广告，此功能已去除，这个接口可以忽略
 exports.submit = function(req, res, next){
     var data = req.body;
     if(Token.token2id(data.token) == null){
@@ -23,6 +27,8 @@ exports.submit = function(req, res, next){
    });
 }
 }
+
+//新增广告暂存草稿，此功能已去除，这个接口可以忽略
 
 exports.save = function(req, res, next){
     var data = req.body;
@@ -42,6 +48,7 @@ exports.save = function(req, res, next){
 }
 }
 
+//获取广告列表
 exports.listAll = function(req, res, next){
     var data = req.body;
     if(Token.token2id(data.token) == null){
@@ -58,6 +65,7 @@ exports.listAll = function(req, res, next){
 }
 }
 
+//审核广告
 exports.audit = function(req, res, next){
     var data = req.body;
     if(Token.token2id(data.token) == null){
@@ -79,6 +87,7 @@ exports.audit = function(req, res, next){
 }
 }
 
+//下架广告
 exports.remove = function(req, res, next){
     var data = req.body;
     if(Token.token2id(data.token) == null){
@@ -100,6 +109,7 @@ exports.remove = function(req, res, next){
 }
 }
 
+//获取广告详情
 exports.detail = function(req, res, next){
     var data = req.body;
     if(Token.token2id(data.token) == null){
@@ -123,6 +133,7 @@ exports.detail = function(req, res, next){
 
 }
 
+//获取财务信息（对账）
 exports.accountList = function(req, res, next){
     var data = req.body;
     if(Token.token2id(data.token) == null){
@@ -147,6 +158,7 @@ exports.accountList = function(req, res, next){
 
 }
 
+//获取申请列表，包括提现和退款
 exports.applyList = function(req, res, next){
     var data = req.body;
     if(Token.token2id(data.token) == null){
@@ -211,6 +223,7 @@ exports.complete = function(req, res, next){
 
 }
 
+//广告查询
 exports.search = function(req, res, next){
     var data = req.body;
     if(Token.token2id(data.token) == null){
