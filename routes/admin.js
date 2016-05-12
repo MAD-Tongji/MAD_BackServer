@@ -32,6 +32,15 @@ router.post('/user/audit', admin.userVerify);
 /* jixiang: Statistics */
 router.get('/statistics/dayincome', admin.dayIncome);
 
+/* jixiang: Get messages */
+router.get('/message/list', admin.message);
+
+/* jixiang: Change message status */
+router.post('/message/status', admin.msgStatus);
+
+/* jixiang: Delete message */
+router.post('/message/delete', admin.msgDelete);
+
 //ashun: Administrator add ads
 router.post('/advert/submit',admin.submit);
 
