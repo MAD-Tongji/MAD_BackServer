@@ -410,7 +410,7 @@ List.getUserById = function(id) {
     userDetail.name = data.name;
     userDetail.id = id;
     if (data.location) {
-        userDetail.location = data.location;  //数据库缺字段!!!
+        userDetail.location = data.location;
     } else {
         userDetail.location = 'null';
     }
@@ -457,7 +457,8 @@ List.userVerify = function(childRef, id, tag, success, reason) {
             })
             if (success == 0) reason = "抱歉您的申请没有通过!原因: " + reason;
             if (success == 1) reason = "恭喜您通过审核!";
-            Message.sendMessage(id, tag, reason, function(err) {
+            var title = "审核消息";
+            Message.sendMessage(id, tag, reason, title, function(err) {
                 if (err) deferred.reject(err); 
                 deferred.resolve();
             })

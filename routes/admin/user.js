@@ -48,9 +48,8 @@ User.prototype.save = function(fn){
         }, function(err) {
             if (err) fn(err);
             /* 发送通知 */
-            var tag = 3;
-            var reason = "您被任命为系统管理员!"
-            Message.sendMessage(id, tag, reason, function(err) {
+            var reason = "您被任命为系统管理员!";
+            Message.sendBackMessage(id, reason, 0, function(err) {
                 if (err) fn(err);
             })
         })
@@ -176,9 +175,9 @@ User.updateLevel = function(id, level, fn) {
         level: level
     }, function(err) {
         if (err) fn(err);
-        var tag = 3;
         var reason = "您的管理权限已被修改为" + level;
-        Message.sendMessage(id, tag, reason, function(err) {
+        var title = "系统消息";
+        Message.sendBackMessage(id, reason, 0, function(err) {
             if (err) fn(err);
         })
         fn(null);
@@ -197,9 +196,9 @@ User.updateInfo = function(id, email, password, fn) {
         pass: hash
     }, function(err) {
         if (err) fn(err);
-        var tag = 3;
         var reason = "您的个人信息修改成功!";
-        Message.sendMessage(id, tag, reason, function(err) {
+        var title = "系统消息";
+        Message.sendBackMessage(id, reason, 0, function(err) {
             if (err) fn(err);
         })
         fn(null);
@@ -218,4 +217,99 @@ User.prototype.toJSON = function() {
         level: this.level,
         hireDate: this.hireDate
 	}
+}
+
+/**
+ * 获取消息列表
+ */
+User.getMessageList = function(id) {
+    var deferred = Q.defer();
+    var ids = [];
+    adminRef.child(id).child("message").on("child_added", function(shapshot, err) {
+        if (err) deferred.reject(err);
+        ids.push(shapshot.key());
+        deferred.resolve(ids);
+    })
+    return deferred.promise;
+}
+
+User.getMessage = function(userId, ids) {
+    var deferred = Q.defer();
+    var msgList = [];
+    if (ids) {
+        for (var id in ids) {
+            (function(id) {
+                User.getMsg(userId, ids[id])
+                .done(function(data) {
+                    msgList.push(data);
+                    deferred.resolve(msgList);
+                })
+            })(id);
+        }
+    }
+    return deferred.promise;
+}
+
+User.getMsg = function(userId, id) {
+    var deferred = Q.defer();
+    var msg = new Object();
+    adminRef.child(userId).child("message").child(id).once("value", function(shapshot, err) {
+        if (err) deferred.reject(err);
+        msg.id = id;
+        msg.msgContent = shapshot.val().content;
+        msg.msgDate = shapshot.val().date;
+        msg.status = shapshot.val().status;
+        deferred.resolve(msg);
+    })
+    return deferred.promise;
+}
+
+User.getJSON = function getJSON(data) {
+    return {
+        msgContent: data.msgContent,
+        msgDate: data.msgDate,
+        status: data.status
+    }
+}
+
+/**
+ * 修改消息阅读状态
+ */
+User.changeMsgStatus = function(id) {
+    var deferred = Q.defer();
+    User.getMessageList(id)
+    .done(function(data) {
+        if (data) {
+            for (var msg in data) {
+                (function(msg) {
+                    adminRef.child(id).child("message").child(data[msg]).once("value", function(shapshot, err) {
+                        if (err) deferred.reject(err);
+                        if (shapshot.val().status == 0) {
+                            adminRef.child(id).child("message").child(data[msg]).update({
+                                status: 1
+                            }, function(err) {
+                                if(err) deferred.reject(err);
+                                // deferred.resolve(1);
+                            });
+                        }
+                    })
+                    
+                })(msg);
+            }
+        }
+    })
+    deferred.resolve(1);
+    return deferred.promise;
+}
+
+/**
+ * 删除消息
+ */
+User.deleteMsg = function(msgId, adminId) {
+    var deferred = Q.defer();
+    adminRef.child(adminId).child("message").child(msgId).remove(function(err) {
+        if (err) deferred.reject(err);
+        else deferred.resolve(1);
+    })
+    return deferred.promise;
 }

@@ -393,3 +393,22 @@ User.changeAlipay = function (id, newAlipay) {
     defer.resolve();
     return defer.promise;
 };
+
+/**
+ * 获取帐户验证信息
+ * @param id
+ * @returns {*}
+ */
+User.getAccountCheckDetail = function (id) {
+    var defer = q.defer();
+    advertiserRef.child(id).once("value", function (snapshot) {
+        if(snapshot.child("status") !== "000" && snapshot.child("detail").exists()) {  //有验证信息
+            var detail = snapshot.val().detail;
+            console.log(detail);
+            defer.resolve(detail);
+        } else {
+            defer.resolve(null);
+        }
+    });
+    return defer.promise;
+};

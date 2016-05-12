@@ -718,4 +718,129 @@ exports.dayIncome = function(req, res, next) {
     })
 }
 
+/**
+ * @interface
+ * @description {interface} 根据管理员id获取消息，参数为token, id
+ *  @param {String} token
+ *  @param {String} id 管理员id
+ * @return {JSON} 成功 {errCode, MsgList{msgTitle, msgContent, msgDate}} 失败 {errCode}
+ */
+exports.message = function(req, res, next) {
+    var data = req.query;
+    if (!data.token && !data.id) {
+        res.json({
+            errCode: 108 //请求错误
+        })
+    }
+    //与颁发的token作比较
+    authenticate(data.token, function(err, result) {
+        if (err) return next(err);
+        if (result) {
+            User.getById(data.id)
+            .done(function(data) {
+                if (data) {
+                    var id = data;
+                    console.log('verify: ' + data);
+                    User.getMessageList(data)
+                    .done(function(data) {
+                        console.log('id list: ' + data);
+                        User.getMessage(id, data)
+                        .done(function(data) {
+                            console.log(data);
+                            res.json({
+                                errCode: 0,
+                                MsgList: data
+                            })
+                        })                        
+                    })
+                } else {
+                    res.json({
+                        errCode: 401 // 用户不存在
+                    })
+                }
+            })
+        } else {
+            res.json({
+                errCode: 101 //令牌不存在或已经过期
+            });
+        }
+    })
+}
+
+/**
+ * @interface
+ * @description {interface} 修改message状态，参数为token, id
+ *  @param {String} token
+ *  @param {String} id 管理员id
+ * @return {JSON} 成功 {errCode} 失败 {errCode}
+ */
+exports.msgStatus = function(req, res, next) {
+    var data = req.body;
+    if (!data.token && !data.id) {
+        res.json({
+            errCode: 108 //请求错误
+        })
+    }
+    //与颁发的token作比较
+    authenticate(data.token, function(err, result) {
+        if (err) return next(err);
+        if (result) {
+            User.getById(data.id)
+            .done(function(data) {
+                if (data) {
+                    User.changeMsgStatus(data)
+                    .done(function(data) {
+                        if (data) {
+                            res.json({
+                                errCode: 0
+                            })
+                        }                       
+                    })
+                } else {
+                    res.json({
+                        errCode: 401 // 用户不存在
+                    })
+                }
+            })
+        } else {
+            res.json({
+                errCode: 101 //令牌不存在或已经过期
+            });
+        }
+    })
+}
+
+/**
+ * @interface
+ * @description {interface} 修改message状态，参数为token, id, adminId
+ * @param {String} token
+ * @param {String} id message's id
+ * @param {String} id admin's id
+ * @return {JSON} 成功 {errCode} 失败 {errCode}
+ */
+exports.msgDelete = function(req, res, next) {
+    var data = req.body;
+  var reason = data.reason || null;
+  if (!data.token || !data.id || !data.adminId) {
+      res.json({
+          errCode: 108 //请求错误
+      });
+      next(err);
+  }
+  authenticate(data.token, function(err, result) {
+      if (err) return next(err);
+      if (result) {
+        User.deleteMsg(data.id, data.adminId)
+        .done(function(data) {
+            res.json({
+                errCode: 0
+            })
+        })
+      } else {
+          res.json({
+              errCode: 101 //令牌不存在或已经过期
+          });
+      }
+  })
+}
 //***********jixiang: end ************

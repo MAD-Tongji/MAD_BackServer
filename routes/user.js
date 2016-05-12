@@ -13,11 +13,21 @@ router.get('/', function(req, res, next) {
   	// test.b(function(){
     // 	console.log('this is callback function');
   	// });
-	advert.findAdvertisementsByCoordinate({
-		longitude: 121.49491,
-		latitude: 31.24169
-	});
-  	res.send({test:'here is user'});
+	try {
+		advert.findAdvertisementsByCoordinate({
+			longitude: 121.49491,
+			latitude: 31.24169
+		}, function (idList) {
+			res.send({
+				errCode: 0,
+				idList: idList
+			});
+		});
+	} catch (error) {
+		res.send({
+			errCode: error.message
+		});
+	}
 });
 /* GET/POST lister*/
 // router.get('/login',function (req,res,next) {

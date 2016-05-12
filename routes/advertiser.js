@@ -101,7 +101,10 @@ router.post('/account/check',function (req,res,next) {
   advertiser.checkAccount(req,res,next);
 });
 
-
+// 获取验证信息
+router.get('/account/check/detail', function (req,res,next) {
+  advertiser.getAccountCheckDetail(req,res,next);
+});
 
 /************** 统计部分 ***********/
 // 获取广告统计列表
