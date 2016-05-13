@@ -93,6 +93,7 @@ User.getUser = function(id) {
         user.name = shapshot.val().name;
         user.pass = shapshot.val().pass;
         user.id = shapshot.val().id;
+        user.level = shapshot.val().level;
         deferred.resolve(user);
     })
     return deferred.promise;

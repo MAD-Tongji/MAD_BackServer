@@ -258,12 +258,13 @@ exports.search = function(req, res, next){
  * @description {interface} 用户登录，参数为用户名，密码
  * @param {String} name 用户名
  * @param {String} pass 登陆密码
- * @return {JSON} 登录成功 {errCode, token} 登陆失败 {errCode}
+ * @return {JSON} 登录成功 {errCode, token, id, level} 登陆失败 {errCode}
  */
 exports.login = function(req, res, next){
     var data = req.body;
     if (data.name && data.pass) {
         User.authenticate(data.name, data.pass, function(err, user){
+            console.log(user);
             if (err) return next(err);
             if (user) {
                 console.log(user.id);
@@ -271,6 +272,7 @@ exports.login = function(req, res, next){
                 res.json({
                     token: token,
                     id: user.id,
+                    level: user.level,
                     errCode: 0
                 });
             } else {
@@ -815,32 +817,32 @@ exports.msgStatus = function(req, res, next) {
  * @description {interface} 修改message状态，参数为token, id, adminId
  * @param {String} token
  * @param {String} id message's id
- * @param {String} id admin's id
+ * @param {String} adminId admin's id
  * @return {JSON} 成功 {errCode} 失败 {errCode}
  */
 exports.msgDelete = function(req, res, next) {
     var data = req.body;
-  var reason = data.reason || null;
-  if (!data.token || !data.id || !data.adminId) {
-      res.json({
-          errCode: 108 //请求错误
-      });
-      next(err);
-  }
-  authenticate(data.token, function(err, result) {
-      if (err) return next(err);
-      if (result) {
-        User.deleteMsg(data.id, data.adminId)
-        .done(function(data) {
-            res.json({
-                errCode: 0
+    var reason = data.reason || null;
+    if (!data.token || !data.id || !data.adminId) {
+        res.json({
+            errCode: 108 //请求错误
+        });
+        next(err);
+    }
+    authenticate(data.token, function(err, result) {
+        if (err) return next(err);
+        if (result) {
+            User.deleteMsg(data.id, data.adminId)
+            .done(function(data) {
+                res.json({
+                    errCode: 0
+                })
             })
-        })
-      } else {
-          res.json({
-              errCode: 101 //令牌不存在或已经过期
-          });
-      }
-  })
+        } else {
+            res.json({
+                errCode: 101 //令牌不存在或已经过期
+            });
+        }
+    })
 }
 //***********jixiang: end ************
