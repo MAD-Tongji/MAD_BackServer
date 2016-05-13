@@ -12,7 +12,7 @@ module.exports = Advertisment;
 
 //广告管理接口的一些函数实现
 
-//获取当前系统时间，格式：yyyy-MM-dd hh:mm:ss
+//获取当前系统时间，格式：yyyy-MM-dd hh:mm:ss，这个函数是没统一规定使用momentjs前写的
 function getNowFormatDate() {
     var date = new Date();
     var seperator1 = "-";
@@ -72,6 +72,8 @@ Advertisment.saveDraft = function (data, callback){
 }
 
 //获取广告列表
+//传入参数为请求体
+
 Advertisment.listAll = function (data){
 	var deferred = Q.defer();
 	var adsList = new Array();
@@ -110,6 +112,7 @@ Advertisment.listAll = function (data){
 }
 
 //审核广告
+//传入参数为请求体
 Advertisment.audit = function(data){
 	var deferred = Q.defer();
 	var AdsRef = AdvertismentRef.child(data.id);
@@ -139,6 +142,8 @@ Advertisment.audit = function(data){
 }
 
 //下架广告
+//传入参数为请求体
+
 Advertisment.remove = function(data){
 	var deferred = Q.defer();
 	var AdsRef = AdvertismentRef.child(data.id);
@@ -163,6 +168,9 @@ Advertisment.remove = function(data){
 	return deferred.promise;
 }
 
+//获取广告详情
+//返回的字段未review，因为是调用朱哥的公共方法
+
 Advertisment.detail = function(data){
 	var deferred = Q.defer();
 	deferred.resolve(publicUtils.getAdDetail(data.id));
@@ -170,6 +178,9 @@ Advertisment.detail = function(data){
 }
 
 //广告查询
+//传入参数为请求体
+//参数体中的broadcastLocation只能匹配与数据库存的相同的内容，是否应有个商圈和其对应的ID映射表？
+
 Advertisment.search = function(data){
 	var deferred = Q.defer();
 	var item = new Advertisment();
