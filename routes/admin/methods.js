@@ -264,10 +264,12 @@ exports.login = function(req, res, next){
     var data = req.body;
     if (data.name && data.pass) {
         User.authenticate(data.name, data.pass, function(err, user){
-            console.log(user);
-            if (err) return next(err);
+            if (err) {
+                res.json({
+                    errCode: 102 //用户名或密码不正确
+                });
+            }
             if (user) {
-                console.log(user.id);
                 var token = Token.getToken(user.id); //传入登录者的id生成token
                 res.json({
                     token: token,
@@ -282,9 +284,21 @@ exports.login = function(req, res, next){
             }
         })
     } else {
-        res.json({
-            errCode: 108  //参数不正确
-        })
+        if (!data.name && data.pass) {
+            res.json({
+                errCode: 407  //登录名不能为空
+            })
+        }
+        else if (!data.pass && data.name) {
+             res.json({
+                errCode: 408  //登录密码不能为空
+            })
+        }
+        else {
+            res.json({
+                errCode: 108  //请求错误
+            })
+        }
     }
     
 }
@@ -667,7 +681,6 @@ exports.userVerify = function(req, res, next) {
       if (result) {
         var refMap = ['user', 'advertiser', 'administrator'];
         if (data.tag > 0 && (data.tag <= refMap.length)) {
-        //   console.log(refMap[data.tag - 1] + ' | ' + data.id + ' | ' + data.success + ' | ' + reason);
           List.userVerify(refMap[data.tag - 1], data.id, data.tag, data.success, reason)
           .done(function() {
             res.json({

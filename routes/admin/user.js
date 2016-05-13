@@ -72,14 +72,19 @@ User.prototype.hashPassword = function(pass, fn){
  */
 User.getId = function(name){
     var deferred = Q.defer();
+    var num = 0;
     adminRef.on("child_added", function(shapshot) {
         var id = shapshot.key();
         adminRef.child(id).on("value", function(data) {
             if (data.val().name == name) {
                 deferred.resolve(id);
-            } 
+                num++;
+            }
         })
     })
+    if (!num > 0) {
+        deferred.resolve(0);
+    }
     return deferred.promise;
 }
 
