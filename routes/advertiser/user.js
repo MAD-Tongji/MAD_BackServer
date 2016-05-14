@@ -413,6 +413,25 @@ User.getAccountCheckDetail = function (id) {
     return defer.promise;
 };
 
+/**
+ * 修改用户邮箱验证状态为true
+ * @param id
+ * @returns {*}
+ */
+User.completeEmailCheck = function (id) {
+    var deferred = q.defer();
+    advertiserRef.child(id).update({
+        check: true
+    }, function (err) {
+        if (err) {
+            deferred.reject(err);
+        } else {
+            deferred.resolve();
+        }
+    });
+    
+    return deferred.promise;
+}
 
 /**
  * TODO: 需要添加一个监听函数，在提现和退款审核状态被修改后修改对应用户下的提现或退款状态
