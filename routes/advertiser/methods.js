@@ -204,6 +204,7 @@ exports.submitAdvert = function (req,res,next) {
  */
 exports.saveAdvert = function (req,res,next) {
     var data = req.body;
+    console.log('draft');
     console.log(data);
     if (!data.token || !Token.token2id(data.token)) {
         res.json({
@@ -219,30 +220,31 @@ exports.saveAdvert = function (req,res,next) {
             // 有ID，更新广告
             console.log('更新广告');
             Advert.updateAdvertDraft(id, data, function (error) {
-                console.log(data.id);
+                console.log('id:' + data.id);
                 if (error) {
                     res.json({
-                        errCode: 207
+                        errCode: 210
                     });
                 } else {
                     //行政区映射
+                    console.log('行政区映射');
                     City.modifyAdvertById(data.id,data.city,data.catalog,data.add,data.remove)
                         .done(function () {
                             res.json({
                                 errCode: 0,
                                 id: data.id
-                            })
+                            });
                         }, function (error) { //reject
                             res.json({
                                 errCode: 306 //行政区映射失败
-                            })
+                            });
                         });
                 }
             });
         } else {
             // 没有ID，新建广告
             Advert.saveAdvert(id, data, function (err,key) {
-                if (err == null) {
+                if (err === null) {
                     // 行政区映射
                     var locations = data.broadcastLocation;
                     locations.forEach(function (location) {

@@ -78,6 +78,7 @@ City.district = function (city) {
 City.modifyAdvertById = function(id,city,catalog,add,remove) {
     var defer = Q.defer();
     //建立新的数据结构
+
     var advertsNeedModifying = new Array;
     add.forEach(function (addAdvert) {
         advertsNeedModifying.push({
@@ -91,7 +92,6 @@ City.modifyAdvertById = function(id,city,catalog,add,remove) {
             ifAdd: false
         });
     });
-
     //修改数据库
     advertsNeedModifying.forEach(function (advertNeedModifying) {
         var advertRef = cityRef.child(city).child(advertNeedModifying.id).child(catalog);
@@ -122,5 +122,8 @@ City.modifyAdvertById = function(id,city,catalog,add,remove) {
             }
         })
     });
+    if (advertsNeedModifying.length < 1) {
+        defer.resolve();
+    }
     return defer.promise;
 };
