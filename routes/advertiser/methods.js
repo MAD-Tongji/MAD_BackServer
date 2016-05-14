@@ -25,6 +25,7 @@ exports.login = function(req, res, next) {
             var token = Token.getToken(user.id); //传入登录者的id生成token
             res.json({
                 token: token,
+                'name': user.name,
                 errCode: 0
             });
         } else {
