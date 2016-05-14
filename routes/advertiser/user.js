@@ -179,7 +179,7 @@ User.recharge = function(id, amount, alipay, callback) {
     var newApply = advertiserRef.child(id).child("recharge").push({
         account: alipay,
         amount: amount,
-        status: false, // false为到帐中,true为已到账
+        status: '01',
         time: date
     },function(err){
         callback(err,newApply.key());
@@ -219,7 +219,7 @@ User.refund = function(id, amount, alipay, callback) {
     var newApply = advertiserRef.child(id).child('refund').push({
         account: alipay,
         amount: amount,
-        status: false, // false为审核中,true为已退款
+        status: '01',
         time: date
     },function(err){
         callback(err,newApply.key());
@@ -412,3 +412,8 @@ User.getAccountCheckDetail = function (id) {
     });
     return defer.promise;
 };
+
+
+/**
+ * TODO: 需要添加一个监听函数，在提现和退款审核状态被修改后修改对应用户下的提现或退款状态
+ */

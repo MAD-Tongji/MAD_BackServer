@@ -396,7 +396,7 @@ exports.recharge = function (req,res,next) {
         var id = Token.token2id(data.token);
         if (id != null) {
             User.recharge(id, data.recharge, data.Alipay, function (err, key) {
-                if (err == null) {
+                if (err === null) {
                     Apply.createApplyById(key, id, "recharge")
                         .done(function (data) {
                             console.log(data);
