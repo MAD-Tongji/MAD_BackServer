@@ -122,7 +122,7 @@ Advertisment.audit = function(data){
 });
 	if(parseInt(data.success) == parseInt(0)){
 		AdsRef.update({"status":"000"},function(err){
-			var content = "您的广告" + data.id + "未通过审核";
+			var content = "您的广告" + data.id + "未通过审核" + " 理由: " + data.reason;
 			Message.sendMessage(Advertiser,2,content,function(err){
 				deferred.resolve(err);
 			});
