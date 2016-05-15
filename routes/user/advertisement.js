@@ -2,164 +2,252 @@ var wilddog = require('wilddog');
 var rootRef = new wilddog("https://wild-boar-00060.wilddogio.com/");
 var userRef = rootRef.child('user');
 var adRef = rootRef.child('advertisment');
-var request = require('sync-request');
+var syncRequest = require('sync-request');
+var request = require('request');
 var Q = require('q');
 
 
 // 车主接广告逻辑
-// TODO：解决循环异步获取数据的问题
 
-function findAdvertisementsByCoordinate(coordinate, callback) {
+/**
+ * 根据district和周边poi类型在wilddog上获取广告ID列表
+ */
+function userGetAdsByCoordinate(coordinate, callback) {
     // 后台广告查找流程：向高德地图请求经纬度周边poi信息(20条)->提取20个poi的类型->根据类型在数据库里查找广告->返回广告ID列表
-    var httpURL = 'http://restapi.amap.com/v3/place/around?key=02127fede0258553291573039655b9f0&offset=20&radius=3000&extensions=all&location=' + coordinate.longitude + ',' + coordinate.latitude; 
-    var element;
-    var distance;
+    // var httpURL = 'http://restapi.amap.com/v3/place/around?key=02127fede0258553291573039655b9f0&offset=20&radius=3000&extensions=all&location=' + coordinate.longitude + ',' + coordinate.latitude; 
+    // var element;
+    // var distance;
+    // var advertTypes;
+    // var districtNums = new Set();
+    // var catalogs = new Set();
+    // var i = 0;
+    // var advertIdList = [];
+    // try {
+    //     var response = request('GET', httpURL);
+    //     // console.log(JSON.parse(response.getBody()));
+    //     if (response.statusCode === 200) {
+    //         var jsonBody = JSON.parse(response.getBody());
+    //         if (jsonBody.pois !== undefined) {
+    //             var pois = jsonBody.pois;
+    //             console.log('poi个数:' + pois.length);
+    //             for (var j = 0; j < pois.length; j++) {
+    //                 element = pois[j];
+    //                 if (element.cityname !== undefined && element.cityname !== null) {
+    //                     if (element.cityname === '上海市') {
+    //                         // 获取行政区代码
+    //                         districtNums.add(getDistrictCode(element.adname));
+                            
+    //                         // 根据poi类型获取广告类型
+    //                         advertTypes = getAdvertismentTypeFromCode(element.typecode);
+    //                         // console.log(advertTypes);
+    //                         for (i = 0; i < advertTypes.length; i++) {
+    //                             catalogs.add(advertTypes[i]);
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         } else {
+    //             throw new Error('异常数据，没有pois');
+    //         }
+    //     } else {
+    //         throw new Error('无法获取到高德地图数据，请求失败');
+    //     }
+    // } catch (err) {
+    //     console.log(err);
+    //     throw new Error('501');
+    // }
+    
+    /**
+     * 伪代码：
+     * 1. 获取行政区代码
+     * 2. 获取poi类型数组
+     * 3. 在野狗中查询
+     * 4. 返回id结果数组
+     */
+    
+    getDistrictCodeWithCoordinate(coordinate)
+        .done(function (districtCode) {
+            console.log('行政区代码' + districtCode);
+        }, function (error) {
+            console.log(error);
+        });
+        
+    
+    getAroundCatalog(coordinate)
+        .done(function (catalogs) {
+            console.log('Around advertisement catalog');
+            console.log(catalogs);
+        }, function (error) {
+            console.log(error);
+        });
+}
+
+/**
+ * 使用高德API获取行政区代码
+ */
+function getDistrictCodeWithCoordinate(coordinate) {
+    var deferred = Q.defer();
+    var districtName;
+    var districtCode;
+        
+    var httpURL = ' http://restapi.amap.com/v3/geocode/regeo?key=02127fede0258553291573039655b9f0&location=' + coordinate.longitude + ',' + coordinate.latitude;
+    
+    request(httpURL, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            console.log(body);
+            var jsonBody = JSON.parse(response.body);
+            districtName = jsonBody.regeocode.addressComponent.district;
+            districtCode = getDistrictCode(districtName);
+            deferred.resolve(districtCode);
+        } else {
+            deferred.reject(new Error('向高德请求行政区错误'));
+        }
+    });
+    
+    return deferred.promise;
+}
+
+/**
+ * 使用高德API获取周边poi类型数组
+ */
+function getAroundCatalog(coordinate) {
+    var deferred = Q.defer();
+    var aroundPoiCatalogs = [];
+    var catalogSet = new Set();
+    var httpURL = 'http://restapi.amap.com/v3/place/around?key=02127fede0258553291573039655b9f0&offset=20&radius=3000&extensions=all&location=' + coordinate.longitude + ',' + coordinate.latitude;
     var advertTypes;
-    var districtNums = new Set();
-    var catalogs = new Set();
-    var i = 0;
-    var advertIdList = [];
-    try {
-        console.log('1');
-        var response = request('GET', httpURL);
-        // console.log(JSON.parse(response.getBody()));
-        if (response.statusCode === 200) {
-            var jsonBody = JSON.parse(response.getBody());
+    
+    request(httpURL, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            console.log(body);
+            var jsonBody = JSON(body);
             if (jsonBody.pois !== undefined) {
                 var pois = jsonBody.pois;
                 console.log('poi个数:' + pois.length);
                 for (var j = 0; j < pois.length; j++) {
                     element = pois[j];
                     if (element.cityname !== undefined && element.cityname !== null) {
-                        if (element.cityname === '上海市') {
-                            // 获取行政区代码
-                            districtNums.add(getDistrictCode(element.adname));
-                            
+                        if (element.cityname === '上海市') {                            
                             // 根据poi类型获取广告类型
                             advertTypes = getAdvertismentTypeFromCode(element.typecode);
                             // console.log(advertTypes);
                             for (i = 0; i < advertTypes.length; i++) {
-                                catalogs.add(advertTypes[i]);
+                                catalogSet.add(advertTypes[i]);
                             }
                         }
                     }
                 }
+                aroundPoiCatalogs = Array.from(catalogSet);
+                deferred.resolve(aroundPoiCatalogs);
             } else {
-                throw new Error('异常数据，没有pois');
+                deferred.reject(new Error('异常数据，没有pois'))
             }
         } else {
-            throw new Error('无法获取到高德地图数据，请求失败');
+            deferred.reject(new Error('向高德请求poi时错误'));
         }
-    } catch (err) {
-        console.log(err);
-        throw new Error('501');
-    }
-    // console.log(districtNums);
-    // console.log(catalogs);
-    // 遍历districtNums和catalogs在野狗中查询对应类型的广告
-    getAdvertisementByCatalog(districtNums, catalogs)
-        .done(function (results) {
-            callback(results);
-        });
-}
-
-function getAdvertisementByCatalog(districtNums, catalogs) {
-    var deferred = Q.defer();
-    var idList = [];
-    var i = 0;
-    var j = 0;
-    
-    var districtArray = Array.from(districtNums);
-    var catalogArray = Array.from(catalogs);
-    
-    for (i = 0; i < districtArray.length; i += 1) {
-        (function(i) {
-        var districtRef = rootRef.child('AdsInCitys').child('Shanghai').child(districtArray[i]);
-
-        
-        getIdByCatalogs(districtRef, catalogArray)
-            .done(function (data) {
-                console.log('data:');
-                console.log(data);
-                idList.push(data);
-                deferred.resolve(idList);
-            });
-        })(i);
-        
-        // for (j = 0; j < catalogArray.length; j += 1) {
-        //     getIdByCatalog(districtRef, catalogArray[j])
-        //             .done(function (data) {
-        //                 console.log(data);
-        //                 idList.concat(data);
-        //                     deferred.resolve(idList);
-
-        //             });
-        //     // (function (districtRef, catalogArray[j]) {
-        //     //     getIdByCatalog(districtRef, catalogArray[j])
-        //     //         .done(function (data) {
-        //     //             console.log(data);
-        //     //             idList.concat(data);
-        //     //         });
-        //     // })(districtRef, catalogArray[j])
-        // }
-    }
-    // districtNums.forEach(function (district) {
-    //     var districtRef = rootRef.child('AdsInCitys').child('Shanghai').child(district);
-    //     catalogs.forEach(function (catalog) {
-    //         (function (districtRef, catalog) {
-    //             getIdByCatalog(districtRef, catalog)
-    //                 .done(function (data) {
-    //                     console.log(data);
-    //                     idList.concat(data);
-                       
-    //                 });
-    //         })(districtRef, catalog)
-    //     });
-    // });
-    return deferred.promise;
-}
-
-
-function getIdByCatalogs(districtRef, catalogs) {
-    var deferred = Q.defer();
-    var idList = [];
-    var catalog;
-    for (var i = 0; i < catalogs.length; i += 1) {
-        catalog = catalogs[i];
-        
-        (function (catalog) {
-            console.log('catalog:' + catalog);
-            getIdByCatalog(districtRef, catalog)
-                .done(function (data) {
-                    idList.push(data);
-                    deferred.resolve(idList);
-                });
-            // districtRef.child(catalogs[i]).once('value', function (snapshot) {
-            //     console.log('snapshot:');
-            //     console.log(snapshot.val());
-            //     idList.concat(snapshot.val());
-            //     deferred.resolve(idList);
-            // }, function (err) {
-            //     deferred.reject(err);
-            // });
-        })(catalog);
-    }
-    return deferred.promise;
-}
-
-function getIdByCatalog(districtRef, catalog) {
-    var deferred = Q.defer();
-    var ids = [];
-    districtRef.child(catalog).once('value', function (snapshot) {
-        console.log('snapshot:');
-        console.log(snapshot.val());
-        ids = snapshot.val();
-    }, function (err) {
-        deferred.reject(err);
     });
-    deferred.resolve(ids);
+    
     return deferred.promise;
 }
+
+
+// function getAdvertisementByCatalog(districtNums, catalogs) {
+//     var deferred = Q.defer();
+//     var idList = [];
+//     var i = 0;
+//     var j = 0;
+    
+//     var districtArray = Array.from(districtNums);
+//     var catalogArray = Array.from(catalogs);
+    
+//     for (i = 0; i < districtArray.length; i += 1) {
+//         (function(i) {
+//         var districtRef = rootRef.child('AdsInCitys').child('Shanghai').child(districtArray[i]);
+
+        
+//         getIdByCatalogs(districtRef, catalogArray)
+//             .done(function (data) {
+//                 console.log('data:');
+//                 console.log(data);
+//                 idList.push(data);
+//                 deferred.resolve(idList);
+//             });
+//         })(i);
+        
+//         // for (j = 0; j < catalogArray.length; j += 1) {
+//         //     getIdByCatalog(districtRef, catalogArray[j])
+//         //             .done(function (data) {
+//         //                 console.log(data);
+//         //                 idList.concat(data);
+//         //                     deferred.resolve(idList);
+
+//         //             });
+//         //     // (function (districtRef, catalogArray[j]) {
+//         //     //     getIdByCatalog(districtRef, catalogArray[j])
+//         //     //         .done(function (data) {
+//         //     //             console.log(data);
+//         //     //             idList.concat(data);
+//         //     //         });
+//         //     // })(districtRef, catalogArray[j])
+//         // }
+//     }
+//     // districtNums.forEach(function (district) {
+//     //     var districtRef = rootRef.child('AdsInCitys').child('Shanghai').child(district);
+//     //     catalogs.forEach(function (catalog) {
+//     //         (function (districtRef, catalog) {
+//     //             getIdByCatalog(districtRef, catalog)
+//     //                 .done(function (data) {
+//     //                     console.log(data);
+//     //                     idList.concat(data);
+                       
+//     //                 });
+//     //         })(districtRef, catalog)
+//     //     });
+//     // });
+//     return deferred.promise;
+// }
+
+
+// function getIdByCatalogs(districtRef, catalogs) {
+//     var deferred = Q.defer();
+//     var idList = [];
+//     var catalog;
+//     for (var i = 0; i < catalogs.length; i += 1) {
+//         catalog = catalogs[i];
+        
+//         (function (catalog) {
+//             console.log('catalog:' + catalog);
+//             getIdByCatalog(districtRef, catalog)
+//                 .done(function (data) {
+//                     idList.push(data);
+//                     deferred.resolve(idList);
+//                 });
+//             // districtRef.child(catalogs[i]).once('value', function (snapshot) {
+//             //     console.log('snapshot:');
+//             //     console.log(snapshot.val());
+//             //     idList.concat(snapshot.val());
+//             //     deferred.resolve(idList);
+//             // }, function (err) {
+//             //     deferred.reject(err);
+//             // });
+//         })(catalog);
+//     }
+//     return deferred.promise;
+// }
+
+// function getIdByCatalog(districtRef, catalog) {
+//     var deferred = Q.defer();
+//     var ids = [];
+//     districtRef.child(catalog).once('value', function (snapshot) {
+//         console.log('snapshot:');
+//         console.log(snapshot.val());
+//         ids = snapshot.val();
+//     }, function (err) {
+//         deferred.reject(err);
+//     });
+//     deferred.resolve(ids);
+//     return deferred.promise;
+// }
 
 
 function getDistrictCode (districtName) {
@@ -253,7 +341,7 @@ function getAdvertismentTypeFromCode(typecode) {
 }
 
 
-exports.findAdvertisementsByCoordinate = findAdvertisementsByCoordinate;
+// exports.userGetAdsByCoordinate = userGetAdsByCoordinate;
 // 121.49491,  31.24169 东方明珠
 // test
 // findAdvertisementsByCoordinate({
