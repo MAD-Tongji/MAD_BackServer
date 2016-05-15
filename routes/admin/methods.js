@@ -669,7 +669,7 @@ exports.userDetailById = function(req, res, next) {
  */
 exports.userVerify = function(req, res, next) {
   var data = req.body;
-  var reason = data.reason || null;
+  var reason = data.reason || '';
   if (!data.token || !data.id) {
       res.json({
           errCode: 108 //请求错误
