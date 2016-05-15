@@ -2,7 +2,6 @@ var wilddog = require('wilddog');
 var rootRef = new wilddog("https://wild-boar-00060.wilddogio.com/");
 var userRef = rootRef.child('user');
 var adRef = rootRef.child('advertisment');
-var syncRequest = require('sync-request');
 var request = require('request');
 var Q = require('q');
 
@@ -135,6 +134,121 @@ exports.setFilter = setFilter;
 
 
 /**
+ * 根据ID获取广告内容
+ */
+function getAdvertContent(req, res) {
+
+    var token = req.body.token;
+    // !token || !utils.token2id(token)
+    if (false) {
+        res.json({
+            errCode: 101
+        });
+    } else {
+        /**
+         * 代码逻辑：
+         * 1. 判断广告状态
+         * 2. 判断广告商余额
+         * 3. response返回广告内容
+         * 4. 广告播放数量＋1
+         * 5. 扣款广告商余额
+         * 6. 更新车主播放、余额信息
+         */
+        var advertId = req.body.id;
+        // var userId = utils.token2id(token);
+        judgeAdvertisementState(advertId)
+            .then(judgeAdvertiserBalance)
+            .then(getAdvertContentFromWilddog)
+            .then(function (content) {
+                console.log('advertisement content' + content);
+                res.json({
+                    errCode: 0,
+                    content: content
+                });
+            })
+            .catch(function (error) {
+                console.log('获取广告content错误:' + error);
+                res.json({
+                    errCode: 503,
+                    errMessage: error.message
+                });
+            });
+    }
+}
+
+exports.getAdvertContent = getAdvertContent
+
+/**
+ * 判断广告状态
+ */
+function judgeAdvertisementState (advertId) {
+    var deferred = Q.defer();
+    
+    adRef.child(advertId).once('value', function (snapshot) {
+        //判断广告状态
+        var advertisement = snapshot.val();
+        if (advertisement.status === '001') {
+            // 广告可以播放
+            deferred.resolve({
+                advertiserId: advertisement.advertiser,
+                advertId: advertId,
+                price: advertisement.price
+            });
+        } else {
+            deferred.reject(new Error('广告不可播放'));
+        }
+    }, function (error) {
+        deferred.reject(error);
+    });
+    
+    return deferred.promise;
+}
+
+/**
+ * 判断广告商余额
+ */
+function judgeAdvertiserBalance (advert) {
+    var deferred = Q.defer();
+    var advertiserRef = rootRef.child('advertiser');
+    
+    if (advert.advertiserId === 'admin') {
+        // 如果是管理员发的广告直接放行
+        deferred.resolve(advert)
+    } else {
+        advertiserRef.child(advert.advertiserId).child('balance').once('value', function (snapshot) {
+            if (snapshot.val() - advert.price >= 0) {
+                // 还有钱，可以播放
+                deferred.resolve(advert);
+            } else {
+                // 钱不够了，不能播放
+                deferred.reject(new Error('广告商钱不够了'));
+            }
+        }, function (error) {
+            deferred.reject(error);
+        });
+    }
+    
+    return deferred.promise;
+}
+
+/**
+ * 返回广告内容
+ */
+function getAdvertContentFromWilddog(advert) {
+    var deferred = Q.defer();
+    
+    adRef.child(advert.advertId).child('content').once('value', function (snapshot) {
+        deferred.resolve(snapshot.val());
+    }, function (error) {
+        deferred.reject(error);
+    });
+    
+    return deferred.promise;
+}
+
+
+
+/**
  * 根据district和周边poi类型在wilddog上获取广告ID列表
  */
 function userGetAdsByCoordinate(req, res) {
@@ -168,7 +282,7 @@ function userGetAdsByCoordinate(req, res) {
                     console.log(error);
                     res.json({
                         errCode: 502,
-                        errMessage: error
+                        errMessage: error.message
                     });
                 });
         } else {
