@@ -26,7 +26,8 @@ ref.authWithCustomToken(superToken,(error,authData)=>{
     utils.fakeMemcache();
     mg.connectMongo();
     // setTimeout(function() {
-    //     utils.playAd('59b8aaf5a171cb121e678f04cddf510aea4709ebb45956d133dbef046851d070','-KHEKBJ7cJM1U0KCFAmp');
+    //     utils.playAd('06a8c69e6ac6c36753009a97301a62a5038463cadab0b5ff5236d274b1ad91bb','-KHEKBJ7cJM1U0KCFAmp');
+    //     utils.playAd('06a8c69e6ac6c36753009a97301a62a5038463cadab0b5ff5236d274b1ad91bb','-KHE5at1fqlvIxabaetC');
     // }, 2000);
     //*****查询广告示例，先require('./bin/mongo')，然后调用AdQuery方法*****//
     // setTimeout(function() {
