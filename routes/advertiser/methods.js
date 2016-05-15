@@ -118,7 +118,7 @@ exports.signup = function(req, res, next) {
  */
 exports.getAdvertisement = function (req, res, next) {
     var token = req.query.token;
-    if (!token || Token.token2id(token)) {
+    if (!token || !Token.token2id(token)) {
         res.json({
             errCode: 101
         });
@@ -145,13 +145,11 @@ exports.getAdvertisement = function (req, res, next) {
 exports.getDistrict = function (req, res, next) {
     var token = req.query.token;
     var city = req.query.city;
-    if (!token || Token.token2id(token)) {
+    if (!token || !Token.token2id(token)) {
         res.json({
             errCode: 101
         });
     } else {
-        // token to id
-        var id = Token.token2id(token);
         //数据库查询
         City.district(city)
             .done(function (data) {
@@ -172,16 +170,12 @@ exports.getDistrict = function (req, res, next) {
 exports.submitAdvert = function (req,res,next) {
     var data = req.query;
     console.log(data);
-    if (data.token === undefined || data.token === null || Token.token2id(data.token) === null) {
+    if (!data.token || !Token.token2id(data.token)) {
         res.json({
             errCode: 101
         });
     } else {
-        if (data.id === undefined || data.id === null) {
-            res.json({
-                errCode: 201
-            });
-        } else {
+        if (data.id) {
             Advert.releaseNewAdvert(data.id, function (err,key) {
                 if (err === null) {
                     res.json({
@@ -193,6 +187,10 @@ exports.submitAdvert = function (req,res,next) {
                         errCode: err.message //发布广告失败
                     });
                 }
+            });
+        } else {
+            res.json({
+                errCode: 399
             });
         }
         
@@ -207,13 +205,10 @@ exports.submitAdvert = function (req,res,next) {
  */
 exports.saveAdvert = function (req,res,next) {
     var data = req.body;
-    console.log('draft');
-    console.log(data);
     if (!data.token || !Token.token2id(data.token)) {
         res.json({
             errCode: 101
         });
-        next(err);
     } else {
         // token to id
         var id = Token.token2id(data.token);
@@ -221,16 +216,13 @@ exports.saveAdvert = function (req,res,next) {
         // 判断广告是否有ID
         if (data.id) {
             // 有ID，更新广告
-            console.log('更新广告');
             Advert.updateAdvertDraft(id, data, function (error) {
-                console.log('id:' + data.id);
                 if (error) {
                     res.json({
                         errCode: 210
                     });
                 } else {
                     //行政区映射
-                    console.log('行政区映射');
                     City.modifyAdvertById(data.id,data.city,data.catalog,data.add,data.remove)
                         .done(function () {
                             res.json({

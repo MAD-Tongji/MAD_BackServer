@@ -93,37 +93,41 @@ City.modifyAdvertById = function(id,city,catalog,add,remove) {
         });
     });
     //修改数据库
-    advertsNeedModifying.forEach(function (advertNeedModifying) {
-        var advertRef = cityRef.child(city).child(advertNeedModifying.id).child(catalog);
-        advertRef.once("value", function (snapshot) {
-            if(snapshot.exists()) {
-                //取出内容放入array
-                var existedAdverts = new Array;
-                snapshot.val().forEach(function (advertId) {
-                    existedAdverts.push(advertId);
-                });
-                //判断增删情况并增删
-                if(advertNeedModifying.ifAdd) {
-                    //不存在则增
-                    if(existedAdverts.indexOf(id) === -1) {
-                        existedAdverts.push(id);
-                    }
-                } else {
-                    //存在则删
-                    if(index = existedAdverts.indexOf(id) !== -1) {
-                        existedAdverts.splice(index,1);
-                    }
-                }
-                //写回数据库
-                advertRef.set(existedAdverts);
-                defer.resolve();
-            } else {
-                defer.reject();
-            }
-        })
-    });
     if (advertsNeedModifying.length < 1) {
         defer.resolve();
+    } else {
+        advertsNeedModifying.forEach(function (advertNeedModifying) {
+            var advertRef = cityRef.child(city).child(advertNeedModifying.id).child(catalog);
+            advertRef.once("value", function (snapshot) {
+                if(snapshot.exists()) {
+                    //取出内容放入array
+                    var existedAdverts = new Array;
+                    snapshot.val().forEach(function (advertId) {
+                        existedAdverts.push(advertId);
+                    });
+                    //判断增删情况并增删
+                    if(advertNeedModifying.ifAdd) {
+                        //不存在则增
+                        if(existedAdverts.indexOf(id) === -1) {
+                            existedAdverts.push(id);
+                        }
+                    } else {
+                        //存在则删
+                        if(index = existedAdverts.indexOf(id) !== -1) {
+                            existedAdverts.splice(index,1);
+                        }
+                    }
+                    //写回数据库
+                    advertRef.set(existedAdverts);
+                }
+                // else {
+                //     defer.reject(new Error('该区不存在'));
+                // }
+            });
+        });
+        defer.resolve();
     }
+    
+
     return defer.promise;
 };
