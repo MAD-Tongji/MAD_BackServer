@@ -137,27 +137,46 @@ exports.setFilter = setFilter;
 /**
  * 根据district和周边poi类型在wilddog上获取广告ID列表
  */
-function userGetAdsByCoordinate(coordinate, callback) {
+function userGetAdsByCoordinate(req, res) {
     // 后台广告查找流程：向高德地图请求经纬度周边poi信息(20条)->提取20个poi的类型->根据类型在数据库里查找广告->返回广告ID列表
-
-    /**
-     * 逻辑：
-     * 1. 获取行政区代码
-     * 2. 获取poi类型数组
-     * 3. 在野狗中查询
-     * 4. 返回id结果数组
-     */
-    
-    Q.all([getDistrictCodeWithCoordinate(coordinate), getAroundCatalog(coordinate)])
-        .then(getAdvertIdsFromWilddog)
-        .then(function (idArray) {
-            console.log('idArray');
-            console.log(idArray);
-            callback(idArray);
-        })
-        .catch(function (error) {
-            console.log(error);
+    var token = req.body.token;
+    if (!token || !utils.token2id(token)) {
+        res.json({
+            errCode: 101
         });
+    } else {
+        /**
+         * 逻辑：
+         * 1. 获取行政区代码
+         * 2. 获取poi类型数组
+         * 3. 在野狗中查询
+         * 4. 返回id结果数组
+         */
+        var coordinate = req.body.coordinate;
+        if (coordinate) {
+            Q.all([getDistrictCodeWithCoordinate(coordinate), getAroundCatalog(coordinate)])
+                .then(getAdvertIdsFromWilddog)
+                .then(function (idArray) {
+                    // console.log('idArray');
+                    // console.log(idArray);
+                    res.json({
+                        errCode: 0,
+                        idArray: idArray
+                    });
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    res.json({
+                        errCode: 502,
+                        errMessage: error
+                    });
+                });
+        } else {
+            res.json({
+                errCode: 501
+            });
+        }
+    }     
 }
 
 /**

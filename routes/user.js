@@ -10,26 +10,9 @@ var advert = require('./user/advert');
 /* GET users listing. */
 router.get('/', function(req, res, next) {
    
-  	// test.b(function(){
-    // 	console.log('this is callback function');
-  	// });
-	// 根据经纬度获取广告ID数组
-	try {
-		advert.userGetAdsByCoordinate({
-			longitude: 121.49491,
-			latitude: 31.24169
-		}, function (idArray) {
-			res.json({
-				errCode: 0,
-				ids: idArray
-			});
-		});
-	} catch (error) {
-		console.log(error);
-		res.send({
-			errCode: error.message
-		});
-	}
+  	test.b(function(){
+    	console.log('this is callback function');
+  	});
 });
 /* GET/POST lister*/
 // router.get('/login',function (req,res,next) {
@@ -59,6 +42,9 @@ router.get('/advert/detail/:adid',advert.getDetail);
 
 /* user set ad filter */
 router.post('/advert/filter',advert.setFilter);
+
+/* user get id array according coordinate */
+router.post('/advert/ids',advert.userGetAdsByCoordinate);
 
 /* user modify detail info */
 router.post('/account/modify',user.modifyInfo);
