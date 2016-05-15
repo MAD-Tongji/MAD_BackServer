@@ -13,17 +13,19 @@ router.get('/', function(req, res, next) {
   	// test.b(function(){
     // 	console.log('this is callback function');
   	// });
+	// 根据经纬度获取广告ID数组
 	try {
-		advert.findAdvertisementsByCoordinate({
+		advert.userGetAdsByCoordinate({
 			longitude: 121.49491,
 			latitude: 31.24169
-		}, function (idList) {
-			res.send({
+		}, function (idArray) {
+			res.json({
 				errCode: 0,
-				idList: idList
+				ids: idArray
 			});
 		});
 	} catch (error) {
+		console.log(error);
 		res.send({
 			errCode: error.message
 		});

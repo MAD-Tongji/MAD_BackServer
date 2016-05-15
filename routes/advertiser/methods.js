@@ -6,6 +6,7 @@ var Advert = require('./advertisement');
 var Apply = require('./apply');
 var City = require('./city');
 var Token = require('../../lib/publicUtils');
+var path = require('path');
 
 /**
  * 广告商登陆
@@ -50,21 +51,25 @@ exports.check = function (req, res, next) {
         
         User.completeEmailCheck(id)
             .done(function () {
-                res.json({
-                    errCode: 0
+                res.set({
+                    'Content-Type': 'text/html;charset=utf-8'
                 });
+                res.sendFile(path.resolve('views/check-success.html'));
             }, function (error) {
                 console.log('用户：' + id +'邮箱验证失败');
                 console.log(error);
-                res.json({
-                    errCode: 107
+
+                res.set({
+                    'Content-Type': 'text/html;charset=utf-8'
                 });
+                res.sendFile(path.resolve('views/check-fail.html'));
             });
     } else {
         //邮箱验证码过期或错误，验证失败
-        res.json({
-            errCode: 107    
+        res.set({
+            'Content-Type': 'text/html;charset=utf-8'
         });
+        res.sendFile(path.resolve('views/check-error.html'));
     }
 }
 
