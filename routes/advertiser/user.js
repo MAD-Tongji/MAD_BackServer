@@ -115,7 +115,7 @@ User.createNewAdvertiser = function (info, callback) {
                 password: info.password,
                 recharge: {},
                 refund: {},
-                status: false,
+                status: '010',
                 check: false
             });
 
