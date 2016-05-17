@@ -27,7 +27,7 @@ ref.authWithCustomToken(superToken,(error,authData)=>{
     mg.connectMongo();
     // setTimeout(function() {
     //     utils.playAd('06a8c69e6ac6c36753009a97301a62a5038463cadab0b5ff5236d274b1ad91bb','-KHEEkZOiDg1cUi4jAxr');
-    // }, 2000);
+    // }, 1000);
     // setTimeout(function() {
     //     utils.playAd('06a8c69e6ac6c36753009a97301a62a5038463cadab0b5ff5236d274b1ad91bb','-KHEDW3DFpeOMYL6lbsO');
     // }, 3000);
