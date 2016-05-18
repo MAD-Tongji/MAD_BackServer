@@ -195,7 +195,7 @@ exports.complete = function(req, res, next){
         User.authenticate(data.operatorEmail, data.operatorPassword, function(err, user){
             if (err) return next(err);
             if (user) {
-            console.log(user.id);
+            // console.log(user.id);
             Account.complete(data).done(function(data){
             if(!data){
                 res.json({
@@ -231,7 +231,7 @@ exports.search = function(req, res, next){
             errCode: 101
         })
     }else{
-        console.log(data.query);
+        // console.log(data.query);
         Advertisment.search(data).done(function(data){
             if(data){
                 res.json({
@@ -257,13 +257,13 @@ exports.search = function(req, res, next){
  * @interface
  * @description {interface} 用户登录，参数为用户名，密码
  * @param {String} name 用户名
- * @param {String} pass 登陆密码
+ * @param {String} password 登陆密码
  * @return {JSON} 登录成功 {errCode, token, id, level} 登陆失败 {errCode}
  */
 exports.login = function(req, res, next){
     var data = req.body;
-    if (data.name && data.pass) {
-        User.authenticate(data.name, data.pass, function(err, user){
+    if (data.name && data.password) {
+        User.authenticate(data.name, data.password, function(err, user){
             if (err) {
                 res.json({
                     errCode: 102 //用户名或密码不正确
@@ -284,12 +284,12 @@ exports.login = function(req, res, next){
             }
         })
     } else {
-        if (!data.name && data.pass) {
+        if (!data.name && data.password) {
             res.json({
                 errCode: 407  //登录名不能为空
             })
         }
-        else if (!data.pass && data.name) {
+        else if (!data.password && data.name) {
              res.json({
                 errCode: 408  //登录密码不能为空
             })
@@ -434,10 +434,10 @@ function getAllList(ids) {
 
 /**
  * @interface
- * @description {interface} 新建管理员，参数为token, name, pass, emnail. gender, level, hireDate
+ * @description {interface} 新建管理员，参数为token, name, password, emnail. gender, level, hireDate
  * @param {String} token
  * @param {String} name 用户名
- * @param {String} pass 密码
+ * @param {String} password 密码
  * @param {String} email 邮箱
  * @param {String} gender 性别
  * @param {String} level 管理级别
@@ -458,7 +458,7 @@ exports.create = function(req, res, next) {
         if (result) {
             var newAdmin = new User({
                 name: data.userName,
-                pass: '12345678', //初始密码
+                password: '12345678', //初始密码
                 email: data.email,
                 gender: data.gender,
                 level: data.level,
@@ -507,7 +507,7 @@ exports.manage = function(req, res, next) {
         if (result) {
             User.getById(data.id)
             .done(function(data) {
-                console.log(data);
+                // console.log(data);
                 User.updateLevel(data, level, function(err) {
                     if (err) next(err);
                     res.json({
@@ -525,22 +525,22 @@ exports.manage = function(req, res, next) {
 
 /**
  * @interface
- * @description {interface} 修改管理员信息，参数为token, email, pass
+ * @description {interface} 修改管理员信息，参数为token, email, password
  * @param {String} token
- * @param {String} pass 修改的密码
+ * @param {String} password 修改的密码
  * @param {String} email 修改的邮箱
  * @return {JSON} 成功 {errCode} 登陆失败 {errCode}
  */
 exports.modify = function(req, res, next) {
     var data = req.body;
-    if (!data.token || !data.email || !data.pass) {
+    if (!data.token || !data.email || !data.password) {
         res.json({
             errCode: 108 //请求错误
         });
         next(err);
     }
     var email = data.email;
-    var password = data.pass;
+    var password = data.password;
     authenticate(data.token, function(err, result) {
         if (err) return next(err);
         if (result) {
@@ -616,9 +616,9 @@ exports.userDetailById = function(req, res, next) {
     var id = req.params.userid;
     var token = req.query.token;
     var tag = req.query.tag;
-    console.log('token: ' + token);
-    console.log('id: ' + id);
-    console.log('tag: ' + tag);
+    // console.log('token: ' + token);
+    // console.log('id: ' + id);
+    // console.log('tag: ' + tag);
     if (!id || !token || !tag) {
         res.json({
             errCode: 108 //请求错误
@@ -755,13 +755,13 @@ exports.message = function(req, res, next) {
             .done(function(data) {
                 if (data) {
                     var id = data;
-                    console.log('verify: ' + data);
+                    // console.log('verify: ' + data);
                     User.getMessageList(data)
                     .done(function(data) {
-                        console.log('id list: ' + data);
+                        // console.log('id list: ' + data);
                         User.getMessage(id, data)
                         .done(function(data) {
-                            console.log(data);
+                            // console.log(data);
                             res.json({
                                 errCode: 0,
                                 MsgList: data

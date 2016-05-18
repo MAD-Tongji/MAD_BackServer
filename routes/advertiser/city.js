@@ -32,12 +32,17 @@ City.addAdvertMapping = function(advertId, cityName, districtId, catalog) {
     district.once("value", function (snapshot) {
         // 判断节点是否存在
         if (snapshot.child(catalog).exists()) {
+            // 存在push数据
             var origin = snapshot.child(catalog).val();
             origin.push(advertId);
             district.child(catalog).set(origin);
             deferred.resolve();
         } else {
-            deferred.reject();
+            // 不存在则新建
+            var newCatalog = [];
+            newCatalog.push(advertId);
+            district.child(catalog).set(newCatalog);
+            deferred.resolve();
         }
     });
 

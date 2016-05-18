@@ -109,17 +109,17 @@ router.get('/account/check/detail', function (req,res,next) {
 /************** 统计部分 ***********/
 // 获取广告统计列表
 router.get('/statistics/all',function (req,res,next) {
-  //code here
+  advertiser.getAdvertisementsStatistics(req, res);
 });
 
-// 根据ID获取广告支出详情
-router.get('/statistics/detail',function (req,res,next) {
-  //code here
+// 根据ID获取广告支出和播放数据
+router.get('/statistics/detail/:id?',function (req,res,next) {
+  advertiser.getAdvertisementStatisticDetail(req, res);
 });
 
 // 获取广告商支出和投放数据
 router.get('/statistics/data',function (req,res,next) {
-  //code here
+  advertiser.getAdvertiserStatistic(req, res);
 });
 
 //消息部分

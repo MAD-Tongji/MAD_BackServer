@@ -62,9 +62,9 @@ List.getCarUser = function(id) {
         list.id = id;
         list.name = shapshot.val().name;
         list.status = shapshot.val().status;
-        if (shapshot.val().detail) {
+        if (shapshot.val().detail && shapshot.val().detail.registerDate) {
         	list.registrationDate = shapshot.val().detail.registerDate;
-        } else {
+        } else if (!shapshot.val().detail || !shapshot.val().detail.registerDate){
         	list.registrationDate = 'null';
         }
     })
@@ -117,11 +117,7 @@ List.getAdvertiser = function(id) {
         list.id = id;
         list.name = shapshot.val().name;
         list.status = shapshot.val().status;
-        if (shapshot.val().detail) {
-        	list.registrationDate = shapshot.val().detail.registerDate;
-        } else {
-        	list.registrationDate = 'null';
-        }
+        list.registrationDate = shapshot.val().registerDate;
     	deferred.resolve(list);
     })
     return deferred.promise;
@@ -337,10 +333,11 @@ List.getAdvertiserById = function(id) {
 	advertiserRef.child(id).once("value", function(shapshot, err) {
 		if (err) deferred.reject(err);
 		var data = shapshot.val();
-		userDetail.name = data.name,
+		userDetail.name = data.name;
 		userDetail.id = id;
-		userDetail.status = data.status,
-		userDetail.email = data.email,
+		userDetail.status = data.status;
+		userDetail.email = data.email;
+        userDetail.registerDate = data.registerDate;
 		List.getAdvertiserDetail(id)
 		.done(function(data) {
 			userDetail.detail = data;
@@ -357,18 +354,33 @@ List.getAdvertiserDetail = function(id) {
 	var deferred = Q.defer();
 	var detail = new Object();
 	advertiserRef.child(id).child("detail").once("value", function(shapshot, err) {
-		if (err) deferred.reject(err);
-		var data = shapshot.val();
-        detail.registerDate = data.registerDate;
-        detail.type = data.type;
-        detail.licenseType = data.licenseType;
-        detail.licenseImage = data.licenseImage;
-        detail.licenseCode = data.licenseCode;
-        detail.location = data.location;
-        detail.accomodation = detail.accomodation;
-        detail.businessScope = detail.businessScope;
-        detail.businessPeriod = detail.businessPeriod;
-        detail.organizationCode = detail.organizationCode;
+        if (err) {
+            deferred.reject(err);
+        }
+		if (!shapshot.val()) {
+            detail.type = 'null';
+            detail.licenseType = 'null';
+            detail.licenseImage = 'null';
+            detail.licenseCode = 'null';
+            detail.location = 'null';
+            detail.accomodation = 'null';
+            detail.businessScope = 'null';
+            detail.businessPeriod = 'null';
+            detail.organizationCode = 'null';
+        }
+        else {
+            var data = shapshot.val();
+            // detail.registerDate = data.registerDate;
+            detail.type = data.type;
+            detail.licenseType = data.licenseType;
+            detail.licenseImage = data.licenseImage;
+            detail.licenseCode = data.licenseCode;
+            detail.location = data.location;
+            detail.accomodation = detail.accomodation;
+            detail.businessScope = detail.businessScope;
+            detail.businessPeriod = detail.businessPeriod;
+            detail.organizationCode = detail.organizationCode;
+        }
         List.getAdvertiserLegalPerson(id)
         .done(function(data) {
             detail.legalPerson = data;
@@ -385,14 +397,26 @@ List.getAdvertiserLegalPerson = function(id) {
     var deferred = Q.defer();
     var legalPerson = new Object();
     advertiserRef.child(id).child("detail").child("legalPerson").once("value", function(shapshot, err) {
-        if (err) deferred.reject(err);
-        var data = shapshot.val();
-        legalPerson.name = data.name;
-        legalPerson.location = data.location;
-        legalPerson.id = data.id;
-        legalPerson.validDate = data.validDate;
-        legalPerson.ifLongTerm = data.ifLongTerm;
-        legalPerson.ifLegalPerson = data.ifLegalPerson;
+        if (err) {
+            deferred.reject(err);
+        }
+        if (!shapshot.val()) {
+            legalPerson.name = 'null';
+            legalPerson.location = 'null';
+            legalPerson.id = 'null';
+            legalPerson.validDate = 'null';
+            legalPerson.ifLongTerm = 'null';
+            legalPerson.ifLegalPerson = 'null';
+        }
+        else {
+            var data = shapshot.val();
+            legalPerson.name = data.name;
+            legalPerson.location = data.location;
+            legalPerson.id = data.id;
+            legalPerson.validDate = data.validDate;
+            legalPerson.ifLongTerm = data.ifLongTerm;
+            legalPerson.ifLegalPerson = data.ifLegalPerson;
+        }
         deferred.resolve(legalPerson);
     })
     return deferred.promise;
@@ -434,9 +458,15 @@ List.getUserDetail = function(id) {
   var detail = new Object();
   carUserRef.child(id).child("detail").once("value", function(shapshot, err) {
     if (err) deferred.reject(err);
-    var data = shapshot.val();
-    detail.vehicleLicenseImage = data.vehicleLicenseImage;
-    detail.email = data.email;
+    if (!shapshot.val()) {
+        detail.vehicleLicenseImage = 'null';
+        detail.email = 'null';
+    }
+    else {
+        var data = shapshot.val();
+        detail.vehicleLicenseImage = data.vehicleLicenseImage;
+        detail.email = data.email;
+    }
     deferred.resolve(detail);
   })
   return deferred.promise;
@@ -476,10 +506,11 @@ List.getStatistics = function() {
     adminStatisticRef.child("incomeDate").on("child_added", function(shapshot, err) {
         if (err) deferred.reject(err);
         var id = shapshot.key();
-        console.log(shapshot.key());
+        // console.log(shapshot.key());
         adminStatisticRef.child("incomeDate").child(id).once("value", function(shapshot, err) {
             if (err) deferred.reject(err);
             listArr.push({
+                date: id,
                 totalBroadcast: shapshot.val().totalBroadcast,
                 totalIncome: shapshot.val().totalIncome
             })

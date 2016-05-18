@@ -31,7 +31,7 @@ User.prototype.save = function(fn){
     var newPush = adminRef.push({
         name: user.name,
         email: user.email,
-        pass: user.pass,
+        password: user.password,
         gender: user.gender,
         level: user.level,
         hireDate: moment(user.hireDate).format('YYYY-MM-DD HH:mm:ss')
@@ -40,11 +40,11 @@ User.prototype.save = function(fn){
     })
 
     var id = newPush.key();
-    user.hashPassword(user.pass, function(err, hashPass) {
+    user.hashPassword(user.password, function(err, hashPass) {
         if (err) return fn(err);
         adminRef.child(id).update({
             id: id,
-            pass: hashPass
+            password: hashPass
         }, function(err) {
             if (err) fn(err);
             /* 发送通知 */
@@ -96,7 +96,7 @@ User.getUser = function(id) {
     var user = new User();
     adminRef.child(id).on("value", function(shapshot) {
         user.name = shapshot.val().name;
-        user.pass = shapshot.val().pass;
+        user.password = shapshot.val().password;
         user.id = shapshot.val().id;
         user.level = shapshot.val().level;
         deferred.resolve(user);
@@ -151,7 +151,7 @@ User.authenticate = function(name, pass, fn) {
 			var hash = crypto.createHash('sha256')
 				.update(pass)
 				.digest('hex');
-			if (hash == data.pass) return fn(null, data);
+			if (hash == data.password) return fn(null, data);
 			fn();
         })
 	})
@@ -199,7 +199,7 @@ User.updateInfo = function(id, email, password, fn) {
 		.digest('hex');
     adminRef.child(id).update({
         email: email,
-        pass: hash
+        password: hash
     }, function(err) {
         if (err) fn(err);
         var reason = "您的个人信息修改成功!";
