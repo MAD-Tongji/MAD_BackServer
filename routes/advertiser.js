@@ -119,7 +119,7 @@ router.get('/statistics/detail/:id?',function (req,res,next) {
 
 // 获取广告商支出和投放数据
 router.get('/statistics/data',function (req,res,next) {
-  //code here
+  advertiser.getAdvertiserStatistic(req, res);
 });
 
 //消息部分

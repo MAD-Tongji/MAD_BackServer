@@ -725,3 +725,30 @@ exports.getAdvertisementStatisticDetail = function (req, res) {
     }
 }
 
+// 获取广告商支出和投放数据
+exports.getAdvertiserStatistic = function (req, res) {
+    var token = req.query.token;
+    
+    if (!token || !Token.token2id(token)) {
+        res.json({
+            errCode: 101
+        });
+    } else {
+        var advertiserId = Token.token2id(token);
+        
+        
+        Statistic.getAdvertiserData(advertiserId)
+            .then(function (result) {
+                res.json({
+                    errCode: 0,
+                    advertisement: result
+                });
+            }).catch(function (error) {
+                res.json({
+                    errCode: 999,
+                    errMessage: error.message
+                });
+            });
+    } 
+}
+
