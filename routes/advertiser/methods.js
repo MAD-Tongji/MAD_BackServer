@@ -17,25 +17,26 @@ var path = require('path');
  */
 exports.login = function(req, res, next) {
     var data = req.body;
-    User.authenticate(data.email, data.password, function(err, user){
-        if (err) {
+
+    User.getAdvertiserByEmail(data.email)
+        .then(function (user) {
+            if (user.password === data.password) {
+                var token = Token.getToken(user.id)
+                res.json({
+                    token: token,
+                    name: user.name,
+                    errCode: 0
+                });
+            } else {
+                res.json({
+                    errCode: 102
+                });
+            }
+        }).catch(function (error) {
             res.json({
-                errCode: err.message
+                errCode: 102
             });
-        }
-        if (user) {
-            var token = Token.getToken(user.id); //传入登录者的id生成token
-            res.json({
-                token: token,
-                'name': user.name,
-                errCode: 0
-            });
-        } else {
-            res.json({
-               errCode: 102 //用户名或密码不正确
-            });
-        }
-    });
+        });
 };
 
 /**

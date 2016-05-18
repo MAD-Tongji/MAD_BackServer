@@ -19,32 +19,6 @@ function User(obj) {
   	}
 }
 
-/**
- * 验证user
- * @param email
- * @param pass
- * @param callback
- */
-User.authenticate = function(email, pass, callback) {
-	User.getAdvertiserByEmail(email).
-        then(function(data) {
-            // console.log('advertiser data:')
-            // console.log(data);
-            if (pass === data.password) {
-                // 登陆后检查是否验证过
-                if (!data.check) {
-                    var uncheck = new Error('103');
-                    callback(uncheck, null);
-                } else {
-                    callback(null, data);
-                }
-            } else {
-                callback(null, null);
-            }
-        }, function(err) {
-            callback(err);
-        });
-};
 
 /**
  * 通过email获取用户
@@ -65,7 +39,7 @@ User.getAdvertiserByEmail = function(email){
             //用户不存在
             console.log('用户不存在');
             var noUserError = new Error('102');
-            deferred.reject('102');
+            deferred.reject(noUserError);
         }
     });
 
