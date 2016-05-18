@@ -112,9 +112,9 @@ router.get('/statistics/all',function (req,res,next) {
   advertiser.getAdvertisementsStatistics(req, res);
 });
 
-// 根据ID获取广告支出详情
-router.get('/statistics/detail',function (req,res,next) {
-  //code here
+// 根据ID获取广告支出和播放数据
+router.get('/statistics/detail/:id?',function (req,res,next) {
+  advertiser.getAdvertisementStatisticDetail(req, res);
 });
 
 // 获取广告商支出和投放数据

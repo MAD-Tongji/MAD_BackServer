@@ -41,3 +41,28 @@ Statistic.getAllStatistic = function (advertiserId) {
     });
     return deferred.promise;
 };
+
+Statistic.getAdvertisementDetail = function (advertId, advertiserId) {
+    var deferred = Q.defer();
+    var advertDetail;
+    var dateId;
+    var statisticArray = new Array;
+    
+    statisticRef.child('advertiser').child('detailInfo').child(advertiserId).child(advertId).once('value', function (snapshot) {
+        if (snapshot.val()) {
+            advertDetail = snapshot.val();
+            
+            for (dateId in advertDetail) {
+                if (typeof advertDetail[dateId] !== 'function') {
+                    advertDetail[dateId].date = dateId;
+                    statisticArray.push(advertDetail[dateId]);
+                }
+            }
+            deferred.resolve(statisticArray);
+        } else {
+            deferred.reject(new Error('没有取到广告:' + advertId + '的统计数据'));
+        }
+    });
+    
+    return deferred.promise;
+}

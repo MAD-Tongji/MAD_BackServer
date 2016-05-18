@@ -309,7 +309,7 @@ exports.removeAdvertById = function (req,res,next) {
 exports.getAdvertById = function (req,res) {
     var token = req.query.token;
 
-    if (token === undefined || token === null  || Token.token2id(token) === null) {
+    if (!token|| !Token.token2id(token)) {
         console.log('token:' + token);
         console.log('id:' + Token.token2id(token));
         res.json({
@@ -696,4 +696,32 @@ exports.getAdvertisementsStatistics = function (req, res) {
                 });
             });
     }
+};
+
+// 根据ID获取广告支出和播放数据
+exports.getAdvertisementStatisticDetail = function (req, res) {
+    var token = req.query.token;
+    
+    if (!token || !Token.token2id(token)) {
+        res.json({
+            errCode: 101
+        });
+    } else {
+        var advertiserId = Token.token2id(token);
+        var advertId = req.params.id;
+        
+        Statistic.getAdvertisementDetail(advertId, advertiserId)
+            .then(function (result) {
+                res.json({
+                    errCode: 0,
+                    statistics: result
+                });
+            }).catch(function (error) {
+                res.json({
+                    errCode: 999,
+                    errMessage: error.message
+                });
+            });
+    }
 }
+
