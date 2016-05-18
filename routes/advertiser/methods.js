@@ -5,6 +5,7 @@ var ExternalAdvert = require('./../admin/advertisment');
 var Advert = require('./advertisement');
 var Apply = require('./apply');
 var City = require('./city');
+var Statistic = require('./statistic');
 var Token = require('../../lib/publicUtils');
 var path = require('path');
 
@@ -669,3 +670,30 @@ exports.getAccountCheckDetail = function (req,res,next) {
 };
 
 //TODO: errCode102问题
+
+
+/*------------------------- 我是分割线------------------*/
+// 获取广告统计列表
+exports.getAdvertisementsStatistics = function (req, res) {
+    var token = req.query.token;
+    
+    if (!token || !Token.token2id(token)) {
+        res.json({
+            errCode: 101
+        });
+    } else {
+        var advertiserId = Token.token2id(token);
+        Statistic.getAllStatistic(advertiserId)
+            .then(function (result) {
+                res.json({
+                    errCode: 0,
+                    advertisement: result
+                });
+            }).catch(function (error) {
+                res.json({
+                    errCode: 999,
+                    errMessage: error.message
+                });
+            });
+    }
+}
