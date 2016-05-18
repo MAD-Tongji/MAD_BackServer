@@ -139,32 +139,28 @@ exports.setFilter = setFilter;
 function getAdvertContent(req, res) {
 
     var token = req.body.token;
-    // !token || !utils.token2id(token)
-    if (false) {
+
+    if (!token || !utils.token2id(token)) {
         res.json({
             errCode: 101
         });
     } else {
-        /**
-         * 代码逻辑：
-         * 1. 判断广告状态
-         * 2. 判断广告商余额
-         * 3. response返回广告内容
-         * 4. 广告播放数量＋1
-         * 5. 扣款广告商余额
-         * 6. 更新车主播放、余额信息
-         */
         var advertId = req.body.id;
-        // var userId = utils.token2id(token);
-        judgeAdvertisementState(advertId)
-            .then(judgeAdvertiserBalance)
-            .then(getAdvertContentFromWilddog)
+
+        judgeAdvertisementState(advertId)   //判断广告状态
+            .then(judgeAdvertiserBalance)   //判断广告商余额
+            .then(getAdvertContentFromWilddog)      //
             .then(function (content) {
                 console.log('advertisement content' + content);
+                
+                // response返回广告内容
                 res.json({
                     errCode: 0,
                     content: content
                 });
+                
+                // 广告播放数量＋1
+                utils.playAd(token, advertId);
             })
             .catch(function (error) {
                 console.log('获取广告content错误:' + error);
