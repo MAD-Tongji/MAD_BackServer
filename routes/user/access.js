@@ -50,7 +50,7 @@ exports.register=function(req,res) {
     var name=req.body.name;
     var username=req.body.username;
     var password=req.body.password;
-    //console.log(username,req.params,req.body);
+    console.log(username,req.params,req.body);
     var result={};
     if(username==null|| password==null){
         result.errCode=102;
@@ -64,7 +64,7 @@ exports.register=function(req,res) {
         // });
         var newUser={};
         newUser[username]={
-            adUsedList:[],
+            adUsedList:"",
             alipay:'',
             balance:0,
             detail:{
@@ -74,7 +74,6 @@ exports.register=function(req,res) {
               vehicleFrontImage:'',
               vehicleLicenseImage :'' 
             },
-            expiration:'',
             filter:{
               accommodation:'',
               commodity:'',
@@ -86,7 +85,7 @@ exports.register=function(req,res) {
               social:'',
               tenancy:''  
             },
-            message:[],
+            message:"",
             mobilePhone:username,
             name:name,
             password:password,
@@ -98,7 +97,8 @@ exports.register=function(req,res) {
                 totalCash:0,
                 totalIncome:0
             },
-            status:true
+            status:true,
+            withdrawHistory:""
         };
         userRef.update(newUser);
         result.errCode=0;
