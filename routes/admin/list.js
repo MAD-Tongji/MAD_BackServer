@@ -506,10 +506,11 @@ List.getStatistics = function() {
     adminStatisticRef.child("incomeDate").on("child_added", function(shapshot, err) {
         if (err) deferred.reject(err);
         var id = shapshot.key();
-        console.log(shapshot.key());
+        // console.log(shapshot.key());
         adminStatisticRef.child("incomeDate").child(id).once("value", function(shapshot, err) {
             if (err) deferred.reject(err);
             listArr.push({
+                date: id,
                 totalBroadcast: shapshot.val().totalBroadcast,
                 totalIncome: shapshot.val().totalIncome
             })

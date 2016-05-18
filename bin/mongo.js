@@ -34,6 +34,7 @@ function connectMongo()
             if(os.networkInterfaces().eth1 != null && os.networkInterfaces().eth1[0] != null && os.networkInterfaces().eth1[0].address == '121.42.57.59')
             dropCol(collection,function(collection){dataBind(collection);});
             // AdQuery({"advertiser":"test1@test-com"},(docs)=>{console.log(docs)});
+            // queryTop3();
         });
     } catch(e){
         console.log("error:"+e.message);
@@ -139,5 +140,36 @@ function AdQuery(query,callback)
     });
 }
 
+function queryTop3()
+{
+    collection.find({},{adId:1,broadcastTimes:1,_id:0,title:1}).sort({'broadcastTimes':-1}).limit(3).toArray((err,docs)=>{
+        if (err != null)
+        {
+            console.log("\033[31m"+err+"\033[0m");
+        }
+        else
+        {
+           console.log(docs);
+           var newtop3 = {advert_most:{}};
+           for(var i = 0; i<3; i++)
+           {
+               newtop3.advert_most[docs[i].adId]={
+                   broadcastTimes:docs[i].broadcastTimes,
+                   title:docs[i].title
+               }
+           }
+           console.log(newtop3);
+           ref.child('statistic/admin/homePageData').update(newtop3,(err)=>{
+               if(err == null){
+                   console.log('更新top3成功啦');
+               }else{
+                   console.log('更新top3失败可');
+               }
+           });
+        }
+    });
+}
+
 exports.connectMongo=connectMongo;
 exports.AdQuery=AdQuery;
+exports.queryTop3=queryTop3;
