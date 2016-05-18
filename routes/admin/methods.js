@@ -195,7 +195,7 @@ exports.complete = function(req, res, next){
         User.authenticate(data.operatorEmail, data.operatorPassword, function(err, user){
             if (err) return next(err);
             if (user) {
-            console.log(user.id);
+            // console.log(user.id);
             Account.complete(data).done(function(data){
             if(!data){
                 res.json({
@@ -231,7 +231,7 @@ exports.search = function(req, res, next){
             errCode: 101
         })
     }else{
-        console.log(data.query);
+        // console.log(data.query);
         Advertisment.search(data).done(function(data){
             if(data){
                 res.json({
@@ -507,7 +507,7 @@ exports.manage = function(req, res, next) {
         if (result) {
             User.getById(data.id)
             .done(function(data) {
-                console.log(data);
+                // console.log(data);
                 User.updateLevel(data, level, function(err) {
                     if (err) next(err);
                     res.json({
@@ -616,9 +616,9 @@ exports.userDetailById = function(req, res, next) {
     var id = req.params.userid;
     var token = req.query.token;
     var tag = req.query.tag;
-    console.log('token: ' + token);
-    console.log('id: ' + id);
-    console.log('tag: ' + tag);
+    // console.log('token: ' + token);
+    // console.log('id: ' + id);
+    // console.log('tag: ' + tag);
     if (!id || !token || !tag) {
         res.json({
             errCode: 108 //请求错误
@@ -755,13 +755,13 @@ exports.message = function(req, res, next) {
             .done(function(data) {
                 if (data) {
                     var id = data;
-                    console.log('verify: ' + data);
+                    // console.log('verify: ' + data);
                     User.getMessageList(data)
                     .done(function(data) {
-                        console.log('id list: ' + data);
+                        // console.log('id list: ' + data);
                         User.getMessage(id, data)
                         .done(function(data) {
-                            console.log(data);
+                            // console.log(data);
                             res.json({
                                 errCode: 0,
                                 MsgList: data
