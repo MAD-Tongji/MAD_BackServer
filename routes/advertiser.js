@@ -51,7 +51,7 @@ router.post('/advertisement/save',function (req,res,next) {
 
 // 根据ID下架广告
 router.post('/advertisement/remove',function (req,res,next) {
-  advertiser.removeAdvertById(req,res,next);
+  advertiser.removeAdvert(req,res,next);
 });
 
 // 根据ID获取广告详情

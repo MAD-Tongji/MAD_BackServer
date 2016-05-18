@@ -88,8 +88,10 @@ Advertisement.releaseNewAdvert = function (id, callback) {
 /**
  * 检查广告是否属于广告商
  */
-function checkAdvertiser(advertiserId) {
-	
+function checkAdvertiser(advertId, advertiserId) {
+	var deferred = Q.defer();
+
+	// advertisementRef.child(advertId).once()
 }
 
 /**
@@ -171,24 +173,28 @@ Advertisement.updateAdvertDraft = function (id, data, callback) {
  * @returns {*}
  */
 
-Advertisement.removeAdvertById = function (id, adId, callback) {
+Advertisement.removeAdvertById = function (id, adId) {
 	var defer = Q.defer();
 	var advert = advertisementRef.child(adId);
-	advert.on("value", function (snapshot) {
-		//验证
-		if (snapshot.val().advertiser == id) {
+
+	advert.once("value", function (snapshot) {
+
+		if (snapshot.val() && snapshot.val().advertiser === id) {
 			advert.update({
 				"status":"101"
 			},function(err){
-				defer.resolve();
-				callback(err);
-				console.log(err);
+				if (err !== null) {
+					console.log('ERROR:' + err);
+					defer.reject(err);
+				} else {
+					defer.resolve();
+				}
 			});
 		} else {
-			defer.resolve();
-			callback("这不是您的广告");
+			defer.reject(new Error('广告不存在或广告商名字错误'));
 		}
 	});
+
 	return defer.promise;
 };
 

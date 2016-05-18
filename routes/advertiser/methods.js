@@ -269,34 +269,31 @@ exports.saveAdvert = function (req,res,next) {
  * @param res
  * @param next
  */
-exports.removeAdvertById = function (req,res,next) {
-    var data = req.body;
-    console.log(data);
-    if (!data.token) {
+exports.removeAdvert = function (req,res,next) {
+    var token = req.body.token;
+    if (!token || !Token.token2id(token)) {
         res.json({
-            errCode: 102
+            errCode: 101
         });
-        next(err);
     } else {
-        // token to id
-        var id = Token.token2id(data.token);
-        var adId = data.id;
-        if (id != null) {
-            Advert.removeAdvertById(id, adId, function (err) {
-                if (err == null) {
+        var id = Token.token2id(token);
+        var advertId = req.body.id;
+        if (advertId) {
+            Advert.removeAdvertById(id, advertId)
+                .then(function () {
                     res.json({
                         errCode: 0
                     });
-                } else {
+                }).catch(function (error) {
                     res.json({
-                        errCode: 208, //广告下架失败
-                        error: err
+                        errCode: 208,
+                        errMessage: error.message
                     });
-                }
-            })
+                });
         } else {
             res.json({
-                errCode: 101
+                errCode: 999,
+                errMessage: 参数不正确
             });
         }
     }
