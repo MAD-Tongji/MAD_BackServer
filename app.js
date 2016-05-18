@@ -34,8 +34,9 @@ ref.authWithCustomToken(superToken,(error,authData)=>{
     // setTimeout(function() {
     //     utils.playAd('06a8c69e6ac6c36753009a97301a62a5038463cadab0b5ff5236d274b1ad91bb','-KHtuHb2BiTRp2au_S9b');
     // }, 5000);
-    // ref.child('advertisment').orderByChild('broadcastTimes').limitToLast(3).on('child_added',(snap)=>{
-    //   console.log("播放排序："+snap.key() + ":" + snap.val().broadcastTimes);
+    // ref.child('advertisment').orderByChild('broadcastTimes').limitToLast(3).on('value',(snap)=>{
+    //   console.log("播放排序：");
+    //   console.log(snap.val());
     // });
     //*****查询广告示例，先require('./bin/mongo')，然后调用AdQuery方法*****//
     // setTimeout(function() {
