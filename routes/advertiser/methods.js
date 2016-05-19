@@ -514,27 +514,24 @@ exports.refundList = function (req,res,next) {
  */
 exports.messageList = function (req,res,next) {
     var token = req.query.token;
-    if (!token) {
+    if (!token || !Token.token2id(token)) {
         res.json({
-            errCode: 102
+            errCode: 101
         });
-        next(err);
-    }
-    // token to id
-    var id = Token.token2id(token);
-    if (id != null) {
-        // 获取内容并处理
+    } else {
+        var id = Token.token2id(token);
         User.getMessages(id)
-            .done(function (data) {
+            .then(function (data) {
                 res.json({
                     errCode: 0,
                     messages: data
                 });
-            })
-    } else {
-        res.json({
-            errCode: 101
-        });
+            }).catch(function (error) {
+                res.json({
+                    errCode: 999,
+                    errMessage: error.message
+                });
+            });
     }
 };
 
