@@ -271,10 +271,15 @@ exports.login = function(req, res, next){
             }
             if (user) {
                 var token = Token.getToken(user.id); //传入登录者的id生成token
+                /**
+                 * 生成七牛云upload token, Token.uptoken()中需传入'madtest' -> bucket名称
+                 */
+                var uploadToken = Token.uptoken('madtest');
                 res.json({
                     token: token,
                     id: user.id,
                     level: user.level,
+                    uptoken: uploadToken,
                     errCode: 0
                 });
             } else {
