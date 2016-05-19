@@ -10,24 +10,9 @@ var advert = require('./user/advert');
 /* GET users listing. */
 router.get('/', function(req, res, next) {
    
-  	// test.b(function(){
-    // 	console.log('this is callback function');
-  	// });
-	try {
-		advert.findAdvertisementsByCoordinate({
-			longitude: 121.49491,
-			latitude: 31.24169
-		}, function (idList) {
-			res.send({
-				errCode: 0,
-				idList: idList
-			});
-		});
-	} catch (error) {
-		res.send({
-			errCode: error.message
-		});
-	}
+  	test.b(function(){
+    	console.log('this is callback function');
+  	});
 });
 /* GET/POST lister*/
 // router.get('/login',function (req,res,next) {
@@ -57,6 +42,12 @@ router.get('/advert/detail/:adid',advert.getDetail);
 
 /* user set ad filter */
 router.post('/advert/filter',advert.setFilter);
+
+/* pad get advertisement id array according coordinate */
+router.post('/advert/ids',advert.userGetAdsByCoordinate);
+
+/* pad get the advertisement content with id */
+router.post('/advert/content', advert.getAdvertContent);
 
 /* user modify detail info */
 router.post('/account/modify',user.modifyInfo);

@@ -23,8 +23,9 @@
     "nodemon": "~1.9.1",
     "q": "^1.4.1",
     "qcloud_cos": "^1.0.4",
+    "qiniu": "^6.1.11",
+    "request": "^2.72.0",
     "serve-favicon": "~2.3.0",
-    "sync-request": "^3.0.1",
     "tsd": "^0.6.5",
     "wilddog": "^0.6.2"
   },

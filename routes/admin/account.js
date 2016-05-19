@@ -117,6 +117,7 @@ Account.complete = function(data){
 
 							//申请被拒绝后要做的事
 							if(catalog == "1"){
+								AdvertiserRef.child(userid).child("recharge").child(refId).update({"status": false});
 								var msgContent = "您的充值申请(充值金额: "+money+" 元)未能通过审核,原因：未收到钱款。";
 								Message.sendMessage(userid,2,msgContent, function(err){});
 

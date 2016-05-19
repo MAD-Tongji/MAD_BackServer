@@ -32,12 +32,17 @@ City.addAdvertMapping = function(advertId, cityName, districtId, catalog) {
     district.once("value", function (snapshot) {
         // 判断节点是否存在
         if (snapshot.child(catalog).exists()) {
+            // 存在push数据
             var origin = snapshot.child(catalog).val();
             origin.push(advertId);
             district.child(catalog).set(origin);
             deferred.resolve();
         } else {
-            deferred.reject();
+            // 不存在则新建
+            var newCatalog = [];
+            newCatalog.push(advertId);
+            district.child(catalog).set(newCatalog);
+            deferred.resolve();
         }
     });
 
@@ -78,6 +83,7 @@ City.district = function (city) {
 City.modifyAdvertById = function(id,city,catalog,add,remove) {
     var defer = Q.defer();
     //建立新的数据结构
+
     var advertsNeedModifying = new Array;
     add.forEach(function (addAdvert) {
         advertsNeedModifying.push({
@@ -91,36 +97,42 @@ City.modifyAdvertById = function(id,city,catalog,add,remove) {
             ifAdd: false
         });
     });
-
     //修改数据库
-    advertsNeedModifying.forEach(function (advertNeedModifying) {
-        var advertRef = cityRef.child(city).child(advertNeedModifying.id).child(catalog);
-        advertRef.once("value", function (snapshot) {
-            if(snapshot.exists()) {
-                //取出内容放入array
-                var existedAdverts = new Array;
-                snapshot.val().forEach(function (advertId) {
-                    existedAdverts.push(advertId);
-                });
-                //判断增删情况并增删
-                if(advertNeedModifying.ifAdd) {
-                    //不存在则增
-                    if(existedAdverts.indexOf(id) === -1) {
-                        existedAdverts.push(id);
+    if (advertsNeedModifying.length < 1) {
+        defer.resolve();
+    } else {
+        advertsNeedModifying.forEach(function (advertNeedModifying) {
+            var advertRef = cityRef.child(city).child(advertNeedModifying.id).child(catalog);
+            advertRef.once("value", function (snapshot) {
+                if(snapshot.exists()) {
+                    //取出内容放入array
+                    var existedAdverts = new Array;
+                    snapshot.val().forEach(function (advertId) {
+                        existedAdverts.push(advertId);
+                    });
+                    //判断增删情况并增删
+                    if(advertNeedModifying.ifAdd) {
+                        //不存在则增
+                        if(existedAdverts.indexOf(id) === -1) {
+                            existedAdverts.push(id);
+                        }
+                    } else {
+                        //存在则删
+                        if(index = existedAdverts.indexOf(id) !== -1) {
+                            existedAdverts.splice(index,1);
+                        }
                     }
-                } else {
-                    //存在则删
-                    if(index = existedAdverts.indexOf(id) !== -1) {
-                        existedAdverts.splice(index,1);
-                    }
+                    //写回数据库
+                    advertRef.set(existedAdverts);
                 }
-                //写回数据库
-                advertRef.set(existedAdverts);
-                defer.resolve();
-            } else {
-                defer.reject();
-            }
-        })
-    });
+                // else {
+                //     defer.reject(new Error('该区不存在'));
+                // }
+            });
+        });
+        defer.resolve();
+    }
+    
+
     return defer.promise;
 };

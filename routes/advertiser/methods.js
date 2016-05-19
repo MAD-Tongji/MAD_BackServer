@@ -5,7 +5,9 @@ var ExternalAdvert = require('./../admin/advertisment');
 var Advert = require('./advertisement');
 var Apply = require('./apply');
 var City = require('./city');
+var Statistic = require('./statistic');
 var Token = require('../../lib/publicUtils');
+var path = require('path');
 
 /**
  * 广告商登陆
@@ -15,24 +17,26 @@ var Token = require('../../lib/publicUtils');
  */
 exports.login = function(req, res, next) {
     var data = req.body;
-    User.authenticate(data.email, data.password, function(err, user){
-        if (err) {
+
+    User.getAdvertiserByEmail(data.email)
+        .then(function (user) {
+            if (user.password === data.password) {
+                var token = Token.getToken(user.id)
+                res.json({
+                    token: token,
+                    name: user.name,
+                    errCode: 0
+                });
+            } else {
+                res.json({
+                    errCode: 102
+                });
+            }
+        }).catch(function (error) {
             res.json({
-                errCode: err.message
+                errCode: 102
             });
-        }
-        if (user) {
-            var token = Token.getToken(user.id); //传入登录者的id生成token
-            res.json({
-                token: token,
-                errCode: 0
-            });
-        } else {
-            res.json({
-               errCode: 102 //用户名或密码不正确
-            });
-        }
-    });
+        });
 };
 
 /**
@@ -46,14 +50,28 @@ exports.check = function (req, res, next) {
     console.log('id:' + id);
     if (id !== null) {
         // 根据ID修改用户check为true
-        res.json({
-            errCode: 0
-        });
+        
+        User.completeEmailCheck(id)
+            .done(function () {
+                res.set({
+                    'Content-Type': 'text/html;charset=utf-8'
+                });
+                res.sendFile(path.resolve('views/check-success.html'));
+            }, function (error) {
+                console.log('用户：' + id +'邮箱验证失败');
+                console.log(error);
+
+                res.set({
+                    'Content-Type': 'text/html;charset=utf-8'
+                });
+                res.sendFile(path.resolve('views/check-fail.html'));
+            });
     } else {
         //邮箱验证码过期或错误，验证失败
-        res.json({
-            errCode: 107    
+        res.set({
+            'Content-Type': 'text/html;charset=utf-8'
         });
+        res.sendFile(path.resolve('views/check-error.html'));
     }
 }
 
@@ -69,7 +87,7 @@ exports.signup = function(req, res, next) {
     User.createNewAdvertiser(data, function (newUserId) {
         if (null !== newUserId) {
             var token = Token.getToken(newUserId);
-            // 这个要根据host来拼
+            // 根据host来拼
             var checkUrl = req.host + ':4000/advertiser/checkemail?token=' + token;
             
             // 给用户邮箱发送验证邮件
@@ -84,11 +102,11 @@ exports.signup = function(req, res, next) {
             });
             
             res.json({
-                errCode: '0'
+                errCode: 0
             });
         } else {
             res.json({
-                errCode: '104'
+                errCode: 104
             });
         }
     });
@@ -102,27 +120,21 @@ exports.signup = function(req, res, next) {
  */
 exports.getAdvertisement = function (req, res, next) {
     var token = req.query.token;
-    if (!token) {
+    if (!token || !Token.token2id(token)) {
         res.json({
-            errCode: 102 //请求错误
+            errCode: 101
         });
     } else {
         // token to id
         var id = Token.token2id(token);
-        if (id != null) {
-            //数据库查询
-            Advert.getAllAdvertisement(id)
-                .done(function (data) {
-                    res.json({
-                        errCode: 0,
-                        advertisement: data
-                    });
+        //数据库查询
+        Advert.getAllAdvertisement(id)
+            .done(function (data) {
+                res.json({
+                    errCode: 0,
+                    advertisement: data
                 });
-        } else {
-            res.json({
-                errCode: 101
             });
-        }
     }    
 };
 
@@ -135,28 +147,19 @@ exports.getAdvertisement = function (req, res, next) {
 exports.getDistrict = function (req, res, next) {
     var token = req.query.token;
     var city = req.query.city;
-    if (!token) {
+    if (!token || !Token.token2id(token)) {
         res.json({
-            errCode: 102 //请求错误
+            errCode: 101
         });
-        next(err);
     } else {
-        // token to id
-        var id = Token.token2id(token);
-        if (id != null) {
-            //数据库查询
-            City.district(city)
-                .done(function (data) {
-                    res.json({
-                        errCode: 0,
-                        broadcastLocation: data
-                    });
+        //数据库查询
+        City.district(city)
+            .done(function (data) {
+                res.json({
+                    errCode: 0,
+                    broadcastLocation: data
                 });
-        } else {
-            res.json({
-                errCode: 101
             });
-        }
     }
 };
 
@@ -169,16 +172,12 @@ exports.getDistrict = function (req, res, next) {
 exports.submitAdvert = function (req,res,next) {
     var data = req.query;
     console.log(data);
-    if (data.token === undefined || data.token === null || Token.token2id(data.token) === null) {
+    if (!data.token || !Token.token2id(data.token)) {
         res.json({
             errCode: 101
         });
     } else {
-        if (data.id === undefined || data.id === null) {
-            res.json({
-                errCode: 201
-            });
-        } else {
+        if (data.id) {
             Advert.releaseNewAdvert(data.id, function (err,key) {
                 if (err === null) {
                     res.json({
@@ -190,6 +189,10 @@ exports.submitAdvert = function (req,res,next) {
                         errCode: err.message //发布广告失败
                     });
                 }
+            });
+        } else {
+            res.json({
+                errCode: 399
             });
         }
         
@@ -204,12 +207,10 @@ exports.submitAdvert = function (req,res,next) {
  */
 exports.saveAdvert = function (req,res,next) {
     var data = req.body;
-    console.log(data);
     if (!data.token || !Token.token2id(data.token)) {
         res.json({
             errCode: 101
         });
-        next(err);
     } else {
         // token to id
         var id = Token.token2id(data.token);
@@ -217,12 +218,10 @@ exports.saveAdvert = function (req,res,next) {
         // 判断广告是否有ID
         if (data.id) {
             // 有ID，更新广告
-            console.log('更新广告');
             Advert.updateAdvertDraft(id, data, function (error) {
-                console.log(data.id);
                 if (error) {
                     res.json({
-                        errCode: 207
+                        errCode: 210
                     });
                 } else {
                     //行政区映射
@@ -231,18 +230,18 @@ exports.saveAdvert = function (req,res,next) {
                             res.json({
                                 errCode: 0,
                                 id: data.id
-                            })
+                            });
                         }, function (error) { //reject
                             res.json({
                                 errCode: 306 //行政区映射失败
-                            })
+                            });
                         });
                 }
             });
         } else {
             // 没有ID，新建广告
             Advert.saveAdvert(id, data, function (err,key) {
-                if (err == null) {
+                if (err === null) {
                     // 行政区映射
                     var locations = data.broadcastLocation;
                     locations.forEach(function (location) {
@@ -270,34 +269,31 @@ exports.saveAdvert = function (req,res,next) {
  * @param res
  * @param next
  */
-exports.removeAdvertById = function (req,res,next) {
-    var data = req.body;
-    console.log(data);
-    if (!data.token) {
+exports.removeAdvert = function (req,res,next) {
+    var token = req.body.token;
+    if (!token || !Token.token2id(token)) {
         res.json({
-            errCode: 102
+            errCode: 101
         });
-        next(err);
     } else {
-        // token to id
-        var id = Token.token2id(data.token);
-        var adId = data.id;
-        if (id != null) {
-            Advert.removeAdvertById(id, adId, function (err) {
-                if (err == null) {
+        var id = Token.token2id(token);
+        var advertId = req.body.id;
+        if (advertId) {
+            Advert.removeAdvertById(id, advertId)
+                .then(function () {
                     res.json({
                         errCode: 0
                     });
-                } else {
+                }).catch(function (error) {
                     res.json({
-                        errCode: 208, //广告下架失败
-                        error: err
+                        errCode: 208,
+                        errMessage: error.message
                     });
-                }
-            })
+                });
         } else {
             res.json({
-                errCode: 101
+                errCode: 999,
+                errMessage: 参数不正确
             });
         }
     }
@@ -311,7 +307,7 @@ exports.removeAdvertById = function (req,res,next) {
 exports.getAdvertById = function (req,res) {
     var token = req.query.token;
 
-    if (token === undefined || token === null  || Token.token2id(token) === null) {
+    if (!token|| !Token.token2id(token)) {
         console.log('token:' + token);
         console.log('id:' + Token.token2id(token));
         res.json({
@@ -394,7 +390,7 @@ exports.recharge = function (req,res,next) {
         var id = Token.token2id(data.token);
         if (id != null) {
             User.recharge(id, data.recharge, data.Alipay, function (err, key) {
-                if (err == null) {
+                if (err === null) {
                     Apply.createApplyById(key, id, "recharge")
                         .done(function (data) {
                             console.log(data);
@@ -672,3 +668,85 @@ exports.getAccountCheckDetail = function (req,res,next) {
 };
 
 //TODO: errCode102问题
+
+
+/*------------------------- 我是分割线------------------*/
+// 获取广告统计列表
+exports.getAdvertisementsStatistics = function (req, res) {
+    var token = req.query.token;
+    
+    if (!token || !Token.token2id(token)) {
+        res.json({
+            errCode: 101
+        });
+    } else {
+        var advertiserId = Token.token2id(token);
+        Statistic.getAllStatistic(advertiserId)
+            .then(function (result) {
+                res.json({
+                    errCode: 0,
+                    advertisement: result
+                });
+            }).catch(function (error) {
+                res.json({
+                    errCode: 999,
+                    errMessage: error.message
+                });
+            });
+    }
+};
+
+// 根据ID获取广告支出和播放数据
+exports.getAdvertisementStatisticDetail = function (req, res) {
+    var token = req.query.token;
+    
+    if (!token || !Token.token2id(token)) {
+        res.json({
+            errCode: 101
+        });
+    } else {
+        var advertiserId = Token.token2id(token);
+        var advertId = req.params.id;
+        
+        Statistic.getAdvertisementDetail(advertId, advertiserId)
+            .then(function (result) {
+                res.json({
+                    errCode: 0,
+                    statistics: result
+                });
+            }).catch(function (error) {
+                res.json({
+                    errCode: 999,
+                    errMessage: error.message
+                });
+            });
+    }
+}
+
+// 获取广告商支出和投放数据
+exports.getAdvertiserStatistic = function (req, res) {
+    var token = req.query.token;
+    
+    if (!token || !Token.token2id(token)) {
+        res.json({
+            errCode: 101
+        });
+    } else {
+        var advertiserId = Token.token2id(token);
+        
+        
+        Statistic.getAdvertiserData(advertiserId)
+            .then(function (result) {
+                res.json({
+                    errCode: 0,
+                    advertisement: result
+                });
+            }).catch(function (error) {
+                res.json({
+                    errCode: 999,
+                    errMessage: error.message
+                });
+            });
+    } 
+}
+

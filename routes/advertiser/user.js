@@ -19,32 +19,6 @@ function User(obj) {
   	}
 }
 
-/**
- * 验证user
- * @param email
- * @param pass
- * @param callback
- */
-User.authenticate = function(email, pass, callback) {
-	User.getAdvertiserByEmail(email).
-        then(function(data) {
-            // console.log('advertiser data:')
-            // console.log(data);
-            if (pass === data.password) {
-                // 登陆后检查是否验证过
-                if (!data.check) {
-                    var uncheck = new Error('103');
-                    callback(uncheck, null);
-                } else {
-                    callback(null, data);
-                }
-            } else {
-                callback(null, null);
-            }
-        }, function(err) {
-            callback(err);
-        });
-};
 
 /**
  * 通过email获取用户
@@ -65,7 +39,7 @@ User.getAdvertiserByEmail = function(email){
             //用户不存在
             console.log('用户不存在');
             var noUserError = new Error('102');
-            deferred.reject('102');
+            deferred.reject(noUserError);
         }
     });
 
@@ -115,7 +89,7 @@ User.createNewAdvertiser = function (info, callback) {
                 password: info.password,
                 recharge: {},
                 refund: {},
-                status: false,
+                status: '010',
                 check: false
             });
 
@@ -179,7 +153,7 @@ User.recharge = function(id, amount, alipay, callback) {
     var newApply = advertiserRef.child(id).child("recharge").push({
         account: alipay,
         amount: amount,
-        status: false, // false为到帐中,true为已到账
+        status: '01',
         time: date
     },function(err){
         callback(err,newApply.key());
@@ -219,7 +193,7 @@ User.refund = function(id, amount, alipay, callback) {
     var newApply = advertiserRef.child(id).child('refund').push({
         account: alipay,
         amount: amount,
-        status: false, // false为审核中,true为已退款
+        status: '01',
         time: date
     },function(err){
         callback(err,newApply.key());
@@ -412,3 +386,27 @@ User.getAccountCheckDetail = function (id) {
     });
     return defer.promise;
 };
+
+/**
+ * 修改用户邮箱验证状态为true
+ * @param id
+ * @returns {*}
+ */
+User.completeEmailCheck = function (id) {
+    var deferred = q.defer();
+    advertiserRef.child(id).update({
+        check: true
+    }, function (err) {
+        if (err) {
+            deferred.reject(err);
+        } else {
+            deferred.resolve();
+        }
+    });
+    
+    return deferred.promise;
+}
+
+/**
+ * TODO: 需要添加一个监听函数，在提现和退款审核状态被修改后修改对应用户下的提现或退款状态
+ */
