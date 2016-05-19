@@ -6,6 +6,7 @@ var applyRef = ref.child("apply");
 var User = require('./user');
 var AdvertiserRef = ref.child("advertiser");
 var UserRef = ref.child("user");
+var Message = require('./messages');
 
 module.exports = Account;
 function Account(obj) {
@@ -73,8 +74,36 @@ Account.complete = function(data){
 					applyRef.child(data.applyId).once('value', function(snapshot){
 						var id = snapshot.child("applyId").val();
 						var userid = snapshot.child("userId").val();
+						var money = snapshot.child("money").val();
+						var catalog = snapshot.child("catalog").val();
+						//更改广告商下的申请状态
+						//申请通过后要做的事
+						if(catalog == "2"){
 						AdvertiserRef.child(userid).child("refund").child(id).update({"status": true});
+						var msgContent = "您的退款申请(退款金额: "+money+" 元)已经通过审核。";
+						Message.sendMessage(userid,2,msgContent, function(err){}); 
+
+					}else if(catalog == "1"){
+						AdvertiserRef.child(userid).child("recharge").child(id).update({"status": true});
+
+						//充值成功，更新余额
+						AdvertiserRef.child(userid).once('value', function(snapshot){
+							var balance = snapshot.child("balance").val();
+							var newBalance = balance + money;
+							//AdvertiserRef.child(userid).child("refund").child(refId).update({"status": false});
+						AdvertiserRef.child(userid).update({"balance": newBalance}, function(err){
+							var msgContent = "您的充值申请(充值金额: "+money+" 元)已经通过审核。";
+							Message.sendMessage(userid,2,msgContent, function(err){}); 							});	
+						});
+
+					}else if(catalog == "3"){
+						var msgContent = "您的提现申请(退款金额: "+money+" 元)已经通过审核。";
+						Message.sendMessage(userid,1,msgContent, function(err){}); 
+					}
+
+
 					});
+
 				});
 			}else{
 				applyRef.child(data.applyId).update({"status":"00"},function(err){
@@ -85,7 +114,14 @@ Account.complete = function(data){
 							var catalog = snapshot.child("catalog").val();
 							var userid = snapshot.child("userId").val();
 							var refId = snapshot.child("applyId").val();
-							if(catalog == "2"){
+
+							//申请被拒绝后要做的事
+							if(catalog == "1"){
+								var msgContent = "您的充值申请(充值金额: "+money+" 元)未能通过审核,原因：未收到钱款。";
+								Message.sendMessage(userid,2,msgContent, function(err){});
+
+							}
+							else if(catalog == "2"){
 							//console.log("222");
 								AdvertiserRef.child(userid).once('value', function(snapshot){
 									var balance = snapshot.child("balance").val();
@@ -93,11 +129,13 @@ Account.complete = function(data){
 									AdvertiserRef.child(userid).child("refund").child(refId).update({"status": false});
 									AdvertiserRef.child(userid).update({"balance": newBalance}, function(err){
 									//deferred.resolve(err);
-								});
+								});	
 							});	
+								var msgContent = "您的退款申请(退款金额: "+money+" 元)未能通过审核。";
+								Message.sendMessage(userid,2,msgContent, function(err){}); 
 						}
 							else if(catalog == "3"){
-								console.log("333");
+								//console.log("333");
 								var balance;
 								UserRef.child(userid).once('value', function(snapshot){
 									balance = snapshot.child("balance").val();
@@ -105,8 +143,11 @@ Account.complete = function(data){
 									UserRef.child(userid).update({"balance": newBalance}, function(err){
 									//deferred.resolve(err);
 								});
-							});							
+							});	
+								var msgContent = "您的提现申请(提现金额: "+money+" 元)未能通过审核。";
+								Message.sendMessage(userid,1,msgContent, function(err){});						
 						}
+
 					});					
 				}
 					deferred.resolve(err);
