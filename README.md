@@ -36,6 +36,11 @@
     ```
     $ mocha test/user.test      // 测试车主接口
     ```
+6. 上传图片到七牛云
+    ```
+   publicUtils里有uptoken()方法，可获取上传图片所需的token，可通过登录接口把uptoken传到前端。MAD_BackWeb里upload文件夹里是Demo，前端上传图片的参数里key为图片名称，key也是上传到七牛云里的图片的名称和标识符，上传成功后七牛云服务器返回这个key，通过这个key可以拼接出图片url，最后把这个url存到数据库。上传图片过程和提交该页面表单里其他参数的过程是独立的。
+    ```
+    
 ## 2.Project structure   
 ```
 |-- root
