@@ -256,10 +256,24 @@ User.getRefundList = function (id) {
 User.getMessages = function (id) {
     var defer = q.defer();
     var list;
+    var messageList = new Array;
+    var messageId;
     advertiserRef.child(id).once("value", function(snapshot) {
-        list = snapshot.val().message;
-        console.log(list);
-        defer.resolve(list);
+        if (snapshot.val()) {
+            list = snapshot.val().message;
+            
+            for (messageId in list) {
+                if (typeof list[messageId] !== 'function') {
+                    messageList.push(list[messageId]);
+                }
+            }
+            
+            console.log(messageList);
+            defer.resolve(messageList);
+        } else {
+            defer.reject(new Error('没有获取到消息列表'));
+        }
+        
     });
     return defer.promise;
 };
