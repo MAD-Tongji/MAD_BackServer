@@ -23,6 +23,11 @@ exports.login=function(req,res) {
     else{
         var ref=userRef.child(username);
         ref.once('value',function(snapshot) {
+            if(snapshot.val()==null)
+            {
+                result.errCode = 102;
+                res.json(result);
+            }
             if(snapshot.val().password==password){
                 result.errCode=0;
                 result.userId=username;
