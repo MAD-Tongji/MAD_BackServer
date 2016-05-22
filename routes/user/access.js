@@ -28,14 +28,16 @@ exports.login=function(req,res) {
                 result.errCode = 102;
                 res.json(result);
             }
-            if(snapshot.val().password==password){
-                result.errCode=0;
-                result.userId=username;
-                result.token=Token.getToken(result.userId);
-                res.json(result);
-            }else{
-                result.errCode=102;
-                res.json(result);
+            else{
+                if(snapshot.val().password==password){
+                    result.errCode=0;
+                    result.userId=username;
+                    result.token=Token.getToken(result.userId);
+                    res.json(result);
+                }else{
+                    result.errCode=102;
+                    res.json(result);
+                }
             }
         })
         // userRef.orderByChild('name').equalTo(username).on('value',function(snapshot) {
