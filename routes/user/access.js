@@ -16,7 +16,7 @@ exports.login=function(req,res) {
     var password=req.body.password;
     console.log(username,req.params,req.body);
     var result={};
-    if(username==null|| password==null){
+    if(username==null|| password==null || username=='' || password==''){
         result.errCode=102;
         res.json(result);
     }
