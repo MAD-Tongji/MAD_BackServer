@@ -12,7 +12,7 @@ var utils = require('../../lib/publicUtils');
  * @description {interface} 获取用户已接广告
  */
 function getAllAdUsed(req,res) {
-        
+
     var userid = req.params.userid || null;
     var token = req.query.token || null;
     var result = new Object;
@@ -43,8 +43,8 @@ function getAllAdUsed(req,res) {
             res.json(result);
         });
     }
-    
-    // res.json(result);  
+
+    // res.json(result);
 }
 
 exports.getAllAdUsed = getAllAdUsed;
@@ -148,7 +148,7 @@ function setFilter(req,res) {
                         result.errCode = 0;
                         // result.filterArray =filterArray;
                         res.json(result);
-                        
+
                     }
                 });
             }
@@ -178,13 +178,13 @@ function getAdvertContent(req, res) {
             .then(getAdvertContentFromWilddog)      //
             .then(function (content) {
                 console.log('advertisement content' + content);
-                
+
                 // response返回广告内容
                 res.json({
                     errCode: 0,
                     content: content
                 });
-                
+
                 // 广告播放数量＋1
                 utils.playAd(token, advertId);
             })
@@ -205,7 +205,7 @@ exports.getAdvertContent = getAdvertContent
  */
 function judgeAdvertisementState (advertId) {
     var deferred = Q.defer();
-    
+
     adRef.child(advertId).once('value', function (snapshot) {
         //判断广告状态
         var advertisement = snapshot.val();
@@ -222,7 +222,7 @@ function judgeAdvertisementState (advertId) {
     }, function (error) {
         deferred.reject(error);
     });
-    
+
     return deferred.promise;
 }
 
@@ -232,7 +232,7 @@ function judgeAdvertisementState (advertId) {
 function judgeAdvertiserBalance (advert) {
     var deferred = Q.defer();
     var advertiserRef = rootRef.child('advertiser');
-    
+
     if (advert.advertiserId === 'admin') {
         // 如果是管理员发的广告直接放行
         deferred.resolve(advert)
@@ -249,7 +249,7 @@ function judgeAdvertiserBalance (advert) {
             deferred.reject(error);
         });
     }
-    
+
     return deferred.promise;
 }
 
@@ -258,13 +258,13 @@ function judgeAdvertiserBalance (advert) {
  */
 function getAdvertContentFromWilddog(advert) {
     var deferred = Q.defer();
-    
+
     adRef.child(advert.advertId).child('content').once('value', function (snapshot) {
         deferred.resolve(snapshot.val());
     }, function (error) {
         deferred.reject(error);
     });
-    
+
     return deferred.promise;
 }
 
@@ -274,6 +274,8 @@ function getAdvertContentFromWilddog(advert) {
  * 根据district和周边poi类型在wilddog上获取广告ID列表
  */
 function userGetAdsByCoordinate(req, res) {
+    var apiKeys = ['261bebea3d5e5d0d826418bb0d7d4953', 'e521d4b038f8fb18042f22d5042a9e9d', 'd283b9b9e40cb549d56b80a1e4551054'];
+
     // 后台广告查找流程：向高德地图请求经纬度周边poi信息(20条)->提取20个poi的类型->根据类型在数据库里查找广告->返回广告ID列表
     var token = req.body.token;
     if (!token || !utils.token2id(token)) {
@@ -290,7 +292,8 @@ function userGetAdsByCoordinate(req, res) {
          */
         var coordinate = req.body.coordinate;
         if (coordinate) {
-            Q.all([getDistrictCodeWithCoordinate(coordinate), getAroundCatalog(coordinate)])
+            var keyNum = parseInt((Math.random()*10)%3);
+            Q.all([getDistrictCodeWithCoordinate(coordinate, apiKeys[keyNum]), getAroundCatalog(coordinate, apiKeys[keyNum])])
                 .then(getAdvertIdsFromWilddog)
                 .then(function (idArray) {
                     // console.log('idArray');
@@ -299,8 +302,7 @@ function userGetAdsByCoordinate(req, res) {
                         errCode: 0,
                         idArray: idArray
                     });
-                })
-                .catch(function (error) {
+                }).catch(function (error) {
                     console.log(error);
                     res.json({
                         errCode: 502,
@@ -312,19 +314,19 @@ function userGetAdsByCoordinate(req, res) {
                 errCode: 501
             });
         }
-    }     
+    }
 }
 
 /**
  * 使用高德API获取行政区代码
  */
-function getDistrictCodeWithCoordinate(coordinate) {
+function getDistrictCodeWithCoordinate(coordinate, apiKey) {
     var deferred = Q.defer();
     var districtName;
     var districtCode;
-        
-    var httpURL = ' http://restapi.amap.com/v3/geocode/regeo?key=02127fede0258553291573039655b9f0&location=' + coordinate.longitude + ',' + coordinate.latitude;
-    
+
+    var httpURL = ' http://restapi.amap.com/v3/geocode/regeo?key=' + apiKey + '&location=' + coordinate.longitude + ',' + coordinate.latitude;
+
     request(httpURL, function (error, response, body) {
         if (!error && response.statusCode == 200) {
             // console.log(body);
@@ -340,20 +342,21 @@ function getDistrictCodeWithCoordinate(coordinate) {
             deferred.reject(new Error('向高德请求行政区错误'));
         }
     });
-    
+
     return deferred.promise;
 }
 
 /**
  * 使用高德API获取周边poi类型数组
  */
-function getAroundCatalog(coordinate) {
+function getAroundCatalog(coordinate, apiKey) {
     var deferred = Q.defer();
     var aroundPoiCatalogs = [];
     var catalogSet = new Set();
-    var httpURL = 'http://restapi.amap.com/v3/place/around?key=02127fede0258553291573039655b9f0&offset=20&radius=3000&extensions=all&location=' + coordinate.longitude + ',' + coordinate.latitude;
+
+    var httpURL = 'http://restapi.amap.com/v3/place/around?key=' + apiKey + '&offset=20&radius=3000&extensions=all&location=' + coordinate.longitude + ',' + coordinate.latitude;
     var advertTypes;
-    
+
     request(httpURL, function (error, response, body) {
         if (!error && response.statusCode == 200) {
             // console.log(body);
@@ -364,7 +367,7 @@ function getAroundCatalog(coordinate) {
                 for (var j = 0; j < pois.length; j++) {
                     element = pois[j];
                     if (element.cityname !== undefined && element.cityname !== null) {
-                        if (element.cityname === '上海市') {                            
+                        if (element.cityname === '上海市') {
                             // 根据poi类型获取广告类型
                             advertTypes = getAdvertismentTypeFromCode(element.typecode);
                             // console.log(advertTypes);
@@ -377,13 +380,14 @@ function getAroundCatalog(coordinate) {
                 aroundPoiCatalogs = Array.from(catalogSet);
                 deferred.resolve(aroundPoiCatalogs);
             } else {
+              console.log(jsonBody);
                 deferred.reject(new Error('异常数据，没有pois'))
             }
         } else {
             deferred.reject(new Error('向高德请求poi时错误'));
         }
     });
-    
+
     return deferred.promise;
 }
 
@@ -397,7 +401,7 @@ function getAdvertIdsFromWilddog(params) {
     var advertIdArray = [];
     var advertIdSet;// = new Set();
     var advertIdRef = rootRef.child('AdsInCitys').child('Shanghai');
-    
+
     advertIdRef.child(districtCode).once('value', function (snapshot) {
         var value = snapshot.val();
         for (var i = 0; i < catalogArray.length; i += 1) {
@@ -411,7 +415,7 @@ function getAdvertIdsFromWilddog(params) {
         console.log('野狗查询时出错');
         deferred.reject(error);
     });
-    
+
     return deferred.promise;
 }
 
@@ -435,7 +439,7 @@ function getDistrictCode (districtName) {
         '静安区': '015',
         '普陀区': '016'
     }
-    
+
     return district[districtName];
 }
 
@@ -451,7 +455,7 @@ function getDistrictCode (districtName) {
  * 7	social	社交
  * 8	tenancy	租赁
  * 9	other	其他
- * 
+ *
  * 高德poi typecode：
  * 01：汽车服务
  * 02：汽车销售
@@ -468,7 +472,7 @@ function getDistrictCode (districtName) {
  * 13: 政府机构及社会团体
  * 14: 科教文化服务
  * 15: 交通设施服务
- * 16: 金融保险服务 
+ * 16: 金融保险服务
  * 17: 公司企业
  * 18: 道路附属设施（收费站之类的）
  * 19：地名地址信息
