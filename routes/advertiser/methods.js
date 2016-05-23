@@ -9,6 +9,8 @@ var Statistic = require('./statistic');
 var Token = require('../../lib/publicUtils');
 var path = require('path');
 
+
+
 /**
  * 广告商登陆
  * @param req
@@ -21,7 +23,8 @@ exports.login = function(req, res, next) {
     User.getAdvertiserByEmail(data.email)
         .then(function (user) {
             if (user.password === data.password) {
-                var token = Token.getToken(user.id)
+                var token = Token.getToken(user.id);
+                console.log(Token.uptoken());
                 res.json({
                     token: token,
                     name: user.name,
@@ -37,6 +40,24 @@ exports.login = function(req, res, next) {
                 errCode: 102
             });
         });
+};
+
+/**
+ * 获取图片上传uptoken
+ */
+exports.getUpToken = function (req, res) {
+    var token = req.query.token;
+    console.log('token:' + token);
+    if (!token || !Token.token2id(token)) {
+        res.json({
+            errCode: 101
+        });
+    } else {
+        res.json({
+            uptoken: Token.uptoken('madtest'),
+            errCode: 0
+        });
+    }
 };
 
 /**

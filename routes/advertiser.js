@@ -106,6 +106,11 @@ router.get('/account/check/detail', function (req,res,next) {
   advertiser.getAccountCheckDetail(req,res,next);
 });
 
+// 获取图片上传uptoken
+router.get('/account/check/uptoken', function (req, res, next) {
+  advertiser.getUpToken(req, res);
+});
+
 /************** 统计部分 ***********/
 // 获取广告统计列表
 router.get('/statistics/all',function (req,res,next) {

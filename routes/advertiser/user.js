@@ -419,7 +419,7 @@ User.completeEmailCheck = function (id) {
     });
     
     return deferred.promise;
-}
+};
 
 /**
  * TODO: 需要添加一个监听函数，在提现和退款审核状态被修改后修改对应用户下的提现或退款状态
