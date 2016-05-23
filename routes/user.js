@@ -43,6 +43,8 @@ router.get('/advert/detail/:adid',advert.getDetail);
 /* user set ad filter */
 router.post('/advert/filter',advert.setFilter);
 
+router.get('/advert/filter',advert.getFilter);
+
 /* pad get advertisement id array according coordinate */
 router.post('/advert/ids',advert.userGetAdsByCoordinate);
 

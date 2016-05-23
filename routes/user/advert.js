@@ -71,6 +71,32 @@ function getDetail(req,res) {
 
 exports.getDetail = getDetail;
 
+function getFilter(req,res) {
+    console.log(req.query);
+    var token = req.query.token || null;
+    var userId=null;
+    var response = {};
+    if(token != null) userId=utils.token2id(userId);
+    if(userId==null){
+        response.errCode=101;
+        res.json(response);
+    }else{
+        userRef.child(userId).once('value',(snap)=>{
+            if(snap != null){
+                var setting = snap.val().filter;
+                response.adValidationSettings=new Array(9);
+                // response.adValidationSettings[0]=setting.
+            }
+            else{
+                response.errCode=101;
+                res.json(response);
+            }
+        });
+    }
+}
+
+exports.getFilter =getFilter;
+
 /**
  * @interface
  * @description {interface} 设置广告过滤参数
