@@ -46,7 +46,7 @@ function connectMongo()
  */
 function dataBind(collection){
     var adRef = ref.child('advertisment');
-    adRef.on('child_added',(snap,prev)=>{
+    adRef.limitToFirst(999999999).on('child_added',(snap,prev)=>{
         var adObj = snap.val();
         adObj['adId'] = snap.key();
         collection.insertOne(adObj,{w:1},(err,result)=>{
@@ -61,7 +61,7 @@ function dataBind(collection){
         });
     });
 
-    adRef.on('child_removed',(snap)=>{
+    adRef.limitToFirst(999999999).on('child_removed',(snap)=>{
         console.log(snap.val());
         console.log(snap.key());
         collection.deleteOne({'adId':snap.key()},(err,result)=>{
@@ -76,7 +76,7 @@ function dataBind(collection){
         });
     });
 
-    adRef.on('child_changed',(snap)=>{
+    adRef.limitToFirst(999999999).on('child_changed',(snap)=>{
         console.log(snap.val());
         console.log(snap.key());
         collection.updateOne({'adId':snap.key()},{$set:snap.val()},(err,result)=>{
