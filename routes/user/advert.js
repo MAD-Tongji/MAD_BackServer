@@ -399,18 +399,21 @@ function getAdvertIdsFromWilddog(params) {
     var catalogArray = params[1];
     var deferred = Q.defer();
     var advertIdArray = [];
-    var advertIdSet;// = new Set();
+    var advertIdSet;
     var advertIdRef = rootRef.child('AdsInCitys').child('Shanghai');
-
     advertIdRef.child(districtCode).once('value', function (snapshot) {
         var value = snapshot.val();
-        for (var i = 0; i < catalogArray.length; i += 1) {
-            var element = catalogArray[i];
-            advertIdArray = advertIdArray.concat(value[element]);
+        if (value) {
+          for (var i = 0; i < catalogArray.length; i += 1) {
+              var element = catalogArray[i];
+              advertIdArray = advertIdArray.concat(value[element]);
+          }
+          advertIdSet = new Set(advertIdArray);
+          advertIdArray = Array.from(advertIdSet);
+          deferred.resolve(advertIdArray);
+        } else {
+          deferred.reject(new Error('查询广告ID时没有获取到数据'));
         }
-        advertIdSet = new Set(advertIdArray);
-        advertIdArray = Array.from(advertIdSet);
-        deferred.resolve(advertIdArray);
     }, function (error) {
         console.log('野狗查询时出错');
         deferred.reject(error);
