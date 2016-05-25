@@ -33,7 +33,7 @@ function connectMongo()
             collection = db.collection('advertisment');
             if(os.networkInterfaces().eth1 != null && os.networkInterfaces().eth1[0] != null && os.networkInterfaces().eth1[0].address == '121.42.57.59')
             dropCol(collection,function(collection){dataBind(collection);});
-            // AdQuery({"advertiser":"test1@test-com"},(docs)=>{console.log(docs)});
+             //AdQuery({"advertiser":"test1@test-com"},(docs)=>{console.log("524:"+docs)});
             // queryTop3();
         });
     } catch(e){

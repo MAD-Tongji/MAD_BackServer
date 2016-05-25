@@ -80,7 +80,7 @@ Advertisment.listAll = function (data){
 	var listItem = new Advertisment();
 	var list = [];
 	console.log(data.tag);
-	AdvertismentRef.on('value', function(snapshot){
+	AdvertismentRef.limitToFirst(99999).on('value', function(snapshot){
 		if(parseInt(data.tag) == parseInt(1)){
 		  snapshot.forEach(function(snap){
 		  	if(snap.child('status').val() == "100"){
@@ -120,8 +120,10 @@ Advertisment.audit = function(data){
 	AdsRef.child('advertiser').once('value', function(snapshot){
 	Advertiser = snapshot.val();
 });
+	console.log(data.success);
 	if(parseInt(data.success) == parseInt(0)){
 		AdsRef.update({"status":"000"},function(err){
+			console.log("00000");
 			var content = "您的广告" + data.id + "未通过审核" + " 理由: " + data.reason;
 			Message.sendMessage(Advertiser,2,content,function(err){
 				deferred.resolve(err);
@@ -131,6 +133,7 @@ Advertisment.audit = function(data){
 	}
 	else if(parseInt(data.success) == parseInt(1)){
 		AdsRef.update({"status":"001"},function(err){
+			console.log("11111");
 			var content = "您的广告" + data.id + "已通过审核";
 			Message.sendMessage(Advertiser,2,content,function(err){
 				deferred.resolve(err);
@@ -184,6 +187,7 @@ Advertisment.detail = function(data){
 Advertisment.search = function(data){
 	var deferred = Q.defer();
 	var item = new Advertisment();
+	console.log("broadcastLocation:"+data.broadcastLocation);
 	if(data.id){
 		item.adId = data.id;
 	}
