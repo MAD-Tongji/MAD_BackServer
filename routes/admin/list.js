@@ -42,8 +42,10 @@ List.getCarUserList = function(ids) {
             (function(id) {
                 List.getCarUser(ids[id])
                 .done(function(data) {
-                    listArr.push(data.toJSON());
-                    deferred.resolve(listArr);
+                    if (data != 'null') {
+                        listArr.push(data.toJSON());
+                        deferred.resolve(listArr);
+                    }
                 })
             })(id);
         }
@@ -57,18 +59,22 @@ List.getCarUserList = function(ids) {
 List.getCarUser = function(id) {
 	var deferred = Q.defer();
     var list = new List();
-    carUserRef.child(id).on("value", function(shapshot, err) {
+    carUserRef.child(id).once("value", function(shapshot, err) {
     	if (err) deferred.reject(err);
-        list.id = id;
-        list.name = shapshot.val().name;
-        list.status = shapshot.val().status;
-        if (shapshot.val().detail && shapshot.val().detail.registerDate) {
-        	list.registrationDate = shapshot.val().detail.registerDate;
-        } else if (!shapshot.val().detail || !shapshot.val().detail.registerDate){
-        	list.registrationDate = 'null';
+        if (shapshot.val().name && shapshot.val().name != 'undefined' && shapshot.val().detail && shapshot.val().detail != 'undefined') {
+            list.id = id;
+            list.name = shapshot.val().name;
+            list.status = shapshot.val().status;
+            if (shapshot.val().detail && shapshot.val().detail.registerDate) {
+                list.registrationDate = shapshot.val().detail.registerDate;
+            } else if (!shapshot.val().detail || !shapshot.val().detail.registerDate){
+                list.registrationDate = 'null';
+            }
+            deferred.resolve(list);
+        } else {
+            deferred.resolve('null');
         }
     })
-    deferred.resolve(list);
     return deferred.promise;
 }
 

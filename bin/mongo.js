@@ -33,7 +33,7 @@ function connectMongo()
             collection = db.collection('advertisment');
             if(os.networkInterfaces().eth1 != null && os.networkInterfaces().eth1[0] != null && os.networkInterfaces().eth1[0].address == '121.42.57.59')
             dropCol(collection,function(collection){dataBind(collection);});
-            // AdQuery({"advertiser":"test1@test-com"},(docs)=>{console.log(docs)});
+             //AdQuery({"advertiser":"test1@test-com"},(docs)=>{console.log("524:"+docs)});
             // queryTop3();
         });
     } catch(e){
@@ -46,7 +46,7 @@ function connectMongo()
  */
 function dataBind(collection){
     var adRef = ref.child('advertisment');
-    adRef.on('child_added',(snap,prev)=>{
+    adRef.limitToFirst(999999999).on('child_added',(snap,prev)=>{
         var adObj = snap.val();
         adObj['adId'] = snap.key();
         collection.insertOne(adObj,{w:1},(err,result)=>{
@@ -61,7 +61,7 @@ function dataBind(collection){
         });
     });
 
-    adRef.on('child_removed',(snap)=>{
+    adRef.limitToFirst(999999999).on('child_removed',(snap)=>{
         console.log(snap.val());
         console.log(snap.key());
         collection.deleteOne({'adId':snap.key()},(err,result)=>{
@@ -76,7 +76,7 @@ function dataBind(collection){
         });
     });
 
-    adRef.on('child_changed',(snap)=>{
+    adRef.limitToFirst(999999999).on('child_changed',(snap)=>{
         console.log(snap.val());
         console.log(snap.key());
         collection.updateOne({'adId':snap.key()},{$set:snap.val()},(err,result)=>{

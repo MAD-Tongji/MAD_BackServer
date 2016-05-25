@@ -1,4 +1,5 @@
 var Token = require('../../lib/publicUtils');
+var moment = require('moment');
 var User=require('./user');
 var wilddog = require('wilddog');
 var rootRef = new wilddog("https://wild-boar-00060.wilddogio.com/");
@@ -59,59 +60,62 @@ exports.register=function(req,res) {
     var password=req.body.password;
     console.log(username,req.params,req.body);
     var result={};
-    if(username==null|| password==null){
-        result.errCode=102;
+    if(username==null||username==''|| password==null||password==''){
+        result.errCode=108;
         res.json(result);
     }
     else{
-        // var userList=[];
-        // userRef.once('value',function(snapshot) {
-        //     userList=snapshot.val();
-            
-        // });
-        var newUser={};
-        newUser[username]={
-            adUsedList:"",
-            alipay:'',
-            balance:0,
-            detail:{
-              VIN:'',
-              email:'',
-              gender:true,
-              vehicleFrontImage:'',
-              vehicleLicenseImage :'' 
-            },
-            filter:{
-              accommodation:'',
-              commodity:'',
-              education:'',
-              entertainment:'',
-              other:'',
-              recruit:'',
-              service:'',
-              social:'',
-              tenancy:''  
-            },
-            message:"",
-            mobilePhone:username,
-            name:name,
-            password:password,
-            playTimes:0,
-            statistics:{
-                day:[],
-                hour:[],
-                mouth:[],
-                totalCash:0,
-                totalIncome:0
-            },
-            status:true,
-            withdrawHistory:""
-        };
-        userRef.update(newUser);
-        result.errCode=0;
-        result.token=Token.getToken(username);
-        result.userId=username;
-        res.json(result);
+        userRef.child(username).once('value',(snap)=>{
+            if(snap!=null){
+                result.errCode=105
+                res.json(result);
+            }else{
+                var newUser={};
+                newUser[username]={
+                    adUsedList:"",
+                    alipay:'',
+                    balance:0,
+                    detail:{
+                        VIN:'',
+                        email:'',
+                        gender:true,
+                        vehicleFrontImage:'',
+                        vehicleLicenseImage :'',
+                        registerDate:moment().format('YYYY-MM-DD') 
+                    },
+                    filter:{
+                        accommodation:'',
+                        commodity:'',
+                        education:'',
+                        entertainment:'',
+                        other:'',
+                        recruit:'',
+                        service:'',
+                        social:'',
+                        tenancy:''  
+                    },
+                    message:"",
+                    mobilePhone:username,
+                    name:name,
+                    password:password,
+                    playTimes:0,
+                    statistics:{
+                        day:[],
+                        hour:[],
+                        mouth:[],
+                        totalCash:0,
+                        totalIncome:0
+                    },
+                    status:'010',
+                    withdrawHistory:""
+                };
+                userRef.update(newUser);
+                result.errCode=0;
+                result.token=Token.getToken(username);
+                result.userId=username;
+                res.json(result);
+            }
+        });
     }
 }
 
