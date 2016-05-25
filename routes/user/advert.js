@@ -274,7 +274,7 @@ function getAdvertContentFromWilddog(advert) {
  * 根据district和周边poi类型在wilddog上获取广告ID列表
  */
 function userGetAdsByCoordinate(req, res) {
-    var apiKeys = ['261bebea3d5e5d0d826418bb0d7d4953', 'e521d4b038f8fb18042f22d5042a9e9d', 'd283b9b9e40cb549d56b80a1e4551054'];
+    var apiKeys = ['261bebea3d5e5d0d826418bb0d7d4953', 'e521d4b038f8fb18042f22d5042a9e9d', 'd283b9b9e40cb549d56b80a1e4551054', '02127fede0258553291573039655b9f0'];
 
     // 后台广告查找流程：向高德地图请求经纬度周边poi信息(20条)->提取20个poi的类型->根据类型在数据库里查找广告->返回广告ID列表
     var token = req.body.token;
@@ -292,7 +292,7 @@ function userGetAdsByCoordinate(req, res) {
          */
         var coordinate = req.body.coordinate;
         if (coordinate) {
-            var keyNum = parseInt((Math.random()*10)%3);
+            var keyNum = parseInt((Math.random()*10)%4);
             Q.all([getDistrictCodeWithCoordinate(coordinate, apiKeys[keyNum]), getAroundCatalog(coordinate, apiKeys[keyNum])])
                 .then(getAdvertIdsFromWilddog)
                 .then(function (idArray) {
