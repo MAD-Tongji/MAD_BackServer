@@ -1,4 +1,5 @@
 var Token = require('../../lib/publicUtils');
+var moment = require('moment');
 var User=require('./user');
 var wilddog = require('wilddog');
 var rootRef = new wilddog("https://wild-boar-00060.wilddogio.com/");
@@ -79,7 +80,8 @@ exports.register=function(req,res) {
               email:'',
               gender:true,
               vehicleFrontImage:'',
-              vehicleLicenseImage :'' 
+              vehicleLicenseImage :'',
+              registerDate:moment().format('YYYY-MM-DD') 
             },
             filter:{
               accommodation:'',
@@ -104,7 +106,7 @@ exports.register=function(req,res) {
                 totalCash:0,
                 totalIncome:0
             },
-            status:true,
+            status:'010',
             withdrawHistory:""
         };
         userRef.update(newUser);
