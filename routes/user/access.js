@@ -68,7 +68,7 @@ exports.register=function(req,res) {
         userRef.child(username).once('value',(snap)=>{
             if(snap!=null){
                 result.errCode=105
-                result.json(result);
+                res.json(result);
             }else{
                 var newUser={};
                 newUser[username]={
