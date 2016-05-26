@@ -66,7 +66,7 @@ exports.register=function(req,res) {
     }
     else{
         userRef.child(username).once('value',(snap)=>{
-            if(snap!=null){
+            if(snap.val()!=null){
                 result.errCode=105
                 res.json(result);
             }else{
@@ -81,7 +81,7 @@ exports.register=function(req,res) {
                         gender:true,
                         vehicleFrontImage:'',
                         vehicleLicenseImage :'',
-                        registerDate:moment().format('YYYY-MM-DD') 
+                        registerDate:moment().format('YYYY-MM-DD HH-mm-ss') 
                     },
                     filter:{
                         accommodation:'',
@@ -152,7 +152,6 @@ exports.findpwd=function(req,res) {
 }
 
 
-
 /**
  * @interface
  * @description {interface} 用户修改密码，参数为旧密码，新密码，会话令牌
@@ -166,7 +165,10 @@ exports.alterpwd=function(req,res) {
     currentToken.once('value',function(snapshot) {
         id=snapshot.val();
         console.log(id);
-        
+        if(id==null){
+            res.json({errCode:101});
+            return;
+        }
         var ref=userRef.child(id)||null;
     
         ref.once('value',function(snapshot) {
@@ -203,7 +205,7 @@ exports.msglist=function(req,res) {
     var result={};
     console.log(token+'3');
     
-    if(userId==null||token==null){
+    if(userId==null || userId==''||token==null||token==''){
         result.errCode=100;
         res.json(result);
     }else{
@@ -229,6 +231,10 @@ exports.msglist=function(req,res) {
 
 exports.sendValidate=function(req,res) {
     var phoneNumber=req.body.phoneNumber;
+    if(phoneNumber==null){
+        res.json({errCode:108});
+        return;
+    }
     validate.sendValidationCode(phoneNumber);
     var result={
         errCode:0
