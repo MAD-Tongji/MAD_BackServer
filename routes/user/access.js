@@ -34,6 +34,8 @@ exports.login=function(req,res) {
                     result.errCode=0;
                     result.userId=username;
                     result.token=Token.getToken(result.userId);
+                    result.uploadToken=Token.uptoken('madtest');
+                    console.log(result.uploadToken);
                     res.json(result);
                 }else{
                     result.errCode=102;
@@ -79,6 +81,7 @@ exports.register=function(req,res) {
                         VIN:'',
                         email:'',
                         gender:true,
+                        vehicleLicense:'',
                         vehicleFrontImage:'',
                         vehicleLicenseImage :'',
                         registerDate:moment().format('YYYY-MM-DD HH-mm-ss') 
