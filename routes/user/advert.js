@@ -18,6 +18,9 @@ function getAllAdUsed(req,res) {
     var result = new Object;
     if(userid == null || token == null || userid != utils.token2id(token))
     {
+        console.log(userid);
+        console.log(token);
+        console.log(utils.token2id(token));
         result.errCode = 100;
         res.json(result);
     }
@@ -32,10 +35,13 @@ function getAllAdUsed(req,res) {
             else{
                 var adlist = snap.val().adUsedList;
                 var detailArray = new Array();
-                for(var i = 0; i < adlist.length; i++)
-                {
-                    detailArray.push(utils.getAdDetail(adlist[i]));
+                for(var key in adlist){
+                    detailArray.push(utils.getAdDetail(adlist[key]));
                 }
+                // for(var i = 0; i < adlist.length; i++)
+                // {
+                //     detailArray.push(utils.getAdDetail(adlist[i]));
+                // }
                 result.errCode = 0;
                 result.adList=detailArray;
                 // result.adUsedList = adlist;
