@@ -137,10 +137,10 @@ function submitInfo(req,res)
 {
     var userId = req.body.userId || null;
     var token = req.body.token || null;
-    var check = req.body.check || null;
+    var check = req.body || null;
     var result = {};
     console.log(req.body);
-
+    console.log(req.body.check);
     if(userId == null || token == null || userId != utils.token2id(token))
     {
         result.errCode = 100;
@@ -148,14 +148,14 @@ function submitInfo(req,res)
     }
     else
     {
-        var ref = userRef.child(account);
+        var ref = userRef.child(userId);
         ref.once('value',function(snapshot) {
             var snap=snapshot.val();
             snap.name=check.name;
             snap.detail.VIN=check.VIN;
             snap.detail.vehicleLicense=check.vehicleLicense;
-            snap.vehicleFrontImage=check.carPicture;
-            snap.vehicleLicenseImage=check.vehicleLicensePicture;
+            snap.detail.vehicleFrontImage=check.carPicture;
+            snap.detail.vehicleLicenseImage=check.vehicleLicensePicture;
             ref.update(snap);
             res.json({
                 errCode:0
@@ -234,7 +234,7 @@ function accountInfo(req,res)
                     gender:infos.gender,
                     address:infos.address,
                     VIN:infos.VIN,
-                    vehicleLicensePicture:infos.vehicleLicensePicture
+                    vehicleLicensePicture:infos.vehicleLicenseImage
                 };
                 res.json(result);
             }
