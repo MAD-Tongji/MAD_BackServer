@@ -1,7 +1,6 @@
 var wilddog = require('wilddog');
 var rootRef = new wilddog("https://wild-boar-00060.wilddogio.com/");
 var userRef = rootRef.child('user');
-var token2id
 // var adRef = rootRef.child('advertisment');
 
 var utils = require('../../lib/publicUtils');
@@ -21,15 +20,25 @@ function modifyInfo(req,res)
     console.log(userid);
     if(userid == null || token == null || userid != utils.token2id(token))
     {
-        result.errCode = 100;
+        result.errCode = 101;
         res.json(result);
     }
     else
     {
         var ref = userRef.child(userid);
-        if(newInfo != null)
-        ref.update(newInfo);
-        res.json({errCode:0});
+        ref.once('value',(snap)=>{
+            if(snap.val()==null){
+                result.errCode = 101;
+                res.json(result);
+            }else{
+                if(newInfo != null){
+                    ref.update(newInfo);
+                    res.json({errCode:0});
+                }else{
+                    res.json({errCode:108});
+                }
+            }
+        });
     }
 }
 
@@ -47,34 +56,46 @@ function drawMoney(req,res)
     var number = req.body.number || null;
     var result = new Object;
     console.log(req.body);
-    
-    if(account == null || token == null || account != utils.token2id(token))
-    {   
-        console.log(utils.token2id(token));
+    if(number < 0){
+        result.errCode = 99;
+        res.json(result);
+        return;
+    }
+    if(account == null || token == null || account == '' || token=='' || utils.token2id(token)==null)
+    {
+        // console.log(utils.token2id(token));
         result.errCode = 100;
         res.json(result);
+        return;
     }
     else
     {
-        var ref = userRef.child(account);
+        var ref = userRef.child(utils.token2id(token));
         var balance = ref.child('balance');
         var drawRecord=ref.child('withdrawHistory');
-        
+
         var newBalance;
         balance.once('value',function(snapshot) {
             console.log(snapshot.val());
-            newBalance=parseInt(snapshot.val())-parseInt(number);
-            console.log(newBalance);
-            ref.update({'balance':newBalance});
-            drawRecord.push({
-                    alipay:account,
-                    number:number,
-                    time:'2016-05-06',
-                    status:'true'
-            })
+            if(snapshot.val() < number){
+                result.errCode = 98;
+                res.json(result);
+                return;
+            }else{
+                newBalance=parseInt(snapshot.val())-parseInt(number);
+                console.log(newBalance);
+                ref.update({'balance':newBalance});
+                drawRecord.push({
+                        alipay:account,
+                        number:number,
+                        time:'2016-05-06',
+                        status:'true'
+                });
+                result.errCode = 0;
+                res.json(result);
+                return;
+            }
         });
-        
-        res.json({errCode:0});
     }
 }
 
@@ -91,8 +112,8 @@ function drawRecord(req,res)
     var token = req.query.token || null;
     //var number = req.body.number || null;
     var result = {};
-    console.log(req.body);
-    
+    console.log(req.query);
+
     if( userId == null || token == null || userId != utils.token2id(token))
     {
         result.errCode = 100;
@@ -103,16 +124,16 @@ function drawRecord(req,res)
         var history=[];
         var ref = userRef.child(userId);
         var historyRef=ref.child('withdrawHistory');
-        res.json({
+        historyRef.orderByKey().once('value',function(snapshot) {
+            console.dir(snapshot.val());
+            for(var k in snapshot.val()){
+                history.push(snapshot.val()[k]);
+            }
+            res.json({
                 errCode:0,
-                withdrawHistory:function() {
-                    ref.orderByKey().on('child_added',function(snapshot) {
-                    history.unshift(snapshot.val());
-                    });
-                    return history;
-                }  
+                withdrawHistory:history
             });
-        
+        });
         //res.json({errCode:0});
     }
 }
@@ -129,6 +150,7 @@ function submitInfo(req,res)
     var token = req.body.token || null;
     var check = req.body || null;
     var result = {};
+    console.log(req.body);
     console.log(req.body.check);
     if(userId == null || token == null || userId != utils.token2id(token))
     {
@@ -167,7 +189,7 @@ function changeInfo(req,res)
     var newInfo = req.body.newInfo || null;
     var result = {};
     console.log(req.body);
-    
+
     if(userId == null || token == null || userId != utils.token2id(token))
     {
         result.errCode = 100;
@@ -196,7 +218,7 @@ function accountInfo(req,res)
     var result = new Object;
     console.log(req.params);
     console.log(req.query);
-    
+
     if(userId == null || token == null || userId != utils.token2id(token))
     {
         console.log('!=');
@@ -228,7 +250,7 @@ function accountInfo(req,res)
                 res.json(result);
             }
         })
-       
+
     }
 }
 
@@ -246,7 +268,7 @@ function changeInfo(req,res)
     var newInfo = req.body.newInfo || null;
     var result = {};
     console.log(req.body);
-    
+
     if(userId == null || token == null || userId != utils.token2id(token))
     {
         result.errCode = 100;

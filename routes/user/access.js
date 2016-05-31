@@ -73,6 +73,7 @@ exports.register=function(req,res) {
                 result.errCode=105
                 res.json(result);
             }else{
+                var tk=Token.getToken(username);
                 var newUser={};
                 newUser[username]={
                     adUsedList:"",
@@ -113,11 +114,18 @@ exports.register=function(req,res) {
                     status:'010',
                     withdrawHistory:""
                 };
-                userRef.update(newUser);
-                result.errCode=0;
-                result.token=Token.getToken(username);
-                result.userId=username;
-                res.json(result);
+                userRef.update(newUser,(err)=>{
+                    if(err==null){
+                        result.errCode=0;
+                        result.token=tk;
+                        result.userId=username;
+                        res.json(result);
+                    }else{
+                        result.errCode=999;
+                        result.message='update failed';
+                        res.json(result);
+                    }
+                });
             }
         });
     }

@@ -18,6 +18,9 @@ function getAllAdUsed(req,res) {
     var result = new Object;
     if(userid == null || token == null || userid != utils.token2id(token))
     {
+        console.log(userid);
+        console.log(token);
+        console.log(utils.token2id(token));
         result.errCode = 100;
         res.json(result);
     }
@@ -32,10 +35,13 @@ function getAllAdUsed(req,res) {
             else{
                 var adlist = snap.val().adUsedList;
                 var detailArray = new Array();
-                for(var i = 0; i < adlist.length; i++)
-                {
-                    detailArray.push(utils.getAdDetail(adlist[i]));
+                for(var key in adlist){
+                    detailArray.push(utils.getAdDetail(adlist[key]));
                 }
+                // for(var i = 0; i < adlist.length; i++)
+                // {
+                //     detailArray.push(utils.getAdDetail(adlist[i]));
+                // }
                 result.errCode = 0;
                 result.adList=detailArray;
                 // result.adUsedList = adlist;
@@ -76,7 +82,8 @@ function getFilter(req,res) {
     var token = req.query.token || null;
     var userId=null;
     var response = {};
-    if(token != null) userId=utils.token2id(userId);
+    if(token != null && token != '') userId=utils.token2id(token);
+    console.log(userId);
     if(userId==null){
         response.errCode=101;
         res.json(response);
@@ -85,7 +92,17 @@ function getFilter(req,res) {
             if(snap != null){
                 var setting = snap.val().filter;
                 response.adValidationSettings=new Array(9);
-                // response.adValidationSettings[0]=setting.
+                response.adValidationSettings[0]=parseInt(setting.accommodation);
+                response.adValidationSettings[1]=parseInt(setting.commodity);
+                response.adValidationSettings[2]=parseInt(setting.education);
+                response.adValidationSettings[3]=parseInt(setting.entertainment);
+                response.adValidationSettings[4]=parseInt(setting.other);
+                response.adValidationSettings[5]=parseInt(setting.recruit);
+                response.adValidationSettings[6]=parseInt(setting.service);
+                response.adValidationSettings[7]=parseInt(setting.social);
+                response.adValidationSettings[8]=parseInt(setting.tenancy);
+                response.errCode=0;
+                res.json(response);
             }
             else{
                 response.errCode=101;
