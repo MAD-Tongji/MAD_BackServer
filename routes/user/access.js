@@ -35,6 +35,7 @@ exports.login=function(req,res) {
                     result.userId=username;
                     result.token=Token.getToken(result.userId);
                     result.uploadToken=Token.uptoken('madtest');
+                    result.status=snapshot.val().status;
                     console.log(result.uploadToken);
                     res.json(result);
                 }else{
