@@ -129,6 +129,7 @@ List.getAdvertiser = function(id) {
     return deferred.promise;
 }
 
+
 /**
  * 获取首页数据
  */
@@ -137,7 +138,32 @@ List.getHomeData = function() {
 	var backendStatistics = new Object();
 	adminStatisticRef.child("homePageData").once("value", function(shapshot, err) {
 		if (err) deferred.reject(err);
-		var data = shapshot.val();
+        var data = shapshot.val();
+        List.totalAdvertisement()
+        .done(function(data) {
+            adminStatisticRef.child("homePageData").update({
+                totalAdvertisement: data.length
+            }, function(err) {
+                if (err) deferred.reject(err);
+            })
+        })
+		List.totalAdvertiser()
+        .done(function(data) {
+            adminStatisticRef.child("homePageData").update({
+                totalAdvertiser: data.length
+            }, function(err) {
+                if (err) deferred.reject(err);
+            })
+        })
+        List.totalUser()
+        .done(function(data) {
+            adminStatisticRef.child("homePageData").update({
+                totalUser: data.length
+            }, function(err) {
+                if (err) deferred.reject(err);
+            })
+        })
+       
 		backendStatistics.totalAdvertiser = data.totalAdvertiser;
 		backendStatistics.totalAdvertisement = data.totalAdvertisement;
 		backendStatistics.totalUser = data.totalUser;
@@ -187,6 +213,39 @@ List.getAdvert_detail7 = function(ids) {
             })(id);
         }
     }
+    return deferred.promise;
+}
+
+List.totalAdvertiser = function() {
+    var deferred = Q.defer();
+    var ids = [];
+    advertiserRef.on("child_added", function(shapshot) {
+        var id = shapshot.key();
+        ids.push(id);
+        deferred.resolve(ids);
+    })
+    return deferred.promise;
+}
+
+List.totalAdvertisement = function() {
+    var deferred = Q.defer();
+    var ids = [];
+    ref.child("advertisment").limitToFirst(999999).on("child_added", function(shapshot) {
+        var id = shapshot.key();
+        ids.push(id);
+        deferred.resolve(ids);
+    })
+    return deferred.promise;
+}
+
+List.totalUser = function() {
+    var deferred = Q.defer();
+    var ids = [];
+    ref.child("user").on("child_added", function(shapshot) {
+        var id = shapshot.key();
+        ids.push(id);
+        deferred.resolve(ids);
+    })
     return deferred.promise;
 }
 
@@ -257,8 +316,8 @@ List.getAdvertisment = function(id) {
     adminStatisticRef.child("homePageData").child("advert_most").child(id).once("value", function(shapshot, err) {
     	if (err) deferred.reject(err);
         advertisment.id = id;
-        if (shapshot.val().broadcastSum) {
-        	advertisment.broadcastSum = shapshot.val().broadcastSum;
+        if (shapshot.val().broadcastTimes) {
+        	advertisment.broadcastSum = shapshot.val().broadcastTimes;
         } else {
         	advertisment.broadcastSum = 0;
         }
@@ -517,7 +576,7 @@ List.getStatistics = function() {
             if (err) deferred.reject(err);
             listArr.push({
                 date: id,
-                totalBroadcast: shapshot.val().totalBroadcast,
+                totalBroadcast: shapshot.val().totalBroadcastTimes,
                 totalIncome: shapshot.val().totalIncome
             })
             deferred.resolve(listArr);
