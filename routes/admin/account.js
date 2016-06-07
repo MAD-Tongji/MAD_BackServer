@@ -7,6 +7,7 @@ var User = require('./user');
 var AdvertiserRef = ref.child("advertiser");
 var UserRef = ref.child("user");
 var Message = require('./messages');
+var moment = require('moment');
 
 module.exports = Account;
 function Account(obj) {
@@ -67,7 +68,8 @@ Account.applyList = function(data){
 
 //完成申请
 Account.complete = function(data){
-	var deferred = Q.defer();	
+	var deferred = Q.defer();
+	applyRef.child(data.applyId).update({"operatorName": data.operatorEmail, "completedDate": moment().format('YYYY-MM-DD HH:mm:ss')});
 			if (data.tag == 1) {
 				applyRef.child(data.applyId).update({"status":"11"},function(err){
 					deferred.resolve(err);
@@ -134,7 +136,7 @@ Account.complete = function(data){
 							});	
 								var msgContent = "您的退款申请(退款金额: "+money+" 元)未能通过审核。";
 								Message.sendMessage(userid,2,msgContent, function(err){}); 
-						}
+							}
 							else if(catalog == "3"){
 								//console.log("333");
 								var balance;
