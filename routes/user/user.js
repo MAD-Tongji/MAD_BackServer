@@ -86,7 +86,7 @@ function drawMoney(req,res)
                 newBalance=parseInt(snapshot.val())-parseInt(number);
                 console.log(newBalance);
                 ref.update({'balance':newBalance});
-                drawRecord.push({
+                var newRecord=drawRecord.push({
                         alipay:account,
                         number:number,
                         time:moment().format('YYYY-MM-DD h:mm:ss'),
@@ -95,7 +95,7 @@ function drawMoney(req,res)
                 apply.push({
                     account:account,
                     applyDate:moment().format('YYYY-MM-DD h:mm:ss'),
-                    applyId:account,
+                    applyId:newRecord.key(),
                     catalog:'1',
                     completeDate:'null',
                     money:number,
