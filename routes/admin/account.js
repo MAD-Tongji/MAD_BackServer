@@ -76,7 +76,7 @@ Account.complete = function(data){
 					applyRef.child(data.applyId).once('value', function(snapshot){
 						var id = snapshot.child("applyId").val();
 						var userid = snapshot.child("userId").val();
-						var money = snapshot.child("money").val();
+						var money = parseInt(snapshot.child("money").val());
 						var catalog = snapshot.child("catalog").val();
 						//更改广告商下的申请状态
 						//申请通过后要做的事
@@ -90,7 +90,7 @@ Account.complete = function(data){
 
 						//充值成功，更新余额
 						AdvertiserRef.child(userid).once('value', function(snapshot){
-							var balance = snapshot.child("balance").val();
+							var balance = parseInt(snapshot.child("balance").val());
 							var newBalance = balance + money;
 							//AdvertiserRef.child(userid).child("refund").child(refId).update({"status": false});
 						AdvertiserRef.child(userid).update({"balance": newBalance}, function(err){
@@ -113,7 +113,7 @@ Account.complete = function(data){
 					if(!err){				
 						applyRef.child(data.applyId).once('value', function(snapshot){
 							console.log(snapshot.child("money").val());
-							var money = snapshot.child("money").val();
+							var money = parseInt(snapshot.child("money").val());
 							var catalog = snapshot.child("catalog").val();
 							var userid = snapshot.child("userId").val();
 							var refId = snapshot.child("applyId").val();
@@ -128,7 +128,7 @@ Account.complete = function(data){
 							else if(catalog == "2"){
 							//console.log("222");
 								AdvertiserRef.child(userid).once('value', function(snapshot){
-									var balance = snapshot.child("balance").val();
+									var balance = parseInt(snapshot.child("balance").val());
 									var newBalance = balance + money;
 									AdvertiserRef.child(userid).child("refund").child(refId).update({"status": '00'});
 									AdvertiserRef.child(userid).update({"balance": newBalance}, function(err){
@@ -142,7 +142,7 @@ Account.complete = function(data){
 								//console.log("333");
 								var balance;
 								UserRef.child(userid).once('value', function(snapshot){
-									balance = snapshot.child("balance").val();
+									balance = parseInt(snapshot.child("balance").val());
 									var newBalance = balance + money;
 									UserRef.child(userid).update({"balance": newBalance}, function(err){
 									//deferred.resolve(err);
