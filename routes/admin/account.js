@@ -79,12 +79,12 @@ Account.complete = function(data){
 						//更改广告商下的申请状态
 						//申请通过后要做的事
 						if(catalog == "2"){
-						AdvertiserRef.child(userid).child("refund").child(id).update({"status": true});
+						AdvertiserRef.child(userid).child("refund").child(id).update({"status": '11'});
 						var msgContent = "您的退款申请(退款金额: "+money+" 元)已经通过审核。";
 						Message.sendMessage(userid,2,msgContent, function(err){}); 
 
 					}else if(catalog == "1"){
-						AdvertiserRef.child(userid).child("recharge").child(id).update({"status": true});
+						AdvertiserRef.child(userid).child("recharge").child(id).update({"status": '11'});
 
 						//充值成功，更新余额
 						AdvertiserRef.child(userid).once('value', function(snapshot){
@@ -117,7 +117,7 @@ Account.complete = function(data){
 
 							//申请被拒绝后要做的事
 							if(catalog == "1"){
-								AdvertiserRef.child(userid).child("recharge").child(refId).update({"status": false});
+								AdvertiserRef.child(userid).child("recharge").child(refId).update({"status": '00'});
 								var msgContent = "您的充值申请(充值金额: "+money+" 元)未能通过审核,原因：未收到钱款。";
 								Message.sendMessage(userid,2,msgContent, function(err){});
 
@@ -127,7 +127,7 @@ Account.complete = function(data){
 								AdvertiserRef.child(userid).once('value', function(snapshot){
 									var balance = snapshot.child("balance").val();
 									var newBalance = balance + money;
-									AdvertiserRef.child(userid).child("refund").child(refId).update({"status": false});
+									AdvertiserRef.child(userid).child("refund").child(refId).update({"status": '00'});
 									AdvertiserRef.child(userid).update({"balance": newBalance}, function(err){
 									//deferred.resolve(err);
 								});	

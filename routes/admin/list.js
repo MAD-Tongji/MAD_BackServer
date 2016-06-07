@@ -441,10 +441,10 @@ List.getAdvertiserDetail = function(id) {
             detail.licenseImage = data.licenseImage;
             detail.licenseCode = data.licenseCode;
             detail.location = data.location;
-            detail.accomodation = detail.accomodation;
-            detail.businessScope = detail.businessScope;
-            detail.businessPeriod = detail.businessPeriod;
-            detail.organizationCode = detail.organizationCode;
+            detail.accomodation = data.accomodation;
+            detail.businessScope = data.businessScope;
+            detail.businessPeriod = data.businessPeriod;
+            detail.organizationCode = data.organizationCode;
         }
         List.getAdvertiserLegalPerson(id)
         .done(function(data) {
@@ -480,7 +480,7 @@ List.getAdvertiserLegalPerson = function(id) {
             legalPerson.id = data.id;
             legalPerson.validDate = data.validDate;
             legalPerson.ifLongTerm = data.ifLongTerm;
-            legalPerson.ifLegalPerson = data.ifLegalPerson;
+            legalPerson.ifLegalPerson = data.iflegalperson;
         }
         deferred.resolve(legalPerson);
     })
