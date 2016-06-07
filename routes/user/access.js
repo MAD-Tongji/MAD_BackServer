@@ -15,11 +15,47 @@ var validate=require('../user/sms-service');
 exports.login=function(req,res) {
     var username=req.body.username;
     var password=req.body.password;
+    var device=req.body.device || null;
     console.log(username,req.params,req.body);
     var result={};
     if(username==null|| password==null || username=='' || password==''){
         result.errCode=102;
         res.json(result);
+    }
+    else if(device == 'pad'){
+        var ref=userRef.child(username);
+        ref.once('value',function(snapshot) {
+            if(snapshot.val()==null)
+            {
+                result.errCode = 102;
+                res.json(result);
+            }
+            else{
+                if(snapshot.val().password==password){
+                    result.errCode=0;
+                    result.userId=username;
+                    // result.token=Token.getToken(result.userId);
+                    result.uploadToken=Token.uptoken('madtest');
+                    result.status=snapshot.val().status;
+                    console.log(result.uploadToken);
+                    rootRef.child('token2id').orderByChild('id').equalTo(result.userId).once('value',(snap)=>{
+                        if(snap.val()==null){
+                            result={};
+                            result.errCode=102;
+                            res.json(result);
+                        }
+                        else{
+                            result.token=snap.key();
+                            res.json(result);
+                        }
+                    });
+                    // res.json(result);
+                }else{
+                    result.errCode=102;
+                    res.json(result);
+                }
+            }
+        })
     }
     else{
         var ref=userRef.child(username);
