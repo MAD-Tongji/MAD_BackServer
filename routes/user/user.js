@@ -96,7 +96,7 @@ function drawMoney(req,res)
                     account:account,
                     applyDate:moment().format('YYYY-MM-DD h:mm:ss'),
                     applyId:newRecord.key(),
-                    catalog:'1',
+                    catalog:'3',
                     completeDate:'null',
                     money:number,
                     operatorName:'null',
