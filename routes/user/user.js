@@ -1,6 +1,7 @@
 var wilddog = require('wilddog');
 var rootRef = new wilddog("https://wild-boar-00060.wilddogio.com/");
 var userRef = rootRef.child('user');
+var moment=require('moment');
 // var adRef = rootRef.child('advertisment');
 
 var utils = require('../../lib/publicUtils');
@@ -73,7 +74,7 @@ function drawMoney(req,res)
         var ref = userRef.child(utils.token2id(token));
         var balance = ref.child('balance');
         var drawRecord=ref.child('withdrawHistory');
-
+        var apply=rootRef.child('apply');
         var newBalance;
         balance.once('value',function(snapshot) {
             console.log(snapshot.val());
@@ -88,8 +89,20 @@ function drawMoney(req,res)
                 drawRecord.push({
                         alipay:account,
                         number:number,
-                        time:'2016-05-06',
+                        time:moment().format('YYYY-MM-DD h:mm:ss'),
                         status:'01'
+                });
+                apply.push({
+                    account:account,
+                    applyDate:moment().format('YYYY-MM-DD h:mm:ss'),
+                    applyId:account,
+                    catalog:'1',
+                    completeDate:'null',
+                    money:number,
+                    operatorName:'null',
+                    status:'01',
+                    userId:account,
+                    userName:'string'
                 });
                 result.errCode = 0;
                 res.json(result);
