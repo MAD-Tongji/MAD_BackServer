@@ -89,7 +89,7 @@ function drawMoney(req,res)
                         alipay:account,
                         number:number,
                         time:'2016-05-06',
-                        status:'true'
+                        status:'01'
                 });
                 result.errCode = 0;
                 res.json(result);
