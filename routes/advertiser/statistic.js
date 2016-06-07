@@ -21,7 +21,7 @@ Statistic.getAllStatistic = function (advertiserId) {
     var advertisements;
     var advertsArray = new Array;
     var advertId;
-    
+
     statisticRef.child('advertiser').child(advertiserId).once('value', function (snapshot) {
         if (snapshot.val() && snapshot.val().advertisements) {
             advertisements = snapshot.val().advertisements;
@@ -31,13 +31,13 @@ Statistic.getAllStatistic = function (advertiserId) {
                     advertsArray.push(advertisements[advertId]);
                 }
             }
-            
+
             deferred.resolve(advertsArray);
         } else {
             console.log(snapshot.val());
             deferred.reject(new Error('没有取到advertisement统计数据'));
         }
-        
+
     });
     return deferred.promise;
 };
@@ -47,11 +47,11 @@ Statistic.getAdvertisementDetail = function (advertId, advertiserId) {
     var advertDetail;
     var dateId;
     var statisticArray = new Array;
-    
+
     statisticRef.child('advertiser').child('detailInfo').child(advertiserId).child(advertId).once('value', function (snapshot) {
         if (snapshot.val()) {
             advertDetail = snapshot.val();
-            
+
             for (dateId in advertDetail) {
                 if (typeof advertDetail[dateId] !== 'function') {
                     advertDetail[dateId].date = dateId;
@@ -63,7 +63,7 @@ Statistic.getAdvertisementDetail = function (advertId, advertiserId) {
             deferred.reject(new Error('没有取到广告:' + advertId + '的统计数据'));
         }
     });
-    
+
     return deferred.promise;
 };
 
@@ -73,25 +73,39 @@ Statistic.getAdvertiserData = function (advertiserId) {
     var advertisements;
     var detail;
     var advertId;
-    
+
     statisticRef.child('advertiser').child('detailInfo').child(advertiserId).once('value', function (snapshot) {
-        if (snapshot.val()) {
-            advertisements = snapshot.val();
-            for (advertId in advertisements) {
-                if (typeof advertisements[advertId] !== 'function'){
-                    detail = advertisements[advertId];
-                    
-                    advertisementArray.push({
-                        'id': advertId,
-                        'statistics': detail
-                    });
+      var advertDetail = [];
+      if (snapshot.val()) {
+          advertisements = snapshot.val();
+          for (advertId in advertisements) {
+            if (typeof advertisements[advertId] !== 'function'){
+              detail = advertisements[advertId];
+
+
+              for (var index in detail) {
+                if (typeof detail[index] !== 'function') {
+                  advertDetail.push({
+                    'date': index,
+                    'totalBroadcast': detail[index].totalBroadcast,
+                    'totalPrice': detail[index].totalPrice
+                  });
                 }
+              }
+              // console.log('detail:');
+              // console.log(advertDetail);
+              advertisementArray.push({
+                  'id': advertId,
+                  'statistics': advertDetail
+              });
+              advertDetail = [];
             }
-            deferred.resolve(advertisementArray);
-        } else {
-            deferred.reject(new Error('没有获得广告商:' + advertiserId + '统计数据'))
-        }
+          }
+          deferred.resolve(advertisementArray);
+      } else {
+          deferred.reject(new Error('没有获得广告商:' + advertiserId + '统计数据'))
+      }
     });
-    
+
     return deferred.promise;
 };

@@ -647,6 +647,7 @@ exports.userDetailById = function(req, res, next) {
             } else if (tag == 2) {
                 List.getAdvertiserById(id)
                 .done(function(data) {
+                    console.log(data);
                     res.json({
                         errCode: 0,
                         tag: 2,

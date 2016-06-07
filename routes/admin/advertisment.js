@@ -124,7 +124,7 @@ Advertisment.audit = function(data){
 	if(parseInt(data.success) == parseInt(0)){
 		AdsRef.update({"status":"000"},function(err){
 			console.log("00000");
-			var content = "您的广告" + data.id + "未通过审核" + " 理由: " + data.reason;
+			var content = "您的广告 [" + data.title + "] 未通过审核" + " 理由: " + data.reason;
 			Message.sendMessage(Advertiser,2,content,function(err){
 				deferred.resolve(err);
 			});
@@ -134,7 +134,7 @@ Advertisment.audit = function(data){
 	else if(parseInt(data.success) == parseInt(1)){
 		AdsRef.update({"status":"001"},function(err){
 			console.log("11111");
-			var content = "您的广告" + data.id + "已通过审核";
+			var content = "您的广告 [" + data.title + "] 已通过审核";
 			Message.sendMessage(Advertiser,2,content,function(err){
 				deferred.resolve(err);
 			})
@@ -157,7 +157,7 @@ Advertisment.remove = function(data){
 	AdsRef.update({"status":"101"},function(err){
 		if(!err){
 			if(Advertiser){
-				var content = "您的广告" + data.id + "被下架了，原因是：" + data.reason;
+				var content = "您的广告 [" + data.title + "] 被下架了，原因是：" + data.reason;
 				Message.sendMessage(Advertiser,2,content,function(err){
 				deferred.resolve(err);
 			});

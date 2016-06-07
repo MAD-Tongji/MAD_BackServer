@@ -22,6 +22,12 @@ exports.login = function(req, res, next) {
 
     User.getAdvertiserByEmail(data.email)
         .then(function (user) {
+            if (!user.check) {
+               res.json({
+                   errCode: 103
+               });
+               return;
+            }
             if (user.password === data.password) {
                 var token = Token.getToken(user.id);
                 console.log(Token.uptoken());
@@ -69,7 +75,7 @@ exports.getUpToken = function (req, res) {
 exports.check = function (req, res, next) {
     var id = Token.token2id(req.query.token);
     console.log('id:' + id);
-    if (id !== null) {
+    if (id) {
         // 根据ID修改用户check为true
         
         User.completeEmailCheck(id)

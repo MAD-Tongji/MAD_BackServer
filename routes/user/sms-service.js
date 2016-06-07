@@ -42,6 +42,8 @@ exports.sendValidationCode = sendValidationCode;
  */
 function validateVCode (phonenum,vcode,callback)
 {
+    if(phonenum==''||vcode==''||phonenum==null||phonenum==null)
+    callback(false);
     var vcodeRef = ref.child('phone-VCode').child(phonenum);
     vcodeRef.once('value',(snap)=>{
         if(snap.val() == null)

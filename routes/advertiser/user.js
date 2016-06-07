@@ -390,8 +390,9 @@ User.changeAlipay = function (id, newAlipay) {
 User.getAccountCheckDetail = function (id) {
     var defer = q.defer();
     advertiserRef.child(id).once("value", function (snapshot) {
-        if(snapshot.child("status") !== "000" && snapshot.child("detail").exists()) {  //有验证信息
+        if(snapshot.child("detail").exists()) {  //有验证信息
             var detail = snapshot.val().detail;
+            detail.status = snapshot.child('status').val();
             console.log(detail);
             defer.resolve(detail);
         } else {
@@ -420,7 +421,3 @@ User.completeEmailCheck = function (id) {
     
     return deferred.promise;
 };
-
-/**
- * TODO: 需要添加一个监听函数，在提现和退款审核状态被修改后修改对应用户下的提现或退款状态
- */

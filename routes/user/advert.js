@@ -18,6 +18,9 @@ function getAllAdUsed(req,res) {
     var result = new Object;
     if(userid == null || token == null || userid != utils.token2id(token))
     {
+        console.log(userid);
+        console.log(token);
+        console.log(utils.token2id(token));
         result.errCode = 100;
         res.json(result);
     }
@@ -32,10 +35,13 @@ function getAllAdUsed(req,res) {
             else{
                 var adlist = snap.val().adUsedList;
                 var detailArray = new Array();
-                for(var i = 0; i < adlist.length; i++)
-                {
-                    detailArray.push(utils.getAdDetail(adlist[i]));
+                for(var key in adlist){
+                    detailArray.push(utils.getAdDetail(adlist[key]));
                 }
+                // for(var i = 0; i < adlist.length; i++)
+                // {
+                //     detailArray.push(utils.getAdDetail(adlist[i]));
+                // }
                 result.errCode = 0;
                 result.adList=detailArray;
                 // result.adUsedList = adlist;
@@ -76,7 +82,8 @@ function getFilter(req,res) {
     var token = req.query.token || null;
     var userId=null;
     var response = {};
-    if(token != null) userId=utils.token2id(userId);
+    if(token != null && token != '') userId=utils.token2id(token);
+    console.log(userId);
     if(userId==null){
         response.errCode=101;
         res.json(response);
@@ -85,7 +92,17 @@ function getFilter(req,res) {
             if(snap != null){
                 var setting = snap.val().filter;
                 response.adValidationSettings=new Array(9);
-                // response.adValidationSettings[0]=setting.
+                response.adValidationSettings[0]=parseInt(setting.accommodation);
+                response.adValidationSettings[1]=parseInt(setting.commodity);
+                response.adValidationSettings[2]=parseInt(setting.education);
+                response.adValidationSettings[3]=parseInt(setting.entertainment);
+                response.adValidationSettings[4]=parseInt(setting.other);
+                response.adValidationSettings[5]=parseInt(setting.recruit);
+                response.adValidationSettings[6]=parseInt(setting.service);
+                response.adValidationSettings[7]=parseInt(setting.social);
+                response.adValidationSettings[8]=parseInt(setting.tenancy);
+                response.errCode=0;
+                res.json(response);
             }
             else{
                 response.errCode=101;
@@ -274,7 +291,16 @@ function getAdvertContentFromWilddog(advert) {
  * 根据district和周边poi类型在wilddog上获取广告ID列表
  */
 function userGetAdsByCoordinate(req, res) {
-    var apiKeys = ['261bebea3d5e5d0d826418bb0d7d4953', 'e521d4b038f8fb18042f22d5042a9e9d', 'd283b9b9e40cb549d56b80a1e4551054'];
+    var apiKeys = [
+     '261bebea3d5e5d0d826418bb0d7d4953',
+     'e521d4b038f8fb18042f22d5042a9e9d',
+     'd283b9b9e40cb549d56b80a1e4551054',
+     '02127fede0258553291573039655b9f0',
+     'f18ec841e160a0df35a3c17fc3ef5160',
+     '83a89a43c0285741f7bea6b0ab03b0c5',
+     '0fda91b29e1581d9ed520755449f65c4',
+     '2103e72a6fb119d83bed8ee964d7c3c2'
+   ];
 
     // 后台广告查找流程：向高德地图请求经纬度周边poi信息(20条)->提取20个poi的类型->根据类型在数据库里查找广告->返回广告ID列表
     var token = req.body.token;
@@ -292,7 +318,7 @@ function userGetAdsByCoordinate(req, res) {
          */
         var coordinate = req.body.coordinate;
         if (coordinate) {
-            var keyNum = parseInt((Math.random()*10)%3);
+            var keyNum = parseInt((Math.random()*10)%8);
             Q.all([getDistrictCodeWithCoordinate(coordinate, apiKeys[keyNum]), getAroundCatalog(coordinate, apiKeys[keyNum])])
                 .then(getAdvertIdsFromWilddog)
                 .then(function (idArray) {
@@ -399,18 +425,21 @@ function getAdvertIdsFromWilddog(params) {
     var catalogArray = params[1];
     var deferred = Q.defer();
     var advertIdArray = [];
-    var advertIdSet;// = new Set();
+    var advertIdSet;
     var advertIdRef = rootRef.child('AdsInCitys').child('Shanghai');
-
     advertIdRef.child(districtCode).once('value', function (snapshot) {
         var value = snapshot.val();
-        for (var i = 0; i < catalogArray.length; i += 1) {
-            var element = catalogArray[i];
-            advertIdArray = advertIdArray.concat(value[element]);
+        if (value) {
+          for (var i = 0; i < catalogArray.length; i += 1) {
+              var element = catalogArray[i];
+              advertIdArray = advertIdArray.concat(value[element]);
+          }
+          advertIdSet = new Set(advertIdArray);
+          advertIdArray = Array.from(advertIdSet);
+          deferred.resolve(advertIdArray);
+        } else {
+          deferred.reject(new Error('查询广告ID时没有获取到数据'));
         }
-        advertIdSet = new Set(advertIdArray);
-        advertIdArray = Array.from(advertIdSet);
-        deferred.resolve(advertIdArray);
     }, function (error) {
         console.log('野狗查询时出错');
         deferred.reject(error);
