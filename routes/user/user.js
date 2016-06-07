@@ -245,6 +245,7 @@ function accountInfo(req,res)
                     gender:infos.gender,
                     address:infos.address,
                     VIN:infos.VIN,
+                    license:infos.vehicleLicense || '',
                     vehicleLicensePicture:infos.vehicleLicenseImage
                 };
                 res.json(result);
