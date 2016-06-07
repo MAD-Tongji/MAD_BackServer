@@ -99,6 +99,7 @@ Account.complete = function(data){
 						});
 
 					}else if(catalog == "3"){
+						UserRef.child(userid).child("withdrawHistory").child(id).update({"status": '11'});
 						var msgContent = "您的提现申请(退款金额: "+money+" 元)已经通过审核。";
 						Message.sendMessage(userid,1,msgContent, function(err){}); 
 					}
@@ -146,7 +147,8 @@ Account.complete = function(data){
 									UserRef.child(userid).update({"balance": newBalance}, function(err){
 									//deferred.resolve(err);
 								});
-							});	
+							});
+								UserRef.child(userid).child("withdrawHistory").child(refId).update({"status": '00'});
 								var msgContent = "您的提现申请(提现金额: "+money+" 元)未能通过审核。";
 								Message.sendMessage(userid,1,msgContent, function(err){});						
 						}
