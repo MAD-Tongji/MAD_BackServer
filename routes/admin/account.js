@@ -134,7 +134,7 @@ Account.complete = function(data){
 							});	
 								var msgContent = "您的退款申请(退款金额: "+money+" 元)未能通过审核。";
 								Message.sendMessage(userid,2,msgContent, function(err){}); 
-						}
+							}
 							else if(catalog == "3"){
 								//console.log("333");
 								var balance;
